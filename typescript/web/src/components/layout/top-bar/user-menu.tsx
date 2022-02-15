@@ -1,8 +1,6 @@
-import { gql, useQuery } from "@apollo/client";
 import {
   Avatar,
   chakra,
-  DeepPartial,
   Flex,
   HStack,
   IconButton,
@@ -18,12 +16,10 @@ import {
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { Query } from "@labelflow/graphql-types";
-import { isEmpty, isNil } from "lodash/fp";
+import { isEmpty } from "lodash/fp";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useCallback } from "react";
-import { useCookies } from "react-cookie";
 import {
   RiLoginCircleLine,
   RiLogoutCircleRLine,
@@ -33,6 +29,8 @@ import {
   RiUserLine,
 } from "react-icons/ri";
 import { useQueryParam } from "use-query-params";
+import { UserQuery_user } from "../../../graphql-types/UserQuery";
+import { useOptionalUser } from "../../../hooks";
 import { trackEvent } from "../../../utils/google-analytics";
 import { BoolParam } from "../../../utils/query-param-bool";
 import { randomBackgroundGradient } from "../../../utils/random-background-gradient";
@@ -48,21 +46,7 @@ const SignoutIcon = chakra(RiLogoutCircleRLine);
 
 const SettingsIcon = chakra(RiSettings4Line);
 
-const userQuery = gql`
-  query getUserProfileInfo($id: ID!) {
-    user(where: { id: $id }) {
-      id
-      createdAt
-      name
-      email
-      image
-    }
-  }
-`;
-
-type UserQueryResult = DeepPartial<Query>;
-
-type UserProps = UserQueryResult["user"] & { displayName?: string };
+type UserProps = Partial<UserQuery_user> & { displayName?: string };
 
 const UserAvatar = ({ image, displayName }: UserProps) => {
   const avatarBackground = useColorModeValue("white", "gray.700");
@@ -75,12 +59,18 @@ const UserAvatar = ({ image, displayName }: UserProps) => {
       bg={bg}
       name={displayName}
       src={image ?? undefined}
-      icon={<UserMenuIcon fontSize="xl" />}
+      icon={
+        <UserMenuIcon
+          fontSize="xl"
+          color={useColorModeValue("gray.700", "white")}
+        />
+      }
     />
   );
 };
 
-const ProfileMenuItem = ({ displayName, email }: UserProps) => {
+const ProfileMenuItem = (props: UserProps) => {
+  const { displayName, email } = props;
   const fadeColor = useColorModeValue("gray.600", "gray.400");
   return (
     <MenuItem
@@ -96,7 +86,7 @@ const ProfileMenuItem = ({ displayName, email }: UserProps) => {
       padding="4"
     >
       <HStack spacing="4" flexShrink={0}>
-        <UserAvatar />
+        <UserAvatar {...props} />
         <Flex direction="column" fontWeight="medium">
           <Text fontSize="sm">{displayName}</Text>
           <Text fontSize="xs" lineHeight="shorter" color={fadeColor}>
@@ -126,17 +116,10 @@ const UserMenuButton = (props: UserProps) => (
 );
 
 const SignOutMenuItem = (props: MenuItemProps) => {
-  const removeLastVisitedWorkspaceSlugCookie = useCookies([
-    "lastVisitedWorkspaceSlug",
-  ])[2];
   const handleClick = useCallback(() => {
-    removeLastVisitedWorkspaceSlugCookie("lastVisitedWorkspaceSlug", {
-      path: "/",
-      httpOnly: false,
-    });
     trackEvent("signout", {});
     signOut({ callbackUrl: "/" });
-  }, [removeLastVisitedWorkspaceSlugCookie]);
+  }, []);
   return (
     <MenuItem
       icon={<SignoutIcon fontSize="lg" />}
@@ -225,15 +208,10 @@ const PreferencesMenuGroup = () => (
 );
 
 const UserMenuList = (props: UserProps) => {
-  const { data: session } = useSession({ required: false });
   return (
     <MenuList>
-      {session && (
-        <>
-          <ProfileMenuItem {...props} />
-          <MenuDivider />
-        </>
-      )}
+      <ProfileMenuItem {...props} />
+      <MenuDivider />
       <UserMenuGroup />
       <MenuDivider />
       <PreferencesMenuGroup />
@@ -241,20 +219,13 @@ const UserMenuList = (props: UserProps) => {
   );
 };
 
-const useUser = (): UserProps => {
-  const { data: session } = useSession({ required: false });
-  const userInfoFromSession = session?.user;
-  const { data: userData } = useQuery(userQuery, {
-    variables: { id: userInfoFromSession?.id },
-    skip: userInfoFromSession?.id == null,
-  });
-  const user = userData?.user;
-  const displayName = !isNil(user) ? getDisplayName(user) : "Anonymous";
-  return { ...user, displayName };
+const useUserWithDisplayName = (): UserProps => {
+  const user = useOptionalUser();
+  return { ...user, displayName: getDisplayName(user ?? {}) };
 };
 
 export const UserMenu = () => {
-  const user = useUser();
+  const user = useUserWithDisplayName();
   return (
     <Menu>
       <UserMenuButton {...user} />

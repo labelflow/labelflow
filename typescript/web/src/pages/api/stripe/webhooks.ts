@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 import { getPrismaClient } from "@labelflow/db";
-import { WorkspacePlan } from "@labelflow/graphql-types";
+import { WorkspacePlan } from "../../../graphql-types/globalTypes";
 
 const {
   STRIPE_SECRET_KEY: stripeSecretKey,

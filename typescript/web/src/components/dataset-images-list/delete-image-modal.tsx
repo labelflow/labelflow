@@ -9,13 +9,19 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
+import { isEmpty } from "lodash/fp";
 import {
-  paginatedImagesQuery,
+  PAGINATED_IMAGES_QUERY,
   useFlushPaginatedImagesCache,
 } from "./paginated-images-query";
+import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../shared-queries/dataset-images-page.query";
+import {
+  GetImageByIdQuery,
+  GetImageByIdQueryVariables,
+} from "../../graphql-types/GetImageByIdQuery";
 
-const getImageByIdQuery = gql`
-  query getImageById($id: ID!) {
+const GET_IMAGE_BY_ID_QUERY = gql`
+  query GetImageByIdQuery($id: ID!) {
     image(where: { id: $id }) {
       id
       name
@@ -23,8 +29,8 @@ const getImageByIdQuery = gql`
   }
 `;
 
-const deleteImageMutation = gql`
-  mutation deleteImage($id: ID!) {
+const DELETE_IMAGE_MUTATION = gql`
+  mutation DeleteImageMutation($id: ID!) {
     deleteImage(where: { id: $id }) {
       id
     }
@@ -43,20 +49,27 @@ export const DeleteImageModal = ({
   datasetId: string;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const { data } = useQuery(getImageByIdQuery, {
-    variables: { id: imageId },
-    skip: imageId == null,
-  });
+  const { data } = useQuery<GetImageByIdQuery, GetImageByIdQueryVariables>(
+    GET_IMAGE_BY_ID_QUERY,
+    {
+      variables: { id: imageId ?? "" },
+      skip: isEmpty(imageId),
+    }
+  );
 
   const flushPaginatedImagesCache = useFlushPaginatedImagesCache(datasetId);
-  const [deleteImage, { loading: deleteImageLoading }] =
-    useMutation(deleteImageMutation);
+  const [deleteImage, { loading: deleteImageLoading }] = useMutation(
+    DELETE_IMAGE_MUTATION
+  );
 
   const handleDeleteButtonClick = async () => {
     await flushPaginatedImagesCache();
     await deleteImage({
       variables: { id: imageId },
-      refetchQueries: ["getDatasetData", paginatedImagesQuery],
+      refetchQueries: [
+        DATASET_IMAGES_PAGE_DATASET_QUERY,
+        PAGINATED_IMAGES_QUERY,
+      ],
     });
     onClose();
   };

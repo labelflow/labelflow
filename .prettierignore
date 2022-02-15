@@ -1,3 +1,2 @@
 typescript/graphql-types/src/graphql-types.generated.ts
-typescript/web/src/worker/__generated__/schema.ts
-typescript/web/src/connectors/apollo-client/__generated__/schema.ts
+typescript/web/src/graphql-types

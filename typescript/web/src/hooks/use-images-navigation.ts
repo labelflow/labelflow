@@ -1,20 +1,13 @@
-import { useRouter } from "next/router";
-import { useQuery, gql } from "@apollo/client";
-
-import { Dataset, Image } from "@labelflow/graphql-types";
-
-const getAllImagesOfADatasetQuery = gql`
-  query getAllImagesOfADataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      images {
-        id
-        url
-        thumbnail200Url
-      }
-    }
-  }
-`;
+import { useQuery } from "@apollo/client";
+import { isEmpty } from "lodash/fp";
+import {
+  GetAllImagesOfADatasetQuery,
+  GetAllImagesOfADatasetQueryVariables,
+} from "../graphql-types/GetAllImagesOfADatasetQuery";
+import { useDataset } from "./use-dataset";
+import { useDatasetImage } from "./use-dataset-image";
+import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "./use-images-navigation.query";
+import { useOptionalWorkspace } from "./use-user";
 
 /**
  * A Hook to handle image navigation.
@@ -28,15 +21,18 @@ const getAllImagesOfADatasetQuery = gql`
  * is already the last index of the array).
  */
 export const useImagesNavigation = () => {
-  const router = useRouter();
-  const { datasetSlug, imageId: currentImageId, workspaceSlug } = router?.query;
+  const workspace = useOptionalWorkspace();
+  const workspaceSlug = workspace?.slug ?? "";
+  const { slug: datasetSlug } = useDataset();
+  const { id: currentImageId } = useDatasetImage();
 
   // Refetch images ?
-  const { data } = useQuery<{
-    dataset: Pick<Dataset, "id" | "images">;
-  }>(getAllImagesOfADatasetQuery, {
+  const { data } = useQuery<
+    GetAllImagesOfADatasetQuery,
+    GetAllImagesOfADatasetQueryVariables
+  >(GET_ALL_IMAGES_OF_A_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
-    skip: !datasetSlug || !workspaceSlug,
+    skip: isEmpty(workspaceSlug) || isEmpty(datasetSlug),
   });
 
   // TODO: Investigate why you have to specify undefined states
@@ -53,9 +49,7 @@ export const useImagesNavigation = () => {
     };
   }
 
-  const currentImageIndex = images.findIndex(
-    (image: Partial<Image>) => image.id === currentImageId
-  );
+  const currentImageIndex = images.findIndex(({ id }) => id === currentImageId);
 
   if (currentImageIndex === -1) {
     return {

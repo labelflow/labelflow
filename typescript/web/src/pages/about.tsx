@@ -6,13 +6,11 @@ import { NavBar } from "../components/website/Navbar/NavBar";
 import { Footer } from "../components/website/Footer/Footer";
 
 import { Meta } from "../components/meta";
-import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
 import { CookieBanner } from "../components/cookie-banner";
 
 export default function About() {
   return (
     <>
-      <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow | About" />
       <CookieBanner />
       <Box minH="640px">

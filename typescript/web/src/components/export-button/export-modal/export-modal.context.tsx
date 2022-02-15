@@ -1,6 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import { ExportFormat } from "@labelflow/graphql-types";
-import { useRouter } from "next/router";
+import { isEmpty } from "lodash/fp";
 import {
   createContext,
   Dispatch,
@@ -9,9 +8,15 @@ import {
   useContext,
   useState,
 } from "react";
+import {
+  CountLabelsOfDatasetQuery,
+  CountLabelsOfDatasetQueryVariables,
+} from "../../../graphql-types/CountLabelsOfDatasetQuery";
+import { ExportFormat } from "../../../graphql-types/globalTypes";
+import { useDataset, useWorkspace } from "../../../hooks";
 
-const countLabelsOfDatasetQuery = gql`
-  query countLabelsOfDataset($slug: String!, $workspaceSlug: String!) {
+export const COUNT_LABELS_OF_DATASET_QUERY = gql`
+  query CountLabelsOfDatasetQuery($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       imagesAggregates {
@@ -54,17 +59,17 @@ export const ExportModalProvider = ({
   onClose = () => {},
   children,
 }: ExportModalProviderProps) => {
-  const router = useRouter();
-  const [exportFormat, setExportFormat] = useState(ExportFormat.Coco);
+  const [exportFormat, setExportFormat] = useState(ExportFormat.COCO);
   const [isExportRunning, setIsExportRunning] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-  const { datasetSlug, workspaceSlug } = router?.query as {
-    datasetSlug: string;
-    workspaceSlug: string;
-  };
-  const { data, loading } = useQuery(countLabelsOfDatasetQuery, {
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
+  const { data, loading } = useQuery<
+    CountLabelsOfDatasetQuery,
+    CountLabelsOfDatasetQueryVariables
+  >(COUNT_LABELS_OF_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
-    skip: !datasetSlug || !isOpen,
+    skip: isEmpty(workspaceSlug) || isEmpty(datasetSlug) || !isOpen,
   });
 
   const datasetId = data?.dataset.id;
@@ -77,7 +82,7 @@ export const ExportModalProvider = ({
     exportFormat,
     setExportFormat,
     loading,
-    datasetId,
+    datasetId: datasetId ?? "",
     datasetSlug,
     setIsExportRunning,
     isExportRunning,

@@ -1,33 +1,23 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { BreadcrumbLink, Skeleton, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useErrorHandler } from "react-error-boundary";
-import { AuthManager } from "../../../../components/auth-manager";
+import { Authenticated } from "../../../../components/auth";
 import { CookieBanner } from "../../../../components/cookie-banner";
+import { GET_DATASET_BY_SLUG_QUERY } from "../../../../components/datasets/datasets.query";
 import { ExportButton } from "../../../../components/export-button";
 import { ImportButton } from "../../../../components/import-button";
 import { Layout } from "../../../../components/layout";
 import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
 import { NavLogo } from "../../../../components/logo/nav-logo";
 import { Meta } from "../../../../components/meta";
-import { ServiceWorkerManagerModal } from "../../../../components/service-worker-manager";
 import { LayoutSpinner } from "../../../../components/spinner";
-import { WelcomeManager } from "../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
 import { Error404Content } from "../../../404";
 
-const getDataset = gql`
-  query getDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      name
-    }
-  }
-`;
-
-const DatasetIndexPage = () => {
+const Body = () => {
   const router = useRouter();
   const { datasetSlug, workspaceSlug, ...queryRest } = router.query;
 
@@ -35,7 +25,7 @@ const DatasetIndexPage = () => {
     data: datasetResult,
     error,
     loading,
-  } = useQuery(getDataset, {
+  } = useQuery(GET_DATASET_BY_SLUG_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });
@@ -58,9 +48,6 @@ const DatasetIndexPage = () => {
     }
     return (
       <>
-        <ServiceWorkerManagerModal />
-        <WelcomeManager />
-        <AuthManager />
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
         <Error404Content />
@@ -70,9 +57,6 @@ const DatasetIndexPage = () => {
 
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
-      <AuthManager />
       <Meta title={`LabelFlow | ${datasetName ?? "Dataset"}`} />
       <CookieBanner />
       <Layout
@@ -99,5 +83,11 @@ const DatasetIndexPage = () => {
     </>
   );
 };
+
+const DatasetIndexPage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default DatasetIndexPage;

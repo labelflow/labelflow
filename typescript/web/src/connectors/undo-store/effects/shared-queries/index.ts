@@ -14,8 +14,8 @@ import { gql } from "@apollo/client";
 /* optimistic responses and caches updates.                          */
 /* ----------------------------------------------------------------- */
 
-export const imageDimensionsQuery = gql`
-  query imageDimensions($id: ID!) {
+export const IMAGE_DIMENSIONS_QUERY = gql`
+  query ImageDimensionsQuery($id: ID!) {
     image(where: { id: $id }) {
       id
       width
@@ -24,7 +24,7 @@ export const imageDimensionsQuery = gql`
   }
 `;
 
-export const createdLabelFragment = gql`
+export const CREATED_LABEL_FRAGMENT = gql`
   fragment NewLabel on Label {
     id
     x
@@ -43,8 +43,8 @@ export const createdLabelFragment = gql`
   }
 `;
 
-export const createLabelClassQuery = gql`
-  mutation createLabelClass($data: LabelClassCreateInput!) {
+export const CREATE_LABEL_CLASS_QUERY = gql`
+  mutation CreateLabelClassActionMutation($data: LabelClassCreateInput!) {
     createLabelClass(data: $data) {
       id
       name
@@ -53,46 +53,32 @@ export const createLabelClassQuery = gql`
   }
 `;
 
-export const deleteLabelClassQuery = gql`
-  mutation deleteLabelClass($where: LabelClassWhereUniqueInput!) {
+export const DELETE_LABEL_CLASS_MUTATION = gql`
+  mutation DeleteLabelClassActionMutation($where: LabelClassWhereUniqueInput!) {
     deleteLabelClass(where: $where) {
       id
     }
   }
 `;
 
-export const createLabelMutation = gql`
-  mutation createLabel(
-    $id: ID
-    $imageId: ID!
-    $type: LabelType!
-    $labelClassId: ID
-    $geometry: GeometryInput!
-  ) {
-    createLabel(
-      data: {
-        id: $id
-        type: $type
-        imageId: $imageId
-        labelClassId: $labelClassId
-        geometry: $geometry
-      }
-    ) {
+export const CREATE_LABEL_MUTATION = gql`
+  mutation CreateLabelActionMutation($data: LabelCreateInput!) {
+    createLabel(data: $data) {
       id
     }
   }
 `;
 
-export const deleteLabelMutation = gql`
-  mutation deleteLabel($id: ID!) {
+export const DELETE_LABEL_MUTATION = gql`
+  mutation DeleteLabelActionMutation($id: ID!) {
     deleteLabel(where: { id: $id }) {
       id
     }
   }
 `;
 
-export const getLabelQuery = gql`
-  query getLabel($id: ID!) {
+export const GET_LABEL_QUERY = gql`
+  query GetLabelIdAndClassIdQuery($id: ID!) {
     label(where: { id: $id }) {
       id
       labelClass {
@@ -102,8 +88,8 @@ export const getLabelQuery = gql`
   }
 `;
 
-export const updateLabelMutation = gql`
-  mutation updateLabelClass(
+export const UPDATE_LABEL_MUTATION = gql`
+  mutation UpdateLabelClassActionMutation(
     $where: LabelWhereUniqueInput!
     $data: LabelUpdateInput!
   ) {

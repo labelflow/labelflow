@@ -1,10 +1,10 @@
 import {
+  addTypename,
+  addTypenames,
   Context,
   DbWorkspace,
   DbWorkspaceWithType,
   Repository,
-  addTypename,
-  addTypenames,
 } from "@labelflow/common-resolvers";
 import {
   Membership,
@@ -22,6 +22,7 @@ import { getPrismaClient } from "../prisma-client";
 import { AuthorizationError } from "../repository/authorization-error";
 import { castObjectNullsToUndefined } from "../repository/utils";
 import { stripe } from "../utils";
+import { createTutorialDataset } from "../utils/tutorial";
 
 function foundWorkspace<TData extends DbWorkspaceWithType | DbWorkspace>(
   data: TData | null | undefined,
@@ -80,31 +81,37 @@ const workspaces = async (
 
 const createWorkspace = async (
   _: any,
-  args: MutationCreateWorkspaceArgs,
-  { repository, user }: Context
+  { data, options }: MutationCreateWorkspaceArgs,
+  ctx: Context
 ): Promise<DbWorkspaceWithType> => {
+  const { repository, user } = ctx;
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
   }
   const db = await getPrismaClient();
   const userInDb = await db.user.findUnique({ where: { id: user.id } });
-
   if (userInDb == null) {
     throw new Error(
       `Couldn't create workspace: User with id "${user.id}" doesn't exist in the database`
     );
   }
-
   const createdWorkspaceId = await repository.workspace.add(
     {
-      id: args.data.id ?? undefined,
-      name: args.data.name,
-      image: args.data.image ?? undefined,
+      id: data.id ?? undefined,
+      name: data.name,
+      image: data.image ?? undefined,
     },
     user
   );
-
-  return await getWorkspace({ id: createdWorkspaceId }, repository, user);
+  const newWorkspace = await getWorkspace(
+    { id: createdWorkspaceId },
+    repository,
+    user
+  );
+  if (options?.createTutorial) {
+    await createTutorialDataset(newWorkspace.id, newWorkspace.slug, ctx);
+  }
+  return newWorkspace;
 };
 
 const updateWorkspace = async (

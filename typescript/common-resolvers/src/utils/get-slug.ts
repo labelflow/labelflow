@@ -5,6 +5,4 @@ import slugify from "slugify";
  * @param name - The name to slugify
  * @returns A param-cased string representation of the name
  */
-export const getSlug = (name: string): string => {
-  return slugify(name, { lower: true });
-};
+export const getSlug = (name: string): string => slugify(name, { lower: true });

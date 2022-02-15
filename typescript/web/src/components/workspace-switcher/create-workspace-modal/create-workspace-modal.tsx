@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Heading,
   Modal,
   ModalBody,
@@ -15,7 +14,6 @@ import {
 import { isEmpty, isNil } from "lodash/fp";
 import React, {
   createContext,
-  FC,
   FormEvent,
   useCallback,
   useContext,
@@ -24,7 +22,7 @@ import React, {
 } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
 import { getApolloErrorMessage } from "../../../utils/get-apollo-error-message";
-import { Features } from "../../auth-manager/signin-modal/features";
+import { Features } from "../../auth/features";
 import { Logo } from "../../logo";
 import {
   useWorkspaceNameInput,
@@ -32,6 +30,7 @@ import {
   WorkspaceNameInputProvider,
   WorkspaceNameMessage,
 } from "../../workspace-name-input";
+import { CreateWorkspaceButton } from "./create-workspace-button";
 import { useCreateWorkspaceMutation } from "./create-workspace.mutation";
 
 const ModalIsOpenContext = createContext(false);
@@ -96,19 +95,11 @@ const WorkspaceName = ({ error }: { error: string | undefined }) => {
   );
 };
 
-const CreateButton: FC<{ isDisabled?: boolean }> = ({ isDisabled }) => (
-  <Button
-    width="full"
-    type="submit"
-    isDisabled={isDisabled}
-    colorScheme="brand"
-    aria-label="create workspace button"
-  >
-    Create
-  </Button>
-);
-
-const useCreateWorkspace = (): [() => void, boolean, string | undefined] => {
+export const useCreateWorkspace = (): [
+  () => void,
+  boolean,
+  string | undefined
+] => {
   const { name } = useWorkspaceNameInput();
   const [create, { loading, error: createError, called }] =
     useCreateWorkspaceMutation(name);
@@ -138,7 +129,7 @@ const FormBody = () => {
   return (
     <form onSubmit={handleSubmit}>
       <WorkspaceName error={createError} />
-      <CreateButton isDisabled={isDisabled} />
+      <CreateWorkspaceButton isDisabled={isDisabled} isLoading={isLoading} />
     </form>
   );
 };

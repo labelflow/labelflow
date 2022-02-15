@@ -1,10 +1,15 @@
 import { useQuery } from "@apollo/client";
-import type { Dataset as DatasetType } from "@labelflow/graphql-types";
 import { isEmpty, isNil } from "lodash/fp";
 import { createContext, PropsWithChildren, useContext } from "react";
 import { UrlUpdateType } from "use-query-params";
+import {
+  WorkspaceDatasetsPageDatasetsQuery,
+  WorkspaceDatasetsPageDatasetsQueryVariables,
+  WorkspaceDatasetsPageDatasetsQuery_datasets,
+} from "../../graphql-types/WorkspaceDatasetsPageDatasetsQuery";
+import { useWorkspace } from "../../hooks";
+import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
 import { usePagination } from "../pagination";
-import { getPaginatedDatasetsQuery } from "./datasets.query";
 
 type UseQueryParamSetter = (
   value: string,
@@ -21,16 +26,7 @@ export type DatasetListProviderProps = PropsWithChildren<DatasetListProps>;
 
 export type DatasetListState = {
   loading: boolean;
-  datasets: Pick<
-    DatasetType,
-    | "id"
-    | "name"
-    | "slug"
-    | "images"
-    | "imagesAggregates"
-    | "labelClassesAggregates"
-    | "labelsAggregates"
-  >[];
+  datasets: WorkspaceDatasetsPageDatasetsQuery_datasets[];
   workspaceSlug?: string | string[];
   setEditDatasetId: UseQueryParamSetter;
   setDeleteDatasetId: UseQueryParamSetter;
@@ -41,20 +37,13 @@ export const DatasetListContext = createContext({} as DatasetListState);
 const useProviderState = (
   props: DatasetListProviderProps
 ): DatasetListState => {
-  const { workspaceSlug, setDeleteDatasetId, setEditDatasetId } = props;
+  const { setDeleteDatasetId, setEditDatasetId } = props;
+  const { slug: workspaceSlug } = useWorkspace();
   const { page, perPage, itemCount } = usePagination();
-  const { data: datasetsResult, loading: datasetQueryLoading } = useQuery<{
-    datasets: Pick<
-      DatasetType,
-      | "id"
-      | "name"
-      | "slug"
-      | "images"
-      | "imagesAggregates"
-      | "labelClassesAggregates"
-      | "labelsAggregates"
-    >[];
-  }>(getPaginatedDatasetsQuery, {
+  const { data: datasetsResult, loading: datasetQueryLoading } = useQuery<
+    WorkspaceDatasetsPageDatasetsQuery,
+    WorkspaceDatasetsPageDatasetsQueryVariables
+  >(WORKSPACE_DATASETS_PAGE_DATASETS_QUERY, {
     variables: {
       where: { workspaceSlug },
       first: perPage,
@@ -69,7 +58,6 @@ const useProviderState = (
     setEditDatasetId,
     setDeleteDatasetId,
   };
-
   return state;
 };
 

@@ -1,42 +1,27 @@
-import { gql, useQuery } from "@apollo/client";
-import NextLink from "next/link";
-import { Skeleton, Text, BreadcrumbLink } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useErrorHandler } from "react-error-boundary";
+import { useQuery } from "@apollo/client";
+import { BreadcrumbLink, Skeleton, Text } from "@chakra-ui/react";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
-
-import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
-import { NavLogo } from "../../../../../components/logo/nav-logo";
-import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
-import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
-import { ImportButton } from "../../../../../components/import-button";
-import { ExportButton } from "../../../../../components/export-button";
-import { Meta } from "../../../../../components/meta";
-import { Layout } from "../../../../../components/layout";
-import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
-import { Error404Content } from "../../../../404";
-import { AuthManager } from "../../../../../components/auth-manager";
-
-import { WelcomeManager } from "../../../../../components/welcome-manager";
+import { isEmpty } from "lodash/fp";
+import NextLink from "next/link";
+import { useErrorHandler } from "react-error-boundary";
+import { Authenticated } from "../../../../../components/auth";
 import { CookieBanner } from "../../../../../components/cookie-banner";
 import { ImagesList } from "../../../../../components/dataset-images-list";
+import { ExportButton } from "../../../../../components/export-button";
+import { ImportButton } from "../../../../../components/import-button";
+import { Layout } from "../../../../../components/layout";
+import { DatasetTabBar } from "../../../../../components/layout/tab-bar/dataset-tab-bar";
+import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
+import { NavLogo } from "../../../../../components/logo/nav-logo";
+import { Meta } from "../../../../../components/meta";
+import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
+import { useDataset, useWorkspace } from "../../../../../hooks";
+import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../../../../shared-queries/dataset-images-page.query";
+import { Error404Content } from "../../../../404";
 
-export const datasetDataQuery = gql`
-  query getDatasetData($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      name
-      imagesAggregates {
-        totalCount
-      }
-    }
-  }
-`;
-
-const ImagesPage = () => {
-  const router = useRouter();
-  const datasetSlug = router?.query?.datasetSlug as string;
-  const workspaceSlug = router?.query?.workspaceSlug as string;
+const Body = () => {
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
 
   const {
     data: datasetResult,
@@ -44,12 +29,12 @@ const ImagesPage = () => {
     loading: datasetQueryLoading,
   } = useQuery<{
     dataset: DatasetType;
-  }>(datasetDataQuery, {
+  }>(DATASET_IMAGES_PAGE_DATASET_QUERY, {
     variables: {
       slug: datasetSlug,
       workspaceSlug,
     },
-    skip: !datasetSlug || !workspaceSlug,
+    skip: isEmpty(datasetSlug) || isEmpty(workspaceSlug),
   });
 
   const imagesTotalCount: number | undefined =
@@ -65,9 +50,6 @@ const ImagesPage = () => {
     }
     return (
       <>
-        <ServiceWorkerManagerModal />
-        <WelcomeManager />
-        <AuthManager />
         <Meta title="LabelFlow | Dataset not found" />
         <CookieBanner />
         <Error404Content />
@@ -76,9 +58,6 @@ const ImagesPage = () => {
   }
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
-      <AuthManager />
       <Meta title="LabelFlow | Images" />
       <CookieBanner />
       <Layout
@@ -110,15 +89,23 @@ const ImagesPage = () => {
           />
         }
       >
-        <ImagesList
-          datasetSlug={datasetSlug}
-          workspaceSlug={workspaceSlug}
-          datasetId={datasetResult?.dataset.id}
-          imagesTotalCount={imagesTotalCount ?? 0}
-        />
+        {datasetResult && (
+          <ImagesList
+            datasetSlug={datasetSlug}
+            workspaceSlug={workspaceSlug}
+            datasetId={datasetResult.dataset.id}
+            imagesTotalCount={imagesTotalCount ?? 0}
+          />
+        )}
       </Layout>
     </>
   );
 };
+
+const ImagesPage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default ImagesPage;

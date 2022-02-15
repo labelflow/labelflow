@@ -13,10 +13,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 import { pageView } from "../utils/google-analytics";
 import { theme } from "../theme";
-import {
-  serviceWorkerClient,
-  distantDatabaseClient,
-} from "../connectors/apollo-client/client";
+import { distantDatabaseClient } from "../connectors/apollo-client/client";
 import { QueryParamProvider } from "../utils/query-params-provider";
 import ErrorPage from "./_error";
 import { MockableLocationProvider } from "../utils/mockable-location";
@@ -74,10 +71,6 @@ const App = (props: AppProps & InitialProps) => {
   // See https://mariestarck.com/add-google-analytics-to-your-next-js-application-in-5-easy-steps/
   const router = useRouter();
 
-  const client = globalThis?.location?.pathname?.startsWith("/local")
-    ? serviceWorkerClient
-    : distantDatabaseClient;
-
   useEffect(() => {
     const handleRouteChange = (url: string) => {
       pageView(url);
@@ -98,7 +91,7 @@ const App = (props: AppProps & InitialProps) => {
       <SessionProvider session={session}>
         <ErrorBoundary FallbackComponent={ErrorFallback}>
           <CookiesProvider cookies={new Cookies("")}>
-            <ApolloProvider client={client}>
+            <ApolloProvider client={distantDatabaseClient}>
               <QueryParamProvider>
                 <ChakraProvider theme={theme} resetCSS>
                   <MockableLocationProvider>

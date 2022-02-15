@@ -2,7 +2,6 @@ import { Box } from "@chakra-ui/react";
 import * as React from "react";
 import { CookieBanner } from "../components/cookie-banner";
 import { Meta } from "../components/meta";
-import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
 import { Banner } from "../components/website/banner";
 import { ArticlesList } from "../components/website/Blog/articles-list";
 import { Features } from "../components/website/Features/Features";
@@ -15,6 +14,7 @@ import { Proof } from "../components/website/proof";
 import { Roadmap } from "../components/website/roadmap/roadmap";
 import { Why } from "../components/website/Why/Why";
 import { Article, getAllArticles } from "../connectors/strapi";
+import { APP_TITLE } from "../constants";
 
 export default function Website({
   previewArticles,
@@ -23,8 +23,7 @@ export default function Website({
 }) {
   return (
     <>
-      <ServiceWorkerManagerBackground />
-      <Meta title="LabelFlow: The open standard platform for image labeling." />
+      <Meta title={APP_TITLE} />
       <CookieBanner />
       <Box minH="640px">
         <NavBar />

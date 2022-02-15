@@ -20,29 +20,31 @@
         "devDependencies": [
           "setup-tests.ts",
           "cypress/**/*.ts",
-          "**/*.test.ts",
-          "**/*.stories.ts",
-          "**/__tests__/**/*.ts",
-          "**/__stories__/**/*.ts",
-          "**/*.test.tsx",
-          "**/*.stories.tsx",
-          "**/__tests__/**/*.tsx",
-          "**/__stories__/**/*.tsx"
+          "**/*.@(test|stories|fixtures).ts?(x)",
+          "**/@(__tests__|__stories__|tests|stories|scripts)/**/*.ts?(x)"
         ]
       }
     ]
   },
   "overrides": [
     {
-      "files": [
-        "**/*.stories.ts",
-        "**/__stories__/**/*.ts",
-        "**/*.stories.tsx",
-        "**/__stories__/**/*.tsx"
-      ],
+      "files": ["cypress/**/*.ts"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off"
+      }
+    },
+    {
+      "files": ["**/*.stories.ts?(x)", "**/__stories__/**/*.ts?(x)"],
       "rules": {
         "no-console": "off",
         "no-alert": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.ts?(x)", "**/__tests__/**/*.ts?(x)"],
+      "rules": {
+        "import/first": "off",
+        "import/order": "off"
       }
     }
   ],

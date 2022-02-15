@@ -11,7 +11,7 @@
   <p align="center">
     The open platform for image labeling
     <br />
-    <a href="https://labelflow.ai/local"><strong>Try it now »</strong></a>
+    <a href="https://labelflow.ai/"><strong>Try it now »</strong></a>
     <br />
     <br />
     <a href="https://docs.labelflow.ai/">Explore docs</a>
@@ -47,7 +47,7 @@ You can build LabelFlow from source, and serve it from your machine. Read how to
 - [TypeScript](https://www.typescriptlang.org/): Main programming language of the web app
 - [ReactJS](https://reactjs.org/): View library of the web app
 - [NextJS](https://nextjs.org/): Web framework of the web app
-- [GraphQL](https://graphql.org/): API, communication between client and server, and service worker
+- [GraphQL](https://graphql.org/): API, communication between client and server
 - [NodeJS](https://nodejs.org/en/): Javascript runtime for development and production on docker
 - [Python](https://www.python.org/) for the machine learning server
 - [PyTorch](https://pytorch.org/) for the machine learning server

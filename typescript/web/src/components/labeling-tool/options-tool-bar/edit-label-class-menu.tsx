@@ -1,7 +1,5 @@
-import { gql, useApolloClient, useQuery } from "@apollo/client";
-import { Label, LabelType } from "@labelflow/graphql-types";
+import { useApolloClient, useQuery } from "@apollo/client";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
-import { useRouter } from "next/router";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
 import { Polygon } from "ol/geom";
 import { useCallback, useEffect, useState } from "react";
@@ -15,85 +13,32 @@ import { createCreateLabelClassAndUpdateLabelEffect } from "../../../connectors/
 import { createDeleteLabelEffect } from "../../../connectors/undo-store/effects/delete-label";
 import { createUpdateLabelClassEffect } from "../../../connectors/undo-store/effects/update-label-class";
 import { createUpdateLabelClassOfLabelEffect } from "../../../connectors/undo-store/effects/update-label-class-of-label";
+import {
+  GetImageLabelsQuery,
+  GetImageLabelsQueryVariables,
+} from "../../../graphql-types/GetImageLabelsQuery";
+import { LabelType } from "../../../graphql-types/globalTypes";
+import { useDataset, useWorkspace, useDatasetImage } from "../../../hooks";
+
 import { keymap } from "../../../keymap";
+import {
+  GET_IMAGE_LABELS_QUERY,
+  GET_LABEL_CLASSES_OF_DATASET_QUERY,
+  GET_LABEL_QUERY,
+  labelClassQuery,
+} from "../openlayers-map/queries";
 import { ClassAdditionMenu } from "./class-addition-menu";
 import { ClassSelectionMenu, LabelClassItem } from "./class-selection-menu";
 
-const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      labelClasses {
-        id
-        name
-        color
-      }
-    }
-  }
-`;
-
-const labelClassQuery = gql`
-  query getLabelClass($id: ID!) {
-    labelClass(where: { id: $id }) {
-      id
-      name
-      color
-    }
-  }
-`;
-
-const getLabelQuery = gql`
-  query getLabel($id: ID!) {
-    label(where: { id: $id }) {
-      id
-      type
-      labelClass {
-        id
-        name
-        color
-      }
-    }
-  }
-`;
-
-const getImageLabelsQuery = gql`
-  query getImageLabels($imageId: ID!) {
-    image(where: { id: $imageId }) {
-      id
-      width
-      height
-      labels {
-        type
-        id
-        x
-        y
-        width
-        height
-        labelClass {
-          id
-          name
-          color
-        }
-        geometry {
-          type
-          coordinates
-        }
-      }
-    }
-  }
-`;
-
 export const EditLabelClassMenu = () => {
-  const router = useRouter();
-  const datasetSlug = router?.query.datasetSlug as string;
-
-  const workspaceSlug = router?.query.workspaceSlug as string;
-  const imageId = router?.query.imageId as string;
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
+  const { id: imageId } = useDatasetImage();
 
   const client = useApolloClient();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data } = useQuery(getLabelClassesOfDatasetQuery, {
+  const { data } = useQuery(GET_LABEL_CLASSES_OF_DATASET_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
   });
   const datasetId = data?.dataset.id;
@@ -104,7 +49,7 @@ export const EditLabelClassMenu = () => {
   );
   const selectedTool = useLabelingStore((state) => state.selectedTool);
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
-  const { data: selectedLabelData } = useQuery(getLabelQuery, {
+  const { data: selectedLabelData } = useQuery(GET_LABEL_QUERY, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });
@@ -169,7 +114,7 @@ export const EditLabelClassMenu = () => {
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
         // Create a new classification label of a new class
         const { data: imageLabelsData } = await client.query({
-          query: getImageLabelsQuery,
+          query: GET_IMAGE_LABELS_QUERY,
           variables: { imageId },
         });
         const geometry = new GeoJSON().writeGeometryObject(
@@ -226,14 +171,17 @@ export const EditLabelClassMenu = () => {
         if (selectedLabelId != null) {
           if (selectedLabelData?.label?.type === LabelType.Classification) {
             // Change the class of an existing classification label to an existing class
-            const { data: imageLabelsData } = await client.query({
-              query: getImageLabelsQuery,
+            const { data: imageLabelsData } = await client.query<
+              GetImageLabelsQuery,
+              GetImageLabelsQueryVariables
+            >({
+              query: GET_IMAGE_LABELS_QUERY,
               variables: { imageId },
             });
 
             const classificationsOfThisClass =
               imageLabelsData.image.labels.filter(
-                (label: Label) =>
+                (label) =>
                   label.labelClass?.id === item?.id &&
                   label.type === LabelType.Classification
               );
@@ -265,13 +213,16 @@ export const EditLabelClassMenu = () => {
       }
       if (selectedTool === Tools.CLASSIFICATION && imageId) {
         // Add a classification label of an existing class
-        const { data: imageLabelsData } = await client.query({
-          query: getImageLabelsQuery,
+        const { data: imageLabelsData } = await client.query<
+          GetImageLabelsQuery,
+          GetImageLabelsQueryVariables
+        >({
+          query: GET_IMAGE_LABELS_QUERY,
           variables: { imageId },
         });
 
         const classificationsOfThisClass = imageLabelsData.image.labels.filter(
-          (label: Label) =>
+          (label) =>
             label.labelClass?.id === item?.id &&
             label.type === LabelType.Classification
         );

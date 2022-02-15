@@ -1,14 +1,18 @@
 import { useQuery } from "@apollo/client";
-import { Image, Query } from "@labelflow/graphql-types";
 import { isEmpty } from "lodash/fp";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
+import {
+  PaginatedImagesQuery,
+  PaginatedImagesQueryVariables,
+  PaginatedImagesQuery_images,
+} from "../../graphql-types/PaginatedImagesQuery";
 import { usePagination } from "../pagination";
-import { paginatedImagesQuery } from "./paginated-images-query";
+import { PAGINATED_IMAGES_QUERY } from "./paginated-images-query";
 
 export type ImagesListProps = {
   workspaceSlug: string;
   datasetSlug: string;
-  datasetId: string | undefined;
+  datasetId: string;
   imagesTotalCount: number;
 };
 
@@ -17,7 +21,7 @@ export type ImagesListState = Pick<
   "workspaceSlug" | "datasetSlug" | "datasetId"
 > & {
   loading: boolean;
-  images: Image[];
+  images: PaginatedImagesQuery_images[];
   toDelete?: string;
   setToDelete: (value: string | undefined) => void;
 };
@@ -35,8 +39,9 @@ export const ImagesListProvider = ({
   const { page, perPage, itemCount } = usePagination();
   const [toDelete, setToDelete] = useState<string | undefined>(undefined);
   const { data: imagesResult, loading: imagesQueryLoading } = useQuery<
-    Pick<Query, "images">
-  >(paginatedImagesQuery, {
+    PaginatedImagesQuery,
+    PaginatedImagesQueryVariables
+  >(PAGINATED_IMAGES_QUERY, {
     variables: {
       datasetId,
       first: perPage,

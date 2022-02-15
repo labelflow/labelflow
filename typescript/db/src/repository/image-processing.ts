@@ -148,12 +148,36 @@ const generateThumbnails = async ({
   };
 };
 
+const shouldNotLoadImage = ({
+  url,
+  width,
+  height,
+  mimetype,
+  thumbnail20Url,
+  thumbnail50Url,
+  thumbnail100Url,
+  thumbnail200Url,
+  thumbnail500Url,
+}: Parameters<Repository["imageProcessing"]["processImage"]>[0]): boolean =>
+  [width, height, mimetype, url].every((value) => !isEmpty(value)) &&
+  [
+    thumbnail20Url,
+    thumbnail50Url,
+    thumbnail100Url,
+    thumbnail200Url,
+    thumbnail500Url,
+  ].some((value) => !isEmpty(value));
 /**
  * Given a partial image, return a completed version of the image, probing it if necessary
  */
 export const processImage: Repository["imageProcessing"]["processImage"] =
   async (input, getImage, putThumbnail) => {
-    const { url, width, height, mimetype } = input;
+    if (shouldNotLoadImage(input)) {
+      return input as AsyncReturnType<
+        Repository["imageProcessing"]["processImage"]
+      >;
+    }
+    const { width, height, mimetype, url } = input;
     const buffer = await getImage(url);
     const image = await Jimp.read(buffer as Buffer);
     const thumbnails = await generateThumbnails({

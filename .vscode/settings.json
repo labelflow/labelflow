@@ -26,5 +26,6 @@
     "openlayers",
     "upsert"
   ],
-  "python.pythonPath": ".venv/bin/python"
+  "python.pythonPath": ".venv/bin/python",
+  "jest.jestCommandLine": "yarn test"
 }

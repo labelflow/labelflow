@@ -1,10 +1,10 @@
 import { MutableRefObject } from "react";
-import { useRouter } from "next/router";
 import { Vector as OlSourceVector } from "ol/source";
 import { Geometry } from "ol/geom";
 import { useLabelingStore, Tools } from "../../../../connectors/labeling-state";
 import { DrawIogInteraction } from "./iog";
 import { DrawBoundingBoxAndPolygonInteraction } from "./bounding-box-polygon";
+import { useDatasetImage } from "../../../../hooks";
 
 export const DrawInteraction = ({
   iogSpinnerRef,
@@ -13,7 +13,7 @@ export const DrawInteraction = ({
   iogSpinnerRef: MutableRefObject<HTMLDivElement | null>;
   sourceVectorLabelsRef: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
-  const { imageId } = useRouter()?.query;
+  const { id: imageId } = useDatasetImage();
 
   const selectedTool = useLabelingStore((state) => state.selectedTool);
 

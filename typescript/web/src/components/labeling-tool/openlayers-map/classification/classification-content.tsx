@@ -1,71 +1,43 @@
-import { gql, useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import { Box, HStack } from "@chakra-ui/react";
-import { Label, LabelType } from "@labelflow/graphql-types";
 import { getNextClassColor, LABEL_CLASS_COLOR_PALETTE } from "@labelflow/utils";
-import { useRouter } from "next/router";
+import { isEmpty } from "lodash/fp";
 import React, { forwardRef, useCallback } from "react";
 import { Tools, useLabelingStore } from "../../../../connectors/labeling-state";
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { createCreateLabelClassAndUpdateLabelEffect } from "../../../../connectors/undo-store/effects/create-label-class-and-update-label";
 import { createDeleteLabelEffect } from "../../../../connectors/undo-store/effects/delete-label";
 import { createUpdateLabelClassOfLabelEffect } from "../../../../connectors/undo-store/effects/update-label-class-of-label";
+import {
+  GetImageLabelsQuery,
+  GetImageLabelsQueryVariables,
+} from "../../../../graphql-types/GetImageLabelsQuery";
+import { LabelType } from "../../../../graphql-types/globalTypes";
+import { useDataset, useWorkspace, useDatasetImage } from "../../../../hooks";
+
+import {
+  GET_IMAGE_LABELS_QUERY,
+  GET_LABEL_CLASSES_OF_DATASET_QUERY,
+} from "../queries";
 import { ClassificationTag, LabelClassItem } from "./classification-tag";
-
-const getLabelClassesOfDatasetQuery = gql`
-  query getLabelClassesOfDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      labelClasses {
-        id
-        name
-        color
-      }
-    }
-  }
-`;
-
-const getImageLabelsQuery = gql`
-  query getImageLabels($imageId: ID!) {
-    image(where: { id: $imageId }) {
-      id
-      width
-      height
-      labels {
-        type
-        id
-        x
-        y
-        width
-        height
-        labelClass {
-          id
-          name
-          color
-        }
-        geometry {
-          type
-          coordinates
-        }
-      }
-    }
-  }
-`;
 
 export const ClassificationContent = forwardRef<HTMLDivElement>(
   (props, ref) => {
-    const router = useRouter();
-    const datasetSlug = router?.query.datasetSlug as string;
-    const workspaceSlug = router?.query.workspaceSlug as string;
-    const imageId = router?.query.imageId as string;
+    const { slug: workspaceSlug } = useWorkspace();
+    const { slug: datasetSlug } = useDataset();
+    const { id: imageId } = useDatasetImage();
     const { data: getImageLabelsData, previousData: previousImageLabelsData } =
-      useQuery(getImageLabelsQuery, {
-        skip: !imageId,
-        variables: { imageId: imageId as string },
-      });
-    const { data: labelClassesData } = useQuery(getLabelClassesOfDatasetQuery, {
-      variables: { slug: datasetSlug, workspaceSlug },
-      skip: !datasetSlug || !workspaceSlug,
-    });
+      useQuery<GetImageLabelsQuery, GetImageLabelsQueryVariables>(
+        GET_IMAGE_LABELS_QUERY,
+        { variables: { imageId }, skip: isEmpty(imageId) }
+      );
+    const { data: labelClassesData } = useQuery(
+      GET_LABEL_CLASSES_OF_DATASET_QUERY,
+      {
+        variables: { slug: datasetSlug, workspaceSlug },
+        skip: !datasetSlug || !workspaceSlug,
+      }
+    );
     const datasetId = labelClassesData?.dataset.id;
     const labelClasses = labelClassesData?.dataset.labelClasses ?? [];
     const selectedTool = useLabelingStore((state) => state.selectedTool);
@@ -113,14 +85,17 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
       async (item: LabelClassItem | null) => {
         if (selectedLabelId != null) {
           // Change the class of an existing classification label to an existing class
-          const { data: imageLabelsData } = await client.query({
-            query: getImageLabelsQuery,
+          const { data: imageLabelsData } = await client.query<
+            GetImageLabelsQuery,
+            GetImageLabelsQueryVariables
+          >({
+            query: GET_IMAGE_LABELS_QUERY,
             variables: { imageId },
           });
 
           const classificationsOfThisClass =
             imageLabelsData.image.labels.filter(
-              (label: Label) =>
+              (label) =>
                 label.labelClass?.id === item?.id &&
                 label.type === LabelType.Classification
             );
@@ -167,8 +142,8 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
           pointerEvents={isInDrawingMode ? "none" : "initial"}
         >
           {labels
-            .filter(({ type }: Label) => type === LabelType.Classification)
-            .map((label: Label) => {
+            .filter(({ type }) => type === LabelType.Classification)
+            .map((label) => {
               return (
                 <ClassificationTag
                   key={label.id}

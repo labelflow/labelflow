@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - "feature/**"
+      - enhancement/delete-service-worker
   push:
     branches:
       - main
@@ -57,6 +58,8 @@ jobs:
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: Generate code
+        run: yarn codegen
       - name: Lint project code
         run: yarn lint:ts
 
@@ -155,34 +158,19 @@ jobs:
         run: cd typescript/db && yarn deploy && yarn generate
         env:
           POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
+      - name: Generate code
+        run: yarn codegen
       - name: run tests
         run: yarn test --coverage
         env:
           POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
-      - name: Upload code-coverage output
-        uses: actions/upload-artifact@v2
-        with:
-          name: lcov.info
-          path: coverage/lcov.info
-
-  publish-tests-coverage:
-    name: Publish tests code-coverage to CodeClimate
-    runs-on: ubuntu-20.04
-    needs: test-typescript
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: Download code-coverage output
-        uses: actions/download-artifact@v2
-        with:
-          name: lcov.info
       - name: Publish code-coverage output to CodeClimate
         uses: paambaati/codeclimate-action@v3.0.0
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
         with:
           coverageLocations: |
-            lcov.info:lcov
+            coverage/lcov.info:lcov
 
   check-codegen-diff:
     name: Check diff after codegen
@@ -197,7 +185,7 @@ jobs:
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
-      - name: run codegen:ci script
+      - name: Generate code and check for uncommitted changes
         run: yarn codegen:ci
       - name: Check for failure
         if: ${{ failure() }}
@@ -310,6 +298,8 @@ jobs:
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: Generate code
+        run: yarn codegen
       - name: Publish to Chromatic
         uses: chromaui/action@v1
         # Chromatic GitHub Action options
@@ -416,6 +406,8 @@ jobs:
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: Generate code
+        run: yarn codegen
       - name: Publish to Chromatic
         uses: chromaui/action@v1
         # Chromatic GitHub Action options

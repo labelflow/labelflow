@@ -1,13 +1,10 @@
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
-const path = require("path");
 
 // This file sets a custom webpack configuration to use your Next.js app
 // with Sentry.
 // https://nextjs.org/docs/api-reference/next.config.js/introduction
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 const { withSentryConfig } = require("@sentry/nextjs");
-
-const buildServiceWorker = require("./build-service-worker-webpack-swc");
 
 const SentryWebpackPluginOptions = {
   // Additional config options for the Sentry Webpack plugin. Keep in mind that
@@ -23,6 +20,7 @@ const SentryWebpackPluginOptions = {
 
 module.exports = withSentryConfig(
   {
+    typescript: { tsconfigPath: "tsconfig.build.json" },
     sentry: {
       disableServerWebpackPlugin:
         process.env.SENTRY_AUTH_TOKEN != null ? false : true,
@@ -52,17 +50,24 @@ module.exports = withSentryConfig(
       config,
       { defaultLoaders, dev, isServer, config: nextConfig, ...others }
     ) => {
-      // Build the service worker
-      if (!isServer) {
-        buildServiceWorker({ minify: !dev });
-      }
+      config.module.rules.push({
+        test: /\.svg$/,
+        use: [
+          {
+            loader: "@svgr/webpack",
+            options: {
+              typescript: true,
+              dimensions: false,
+            },
+          },
+        ],
+      });
 
       // Allow to transpile node modules that depends on node built-ins into browser.
       // E.g.: `apollo-server-core`
       // See https://github.com/webpack-contrib/css-loader/issues/447
       // See https://github.com/vercel/next.js/issues/7755
       if (!isServer) {
-
         // See https://www.npmjs.com/package/node-polyfill-webpack-plugin
         const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
@@ -79,7 +84,7 @@ module.exports = withSentryConfig(
             http2: false,
             module: false,
             net: false,
-            tls: false
+            tls: false,
           },
         };
         config.plugins = [
@@ -88,7 +93,6 @@ module.exports = withSentryConfig(
             excludeAliases: ["console"],
           }),
         ];
-
       }
 
       // Add webpack bundle analyzer with custom config to expose the reports publicly
@@ -112,7 +116,7 @@ module.exports = withSentryConfig(
     // See https://github.com/vercel/next.js/blob/0af3b526408bae26d6b3f8cab75c4229998bf7cb/test/integration/typescript-workspaces-paths/packages/www/next.config.js
     onDemandEntries: {
       maxInactiveAge: 1000 * 60 * 60,
-    }
+    },
   },
   SentryWebpackPluginOptions
 );

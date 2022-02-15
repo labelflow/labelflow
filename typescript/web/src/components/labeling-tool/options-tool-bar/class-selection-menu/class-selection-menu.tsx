@@ -11,11 +11,10 @@ import {
 } from "@chakra-ui/react";
 import { HiSelector } from "react-icons/hi";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
-import { LabelClass } from "@labelflow/graphql-types";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
+import { GetLabelClassesOfDatasetQuery_dataset_labelClasses } from "../../../../graphql-types/GetLabelClassesOfDatasetQuery";
 
-// The class selection menu doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "dataset" | "labelsAggregates">;
+export type LabelClassItem = GetLabelClassesOfDatasetQuery_dataset_labelClasses;
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 const SelectorIcon = chakra(HiSelector);

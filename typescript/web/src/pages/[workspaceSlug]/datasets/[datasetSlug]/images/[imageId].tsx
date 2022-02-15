@@ -7,14 +7,13 @@ import {
   Text,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import type { Image } from "@labelflow/graphql-types";
 import dynamic from "next/dynamic";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { useErrorHandler } from "react-error-boundary";
-import { AuthManager } from "../../../../../components/auth-manager";
+import { Authenticated } from "../../../../../components/auth";
 import { CookieBanner } from "../../../../../components/cookie-banner";
+import { GET_DATASET_BY_SLUG_QUERY } from "../../../../../components/datasets/datasets.query";
 import { ExportButton } from "../../../../../components/export-button";
 import { Gallery } from "../../../../../components/gallery";
 import { ImportButton } from "../../../../../components/import-button";
@@ -22,10 +21,18 @@ import { Layout } from "../../../../../components/layout";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { Meta } from "../../../../../components/meta";
-import { ServiceWorkerManagerModal } from "../../../../../components/service-worker-manager";
 import { LayoutSpinner } from "../../../../../components/spinner";
-import { WelcomeManager } from "../../../../../components/welcome-manager";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
+import {
+  ImageNameQuery,
+  ImageNameQueryVariables,
+} from "../../../../../graphql-types/ImageNameQuery";
+import {
+  useDataset,
+  useWorkspace,
+  useDatasetImage,
+} from "../../../../../hooks";
+
 import { Error404Content } from "../../../../404";
 
 // The dynamic import is needed because openlayers use web apis that are not available
@@ -42,8 +49,8 @@ const LabelingTool = dynamic(
   }
 );
 
-const imageQuery = gql`
-  query image($id: ID!) {
+const IMAGE_NAME_QUERY = gql`
+  query ImageNameQuery($id: ID!) {
     image(where: { id: $id }) {
       id
       name
@@ -51,29 +58,17 @@ const imageQuery = gql`
   }
 `;
 
-const getDatasetQuery = gql`
-  query getDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      name
-    }
-  }
-`;
-
-type ImageQueryResponse = {
-  image: Pick<Image, "id" | "name">;
-};
-
-const ImagePage = () => {
-  const router = useRouter();
-  const { datasetSlug, imageId, workspaceSlug } = router?.query;
+const Body = () => {
+  const { slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
+  const { id: imageId } = useDatasetImage();
 
   const {
     data: imageResult,
     error: errorImage,
     loading: loadingImage,
-  } = useQuery<ImageQueryResponse>(imageQuery, {
-    variables: { id: imageId },
+  } = useQuery<ImageNameQuery, ImageNameQueryVariables>(IMAGE_NAME_QUERY, {
+    variables: { id: typeof imageId === "string" ? imageId : imageId[0] },
     skip: !imageId,
   });
 
@@ -81,7 +76,7 @@ const ImagePage = () => {
     data: datasetResult,
     error: errorDataset,
     loading: loadingDataset,
-  } = useQuery(getDatasetQuery, {
+  } = useQuery(GET_DATASET_BY_SLUG_QUERY, {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: !datasetSlug || !workspaceSlug,
   });
@@ -99,9 +94,6 @@ const ImagePage = () => {
       }
       return (
         <>
-          <ServiceWorkerManagerModal />
-          <WelcomeManager />
-          <AuthManager />
           <Meta title="LabelFlow | Dataset not found" />
           <CookieBanner />
           <Error404Content />
@@ -114,9 +106,6 @@ const ImagePage = () => {
       }
       return (
         <>
-          <ServiceWorkerManagerModal />
-          <WelcomeManager />
-          <AuthManager />
           <Meta title="LabelFlow | Image not found" />
           <CookieBanner />
           <Error404Content />
@@ -127,9 +116,6 @@ const ImagePage = () => {
 
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
-      <AuthManager />
       <Meta title={`LabelFlow | Image ${imageName ?? ""}`} />
       <CookieBanner />
       <Layout
@@ -179,5 +165,11 @@ const ImagePage = () => {
     </>
   );
 };
+
+const ImagePage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default ImagePage;

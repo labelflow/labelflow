@@ -5,7 +5,7 @@ import {
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
+import { useWorkspace } from "../../../hooks";
 
 export type TabBarItem = {
   name: string;
@@ -50,7 +50,7 @@ const DisabledSettingsLink = () => {
 };
 
 export const TabBarBody = ({ tabs }: TabBarProps) => {
-  const { workspaceSlug } = useRouter().query;
+  const { slug: workspaceSlug } = useWorkspace();
   return (
     <Flex
       alignItems="center"

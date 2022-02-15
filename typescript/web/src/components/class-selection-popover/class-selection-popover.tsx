@@ -13,7 +13,6 @@ import {
   Text,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { LabelClass } from "@labelflow/graphql-types";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -23,11 +22,11 @@ import { useVirtual } from "react-virtual";
 import { noneClassColor } from "../../theme";
 import { keymap } from "../../keymap";
 import { ClassListItem } from "./class-list-item";
+import { GetLabelClassesOfDatasetQuery_dataset_labelClasses } from "../../graphql-types/GetLabelClassesOfDatasetQuery";
 
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
-// The popover doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "dataset" | "labelsAggregates">;
+export type LabelClassItem = GetLabelClassesOfDatasetQuery_dataset_labelClasses;
 
 const noneClass = {
   name: "None",

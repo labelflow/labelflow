@@ -1,6 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
-import { Label, LabelType } from "@labelflow/graphql-types";
-import { useRouter } from "next/router";
+import { useQuery } from "@apollo/client";
 import { Feature } from "ol";
 import GeoJSON from "ol/format/GeoJSON";
 import { Geometry, MultiPoint } from "ol/geom";
@@ -19,43 +17,25 @@ import {
   Tools,
   useLabelingStore,
 } from "../../../connectors/labeling-state";
+import {
+  GetImageLabelsQuery,
+  GetImageLabelsQueryVariables,
+} from "../../../graphql-types/GetImageLabelsQuery";
+import { LabelType } from "../../../graphql-types/globalTypes";
+import { useDatasetImage } from "../../../hooks";
 import { noneClassColor } from "../../../theme";
-
-const getImageLabelsQuery = gql`
-  query getImageLabels($imageId: ID!) {
-    image(where: { id: $imageId }) {
-      id
-      width
-      height
-      labels {
-        type
-        id
-        x
-        y
-        width
-        height
-        smartToolInput
-        labelClass {
-          id
-          name
-          color
-        }
-        geometry {
-          type
-          coordinates
-        }
-      }
-    }
-  }
-`;
+import { GET_IMAGE_LABELS_QUERY } from "./queries";
 
 export const Labels = ({
   sourceVectorLabelsRef,
 }: {
   sourceVectorLabelsRef?: MutableRefObject<OlSourceVector<Geometry> | null>;
 }) => {
-  const { imageId } = useRouter()?.query;
-  const { data, previousData } = useQuery(getImageLabelsQuery, {
+  const { id: imageId } = useDatasetImage();
+  const { data, previousData } = useQuery<
+    GetImageLabelsQuery,
+    GetImageLabelsQueryVariables
+  >(GET_IMAGE_LABELS_QUERY, {
     skip: !imageId,
     variables: { imageId: imageId as string },
   });
@@ -68,17 +48,17 @@ export const Labels = ({
     (state) => state.iogProcessingLabels
   );
   const labels = data?.image?.labels ?? previousData?.image?.labels ?? [];
-  const selectedLabel = labels.find(({ id }: Label) => id === selectedLabelId);
+  const selectedLabel = labels.find(({ id }) => id === selectedLabelId);
 
   return (
     <>
       <olLayerVector>
         <olSourceVector ref={sourceVectorLabelsRef}>
           {labels
-            .filter(({ type }: Label) =>
+            .filter(({ type }) =>
               [LabelType.Box, LabelType.Polygon].includes(type)
             )
-            .map(({ id, labelClass, geometry }: Label) => {
+            .map(({ id, labelClass, geometry }) => {
               const isSelected = id === selectedLabelId;
               const labelClassColor = labelClass?.color ?? noneClassColor;
               const labelStyle = new Style({
@@ -136,8 +116,8 @@ export const Labels = ({
                 geometry={new GeoJSON().readGeometry({
                   coordinates: extractIogMaskFromLabel(
                     selectedLabel,
-                    data?.image?.width,
-                    data?.image?.height
+                    data?.image?.width ?? 0,
+                    data?.image?.height ?? 0
                   ),
                   type: "Polygon",
                 })}

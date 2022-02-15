@@ -38,13 +38,13 @@ export const DeleteWorkspaceProvider = ({
   children,
 }: PropsWithChildren<{}>) => {
   const [isOpen, { on: open, off: close }] = useBoolean();
-  const workspace = useWorkspaceSettings();
+  const { name: workspaceName } = useWorkspaceSettings();
   const [name, setName] = useState(DEFAULT_STATE.name);
   const [deleteWorkspace, { loading: isDeleting }] =
     useDeleteWorkspaceMutation();
   const canDelete = useMemo(
-    () => !isDeleting && name === workspace?.name,
-    [isDeleting, name, workspace?.name]
+    () => !isDeleting && name === workspaceName,
+    [isDeleting, name, workspaceName]
   );
   const handleDeleteWorkspace = useCallback(() => {
     if (!canDelete) return;

@@ -1,0 +1,104 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`convertGeometryFromCocoAnnotationToLabel converts a box into a box 1`] = `
+Object {
+  "geometry": Object {
+    "coordinates": Array [
+      Array [
+        Array [
+          123.33,
+          313.9999,
+        ],
+        Array [
+          369.12346,
+          313.9995,
+        ],
+        Array [
+          369.12348,
+          0.9056399999999485,
+        ],
+        Array [
+          123.33,
+          0.9054399999999987,
+        ],
+        Array [
+          123.33,
+          313.9999,
+        ],
+      ],
+    ],
+    "type": "Polygon",
+  },
+  "type": "Box",
+}
+`;
+
+exports[`convertGeometryFromCocoAnnotationToLabel converts a polygon into a polygon 1`] = `
+Object {
+  "geometry": Object {
+    "coordinates": Array [
+      Array [
+        Array [
+          123.33,
+          313.9999,
+        ],
+        Array [
+          369.12346,
+          313.9995,
+        ],
+        Array [
+          369.12348,
+          0.9056399999999485,
+        ],
+        Array [
+          123.33,
+          0.9054399999999987,
+        ],
+        Array [
+          100,
+          18,
+        ],
+        Array [
+          123.33,
+          313.9999,
+        ],
+      ],
+    ],
+    "type": "Polygon",
+  },
+  "type": "Polygon",
+}
+`;
+
+exports[`convertGeometryFromCocoAnnotationToLabel converts an empty segmentation's bounding box into a box 1`] = `
+Object {
+  "geometry": Object {
+    "coordinates": Array [
+      Array [
+        Array [
+          100,
+          600,
+        ],
+        Array [
+          100,
+          200,
+        ],
+        Array [
+          400,
+          200,
+        ],
+        Array [
+          400,
+          600,
+        ],
+        Array [
+          100,
+          600,
+        ],
+      ],
+    ],
+    "type": "Polygon",
+  },
+  "type": "Box",
+}
+`;

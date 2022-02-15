@@ -6,8 +6,11 @@ import { DroppedUrl, SetUploadStatuses } from "../types";
 
 import { BATCH_SIZE, CONCURRENCY } from "../constants";
 
-const createManyImagesMutation = gql`
-  mutation ($images: [ImageCreateManySingleInput!]!, $datasetId: ID!) {
+export const CREATE_MANY_IMAGES_MUTATION = gql`
+  mutation CreateManyImagesMutation(
+    $images: [ImageCreateManySingleInput!]!
+    $datasetId: ID!
+  ) {
     createManyImages(data: { images: $images, datasetId: $datasetId }) {
       id
     }
@@ -46,7 +49,7 @@ export const importUrls = async ({
 
       try {
         await apolloClient.mutate({
-          mutation: createManyImagesMutation,
+          mutation: CREATE_MANY_IMAGES_MUTATION,
           variables: { images: imagesToCreate, datasetId },
         });
 

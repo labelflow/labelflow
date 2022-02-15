@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  ButtonProps,
   chakra,
   Flex,
   FlexProps,
@@ -12,6 +13,7 @@ import {
 import NextLink from "next/link";
 import * as React from "react";
 import { RiStarLine } from "react-icons/ri";
+import { APP_GITHUB_URL } from "../../../constants";
 import { Logo } from "../Logo";
 import { NavLink } from "./NavLink";
 import { NavMenu } from "./NavMenu";
@@ -21,11 +23,13 @@ import { links } from "./_data";
 
 const StarIcon = chakra(RiStarLine);
 
-const GitHubButton = ({ isMobile }: { isMobile?: boolean }) => {
+type GitHubButtonProps = ButtonProps & { isMobile?: boolean };
+
+const GitHubButton = ({ isMobile, ...props }: GitHubButtonProps) => {
   const label = "Star us on GitHub";
   const mobileProps = isMobile ? { w: "full", size: "lg", mt: "5" } : {};
   return (
-    <NextLink href="https://github.com/labelflow/labelflow" passHref>
+    <NextLink href={APP_GITHUB_URL} passHref>
       <Button
         as="a"
         target="_blank"
@@ -34,12 +38,27 @@ const GitHubButton = ({ isMobile }: { isMobile?: boolean }) => {
         aria-label={label}
         leftIcon={<StarIcon fontSize="2xl" />}
         {...mobileProps}
+        {...props}
       >
         {label}
       </Button>
     </NextLink>
   );
 };
+
+const SignInButton = ({ children = "Sign in", ...props }: ButtonProps) => (
+  <NextLink href="/auth/signin">
+    <Button as="a" href="#" colorScheme="brand" variant="outline" {...props}>
+      {children}
+    </Button>
+  </NextLink>
+);
+
+const TryItNowButton = (props: ButtonProps) => (
+  <SignInButton variant="solid" fontWeight="bold" {...props}>
+    Try it now
+  </SignInButton>
+);
 
 const MobileNavContext = (props: FlexProps) => {
   const { isOpen, onToggle } = useDisclosure();
@@ -56,11 +75,7 @@ const MobileNavContext = (props: FlexProps) => {
         </NextLink>
         <Spacer />
         <Box display={{ base: "none", sm: "block" }}>
-          <NextLink href="/local/datasets">
-            <Button colorScheme="brand" variant="outline" ml="3">
-              Try it now
-            </Button>
-          </NextLink>
+          <SignInButton ml="3" />
         </Box>
       </Flex>
       <NavMenu animate={isOpen ? "open" : "closed"}>
@@ -78,11 +93,10 @@ const MobileNavContext = (props: FlexProps) => {
             </NavLink.Mobile>
           )
         )}
-        <NextLink href="/local/datasets">
-          <Button colorScheme="brand" w="full" size="lg" mt="5">
-            Try it now
-          </Button>
-        </NextLink>
+        <HStack mt="5">
+          <SignInButton w="full" size="lg" />
+          <TryItNowButton w="full" size="lg" />
+        </HStack>
         <GitHubButton isMobile />
       </NavMenu>
     </>
@@ -125,19 +139,10 @@ const DesktopNavContent = (props: FlexProps) => {
           </Box>
         ))}
       </HStack>
-      <HStack spacing="4" justify="space-between" align="center">
+      <HStack spacing="3" justify="space-between" align="center">
         <GitHubButton />
-        <NextLink href="/local/datasets">
-          <Button
-            as="a"
-            href="#"
-            colorScheme="brand"
-            fontWeight="bold"
-            variant="outline"
-          >
-            Try it now
-          </Button>
-        </NextLink>
+        <SignInButton />
+        <TryItNowButton display={{ base: "none", xl: "inherit" }} />
       </HStack>
     </Flex>
   );

@@ -7,7 +7,6 @@ import {
   useColorModeValue as mode,
   VStack,
 } from "@chakra-ui/react";
-import { Maybe } from "@labelflow/graphql-types";
 import NextLink from "next/link";
 import { createContext, MouseEvent, useCallback, useContext } from "react";
 import { HiTrash } from "react-icons/hi";
@@ -21,7 +20,7 @@ const TrashIcon = chakra(HiTrash);
 type ImageCardProps = {
   id: string;
   name: string;
-  thumbnail?: Maybe<string>;
+  thumbnail?: string | null;
   href: string;
   onAskImageDelete: (imageId: string) => void;
 };

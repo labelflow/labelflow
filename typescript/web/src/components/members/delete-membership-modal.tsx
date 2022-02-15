@@ -10,10 +10,10 @@ import {
   ListItem,
   UnorderedList,
 } from "@chakra-ui/react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { Membership } from "@labelflow/graphql-types";
 import { getDisplayName } from "./user";
+import { GetMembershipsMembersQuery_memberships } from "../../graphql-types/GetMembershipsMembersQuery";
+import { useUser } from "../../hooks";
 
 export const DeleteMembershipModal = ({
   isOpen = false,
@@ -23,17 +23,16 @@ export const DeleteMembershipModal = ({
 }: {
   isOpen?: boolean;
   onClose?: () => void;
-  membership: Membership | null;
+  membership?: GetMembershipsMembersQuery_memberships;
   deleteMembership: (id: string) => void;
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const session = useSession({ required: false });
+  const { id: userId } = useUser();
   const router = useRouter();
   if (membership == null) {
     return null;
   }
-  const isRemovingCurrentUser =
-    membership?.user?.id === session?.data?.user?.id;
+  const isRemovingCurrentUser = membership?.user?.id === userId;
   return (
     <AlertDialog
       isOpen={isOpen}

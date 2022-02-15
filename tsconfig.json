@@ -20,6 +20,6 @@
     "module": "esnext",
     "strictNullChecks": true
   },
-  "exclude": ["node_modules", "**/*.graphql"],
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }

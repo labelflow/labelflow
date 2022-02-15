@@ -162,10 +162,20 @@ export type Repository = {
   };
   label: {
     add: Add<DbLabelCreateInput>;
+    addMany: (
+      args: {
+        labels: Omit<DbLabelCreateInput, "imageId" | "labelClassId">[];
+        imageId: string;
+      },
+      user?: { id: string }
+    ) => Promise<ID[]>;
     count: Count<LabelWhereInput & { user?: { id: string } }>;
     delete: Delete<LabelWhereUniqueInput>;
     get: Get<DbLabel, LabelWhereUniqueInput>;
-    list: List<DbLabel, LabelWhereInput & { user?: { id: string } }>;
+    list: List<
+      DbLabel,
+      LabelWhereInput & { user?: { id: string } } & { id?: { in: string[] } }
+    >;
     update: Update<DbLabel, LabelWhereUniqueInput>;
   };
   labelClass: {

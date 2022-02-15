@@ -1,46 +1,50 @@
-import {
-  MockedProvider as ApolloProvider,
-  MockedResponse as ApolloResponse,
-} from "@apollo/client/testing";
+import { MockedProvider as ApolloProvider } from "@apollo/client/testing";
 import {
   FORBIDDEN_WORKSPACE_SLUGS,
   INVALID_WORKSPACE_NAME_MESSAGES,
 } from "@labelflow/common-resolvers";
-import { Mutation, Query } from "@labelflow/graphql-types";
 import { isEmpty, isNil } from "lodash/fp";
 import { PropsWithChildren, useEffect } from "react";
+import { MATCH_ANY_PARAMETERS } from "wildcard-mock-link";
 import {
   useWorkspaceNameInput,
   WorkspaceNameInput,
   WorkspaceNameInputProvider,
   WorkspaceNameMessage,
 } from ".";
+import {
+  WorkspaceExistsQuery,
+  WorkspaceExistsQueryVariables,
+} from "../../graphql-types/WorkspaceExistsQuery";
 import { MockableLocationProvider } from "../../utils/mockable-location";
+import {
+  ApolloMockResponse,
+  ApolloMockResponses,
+  getApolloMockLink,
+} from "../../utils/tests";
 import { WORKSPACE_EXISTS_QUERY } from "./workspace-exists.query";
 import { WorkspaceNameMessageProps } from "./workspace-name-message";
 
-export type ApolloMock = ApolloResponse<Partial<Query | Mutation>>;
-
-export const WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME: ApolloMock = {
+export const WORKSPACE_EXISTS_MOCK: ApolloMockResponse<
+  WorkspaceExistsQuery,
+  WorkspaceExistsQueryVariables
+> = {
   request: {
     query: WORKSPACE_EXISTS_QUERY,
-    variables: { slug: "already-taken-name" },
+    variables: MATCH_ANY_PARAMETERS,
   },
-  result: { data: { workspaceExists: true } },
+  nMatches: Number.POSITIVE_INFINITY,
+  result: ({ slug }) => ({
+    data: { workspaceExists: slug === "already-taken-name" },
+  }),
 };
 
-export const WORKSPACE_EXISTS_MOCK_TEST: ApolloMock = {
-  request: {
-    query: WORKSPACE_EXISTS_QUERY,
-    variables: { slug: "test" },
-  },
-  result: { data: { workspaceExists: false } },
-};
+export const GRAPHQL_MOCKS: ApolloMockResponses = [WORKSPACE_EXISTS_MOCK];
 
 export type TestComponentProps = Partial<WorkspaceNameMessageProps> & {
   name?: string;
   defaultName?: string;
-  graphqlMocks?: ApolloResponse<Partial<Query | Mutation>>[];
+  graphqlMocks?: ApolloMockResponses;
   storybook?: boolean;
   origin?: string;
 };
@@ -63,13 +67,12 @@ const Wrapper = ({
   name,
   storybook = false,
   defaultName,
-  graphqlMocks,
   children,
 }: PropsWithChildren<TestComponentProps>) => (
   <MockableLocationProvider
     location={storybook ? "http://localhost" : undefined}
   >
-    <ApolloProvider mocks={graphqlMocks}>
+    <ApolloProvider link={getApolloMockLink(GRAPHQL_MOCKS)}>
       <WorkspaceNameInputProvider defaultName={defaultName}>
         <NameObserver name={name} storybook={storybook} />
         {children}
@@ -83,15 +86,9 @@ export const TestComponent = ({
   storybook,
   defaultName,
   hideError = false,
-  graphqlMocks = [WORKSPACE_EXISTS_MOCK_TEST],
   ...messageProps
 }: TestComponentProps) => (
-  <Wrapper
-    name={name}
-    storybook={storybook}
-    defaultName={defaultName}
-    graphqlMocks={graphqlMocks}
-  >
+  <Wrapper name={name} storybook={storybook} defaultName={defaultName}>
     <WorkspaceNameInput />
     <WorkspaceNameMessage hideError={hideError} {...messageProps} />
   </Wrapper>
@@ -117,10 +114,7 @@ export const TEST_CASES: Record<string, TestCase> = {
     INVALID_WORKSPACE_NAME_MESSAGES.invalidNameCharacters,
   ],
   "warns if the name is already taken": [
-    {
-      name: "Already taken name",
-      graphqlMocks: [WORKSPACE_EXISTS_MOCK_ALREADY_TAKEN_NAME],
-    },
+    { name: "Already taken name" },
     INVALID_WORKSPACE_NAME_MESSAGES.workspaceExists,
   ],
   "displays the error if given one": [
