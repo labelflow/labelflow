@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 import { BsClockFill } from "react-icons/bs";
+import { getImageUrl } from "../get-image-url";
 
 interface BlogProps {
   category: string;
@@ -40,7 +41,8 @@ export const BlogCard = (props: BlogProps) => {
           height="60"
           objectFit="cover"
           alt={title}
-          src={image ?? "/static/img/home-screenshot2.jpg"}
+          // FIXME The fallback image (initially home-screenshot2.jpg) does not exists
+          src={image ?? getImageUrl("home-screenshot-2.jpg")}
         />
         <Flex direction="column" px={{ sm: "6" }} py="5">
           <Text

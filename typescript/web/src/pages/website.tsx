@@ -6,11 +6,12 @@ import { Banner } from "../components/website/banner";
 import { ArticlesList } from "../components/website/Blog/articles-list";
 import { Features } from "../components/website/Features/Features";
 import { Footer } from "../components/website/Footer/Footer";
-import { Hero } from "../components/website/Hero/Hero";
+import { Hero } from "../components/website/hero";
 import { LogoGrid } from "../components/website/Logos/LogoGrid";
 import { NavBar } from "../components/website/Navbar/NavBar";
 import { Pricing } from "../components/website/Pricing/Pricing";
 import { Proof } from "../components/website/proof";
+import { IntroVideo } from "../components/website/intro-video";
 import { Roadmap } from "../components/website/roadmap/roadmap";
 import { Why } from "../components/website/Why/Why";
 import { Article, getAllArticles } from "../connectors/strapi";
@@ -29,12 +30,12 @@ export default function Website({
         <NavBar />
         <Hero />
         <Banner />
+        <IntroVideo />
         <Features />
         <Proof />
         <Why />
         <LogoGrid />
         <Roadmap />
-        {/* <Testimonials /> */}
         <Pricing />
         <ArticlesList preview previewArticles={previewArticles} />
         <Footer />
