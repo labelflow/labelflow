@@ -106,6 +106,7 @@ export function useCreateWorkspaceMutation(
   >(CREATE_WORKSPACE_MUTATION, {
     variables: { name: workspaceName },
     refetchQueries: [USER_WITH_WORKSPACES_QUERY],
+    awaitRefetchQueries: true,
     onCompleted,
     onError,
   });
