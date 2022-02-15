@@ -1,15 +1,27 @@
-import { Center, chakra, Flex, Heading, Text } from "@chakra-ui/react";
+import {
+  Center,
+  chakra,
+  Flex,
+  Heading,
+  Text,
+  useBoolean,
+} from "@chakra-ui/react";
 import { isEmpty } from "lodash";
-import { useCallback, FormEvent } from "react";
-import { useWorkspaces } from "../../hooks";
+import { isNil } from "lodash/fp";
+import { FormEvent, useCallback } from "react";
+import { useOptionalWorkspaces, useWorkspaces } from "../../hooks";
 import NoWorkspacesGraphics from "../graphics/no-workspace";
+import { LayoutSpinner } from "../spinner";
 import {
   useWorkspaceNameInput,
   WorkspaceNameInput,
   WorkspaceNameInputProvider,
   WorkspaceNameMessage,
 } from "../workspace-name-input";
-import { useCreateWorkspace } from "../workspace-switcher/create-workspace-modal";
+import {
+  CreateWorkspaceModal,
+  useCreateWorkspace,
+} from "../workspace-switcher/create-workspace-modal";
 import { CreateWorkspaceButton } from "../workspace-switcher/create-workspace-modal/create-workspace-button";
 import {
   WorkspacesContextProvider,
@@ -63,7 +75,7 @@ const NoWorkspaces = () => (
   </Center>
 );
 
-export const Workspaces = (props: WorkspacesProps) => {
+const WorkspacesBody = (props: WorkspacesProps) => {
   const workspaces = useWorkspaces();
   return (
     <WorkspacesContextProvider {...props}>
@@ -71,5 +83,28 @@ export const Workspaces = (props: WorkspacesProps) => {
         {workspaces.length > 0 ? <WorkspacesList /> : <NoWorkspaces />}
       </WorkspaceNameInputProvider>
     </WorkspacesContextProvider>
+  );
+};
+
+export const Workspaces = () => {
+  const [
+    showCreateWorkspaceModal,
+    { on: openCreateWorkspaceModal, off: closeCreateWorkspaceModal },
+  ] = useBoolean(false);
+  const workspaces = useOptionalWorkspaces();
+  return (
+    <>
+      {isNil(workspaces) ? (
+        <LayoutSpinner />
+      ) : (
+        <>
+          <WorkspacesBody openCreateWorkspaceModal={openCreateWorkspaceModal} />
+          <CreateWorkspaceModal
+            isOpen={showCreateWorkspaceModal}
+            onClose={closeCreateWorkspaceModal}
+          />
+        </>
+      )}
+    </>
   );
 };

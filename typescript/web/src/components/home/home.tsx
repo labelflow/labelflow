@@ -1,24 +1,28 @@
-import { useBoolean } from "@chakra-ui/react";
-import { isNil } from "lodash/fp";
-import { useOptionalWorkspaces } from "../../hooks";
+import { isEmpty, isNil } from "lodash/fp";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useLastWorkspaceId, useOptionalWorkspaces } from "../../hooks";
 import { LayoutSpinner } from "../spinner";
-import { CreateWorkspaceModal } from "../workspace-switcher/create-workspace-modal";
 import { Workspaces } from "../workspaces";
 
-export const Home = () => {
-  const [
-    showCreateWorkspaceModal,
-    { on: openCreateWorkspaceModal, off: closeCreateWorkspaceModal },
-  ] = useBoolean(false);
+const useLastWorkspaceIdUrl = (): string | undefined => {
   const workspaces = useOptionalWorkspaces();
-  if (isNil(workspaces)) return <LayoutSpinner />;
-  return (
-    <>
-      <Workspaces openCreateWorkspaceModal={openCreateWorkspaceModal} />
-      <CreateWorkspaceModal
-        isOpen={showCreateWorkspaceModal}
-        onClose={closeCreateWorkspaceModal}
-      />
-    </>
-  );
+  const lastWorkspaceId = useLastWorkspaceId();
+  if (isNil(workspaces) || isEmpty(lastWorkspaceId)) return undefined;
+  const lastWorkspace = workspaces.find(({ id }) => lastWorkspaceId === id);
+  return lastWorkspace?.slug;
+};
+
+const useRedirectTo = (redirectTo: string | undefined) => {
+  const router = useRouter();
+  useEffect(() => {
+    if (!router.isReady || isNil(redirectTo)) return;
+    router.push(redirectTo);
+  }, [redirectTo, router]);
+};
+
+export const Home = () => {
+  const redirectTo = useLastWorkspaceIdUrl();
+  useRedirectTo(redirectTo);
+  return <>{isNil(redirectTo) ? <Workspaces /> : <LayoutSpinner />}</>;
 };

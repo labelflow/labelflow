@@ -50,6 +50,19 @@ module.exports = withSentryConfig(
       config,
       { defaultLoaders, dev, isServer, config: nextConfig, ...others }
     ) => {
+      config.module.rules.push({
+        test: /\.svg$/,
+        use: [
+          {
+            loader: "@svgr/webpack",
+            options: {
+              typescript: true,
+              dimensions: false,
+            },
+          },
+        ],
+      });
+
       // Allow to transpile node modules that depends on node built-ins into browser.
       // E.g.: `apollo-server-core`
       // See https://github.com/webpack-contrib/css-loader/issues/447

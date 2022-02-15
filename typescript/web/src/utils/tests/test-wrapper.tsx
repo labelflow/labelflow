@@ -42,7 +42,6 @@ export type TestWrapperProps = PropsWithChildren<{
   auth?: AuthMockOptions;
   apollo?: ApolloMockOptions;
   router?: RouterMockOptions;
-  queryParams?: Record<string, unknown>;
 }>;
 
 const hasWorkspaces = (auth: AuthMockOptions | undefined): boolean =>

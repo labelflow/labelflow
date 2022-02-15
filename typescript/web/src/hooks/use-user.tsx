@@ -1,7 +1,9 @@
 import { DocumentNode, useQuery } from "@apollo/client";
 import { isEmpty, isNil } from "lodash/fp";
 import { useSession } from "next-auth/react";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useEffect, useMemo } from "react";
+import { useCookies } from "react-cookie";
+import { LAST_WORKSPACE_ID_COOKIE_NAME } from "../constants";
 import {
   UserQuery,
   UserQueryVariables,
@@ -71,6 +73,29 @@ const MinimalUserProvider = ({ children }: PropsWithChildren<{}>) => {
   return <UserContextProvider value={user}>{children}</UserContextProvider>;
 };
 
+const useUpdateLastWorkspaceId = (): void => {
+  const workspace = useOptionalWorkspace();
+  const [{ lastWorkspaceId }, setLastWorkspaceId] = useCookies([
+    LAST_WORKSPACE_ID_COOKIE_NAME,
+  ]);
+  useEffect(() => {
+    const workspaceId = workspace?.id;
+    if (!isEmpty(workspaceId) && lastWorkspaceId !== workspaceId) {
+      setLastWorkspaceId(LAST_WORKSPACE_ID_COOKIE_NAME, workspaceId);
+    }
+  }, [workspace?.id, lastWorkspaceId, setLastWorkspaceId]);
+};
+
+const LastWorkspaceIdObserver = () => {
+  useUpdateLastWorkspaceId();
+  return <></>;
+};
+
+export const useLastWorkspaceId = (): string | undefined => {
+  const [{ lastWorkspaceId }] = useCookies([LAST_WORKSPACE_ID_COOKIE_NAME]);
+  return lastWorkspaceId;
+};
+
 const useWorkspaceProvider = () => {
   const workspaces = useOptionalWorkspaces();
   const workspaceSlug = useRouterQueryString("workspaceSlug");
@@ -87,6 +112,7 @@ const useWorkspaceProvider = () => {
 
 const WorkspaceProvider = ({ children }: PropsWithChildren<{}>) => (
   <WorkspaceContextProvider value={useWorkspaceProvider()}>
+    <LastWorkspaceIdObserver />
     {children}
   </WorkspaceContextProvider>
 );
