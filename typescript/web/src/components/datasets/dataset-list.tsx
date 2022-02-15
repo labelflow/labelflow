@@ -124,8 +124,8 @@ const MigrateLocalDatasetsModal = ({
         </ModalHeader>
         <ModalBody>
           <Text>
-            Migrate your local datasets to an online workspace before next
-            Monday (Feb 14th). Check{" "}
+            Migrate your local datasets to an online workspace before tonight
+            (Feb 15th). Check{" "}
             <Link
               color="brand.600"
               href="https://docs.labelflow.ai/labelflow/import-dataset/migrate-a-local-dataset"
