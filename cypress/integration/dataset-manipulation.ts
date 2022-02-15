@@ -22,9 +22,6 @@ describe("Dataset creation, edition, deletion (online)", () => {
     cy.contains("0 Images").should("be.visible");
     cy.contains("0 Classes").should("be.visible");
     cy.contains("0 Labels").should("be.visible");
-    if (workspaceSlug === "local") {
-      cy.get('[aria-label="I Understand"]').click();
-    }
     cy.get('[aria-label="edit dataset"]').click();
     cy.get('[aria-label="Dataset name input"]').clear();
     cy.get('[aria-label="Dataset name input"]').type(
