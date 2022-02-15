@@ -14,9 +14,8 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { pageView } from "../utils/google-analytics";
 import { theme } from "../theme";
 import { distantDatabaseClient } from "../connectors/apollo-client/client";
-import { QueryParamProvider } from "../utils/query-params-provider";
+import { QueryParamProvider, MockableLocationProvider } from "../utils";
 import ErrorPage from "./_error";
-import { MockableLocationProvider } from "../utils/mockable-location";
 
 interface InitialProps {
   cookie: string;

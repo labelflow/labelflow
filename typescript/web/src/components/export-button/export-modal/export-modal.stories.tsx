@@ -1,9 +1,9 @@
 import { ExportModal } from ".";
-import { WORKSPACE_DATA, BASIC_DATASET_DATA } from "../../../utils/fixtures";
+import { WORKSPACE_DATA, BASIC_DATASET_DATA } from "../../../dev/fixtures";
 import {
   createTestWrapperDecorator,
   storybookTitle,
-} from "../../../utils/stories";
+} from "../../../dev/stories";
 import { APOLLO_MOCKS } from "./export-modal.fixtures";
 
 export default {

@@ -12,7 +12,7 @@ import {
   DeleteLabelActionMutation,
   DeleteLabelActionMutationVariables,
 } from "../../../graphql-types/DeleteLabelActionMutation";
-import { ApolloMockResponse, ApolloMockResponses } from "../../../utils/tests";
+import { ApolloMockResponse, ApolloMockResponses } from "../../../dev/tests";
 
 export const CREATE_LABEL_ACTION_MOCK: ApolloMockResponse<
   CreateLabelActionMutation,

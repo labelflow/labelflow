@@ -6,7 +6,7 @@ import {
   createDataset,
   createLabelClass,
   createWorkspace,
-} from "../../utils/tests";
+} from "../../dev/tests";
 
 // @ts-ignore
 fetch.disableFetchMocks();

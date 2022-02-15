@@ -1,11 +1,7 @@
 import { Popover, PopoverBody, PopoverContent, VStack } from "@chakra-ui/react";
 import React, { useRef, useState } from "react";
 import { Tools } from "../../../connectors/labeling-state";
-import {
-  chakraDecorator,
-  queryParamsDecorator,
-  storybookTitle,
-} from "../../../utils/stories";
+import { queryParamsDecorator, storybookTitle } from "../../../dev/stories";
 import { DrawingToolIcon } from "./drawing-tool";
 
 export default {
@@ -20,7 +16,7 @@ export default {
       },
     },
   },
-  decorators: [chakraDecorator, queryParamsDecorator],
+  decorators: [queryParamsDecorator],
 };
 
 // @ts-ignore

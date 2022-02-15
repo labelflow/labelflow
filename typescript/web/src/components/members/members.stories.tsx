@@ -1,10 +1,7 @@
 import { SessionProvider } from "next-auth/react";
 import { Members } from ".";
-import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../utils/fixtures";
-import {
-  createTestWrapperDecorator,
-  storybookTitle,
-} from "../../utils/stories";
+import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../dev/fixtures";
+import { createTestWrapperDecorator, storybookTitle } from "../../dev/stories";
 import { TEST_MEMBERSHIPS } from "./members.fixtures";
 
 export default {

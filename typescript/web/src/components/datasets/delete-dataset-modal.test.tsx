@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { BASIC_DATASET_DATA } from "../../utils/fixtures";
-import { getApolloMockWrapper } from "../../utils/tests";
+import { BASIC_DATASET_DATA } from "../../dev/fixtures";
+import { getJestApolloMockWrapper } from "../../dev/tests";
 import { DeleteDatasetModal } from "./delete-dataset-modal";
 import {
   APOLLO_MOCKS,
@@ -9,7 +9,7 @@ import {
 
 const renderModal = (props = {}) => {
   return render(<DeleteDatasetModal isOpen {...props} />, {
-    wrapper: getApolloMockWrapper(APOLLO_MOCKS),
+    wrapper: getJestApolloMockWrapper(APOLLO_MOCKS),
   });
 };
 

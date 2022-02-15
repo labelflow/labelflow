@@ -2,13 +2,13 @@ import "@testing-library/jest-dom/extend-expect";
 import { RenderResult, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { mockWorkspace } from "../../utils/tests/mock-workspace";
+import { mockWorkspace } from "../../dev/tests/mock-workspace";
 
 mockWorkspace();
 
 import { MembershipRole } from "../../graphql-types/globalTypes";
 import { GetMembershipsMembersQuery_memberships } from "../../graphql-types/GetMembershipsMembersQuery";
-import { renderWithTestWrapper } from "../../utils/tests";
+import { renderWithTestWrapper } from "../../dev/tests";
 import { Members } from ".";
 import {
   TEST_MEMBERSHIPS,

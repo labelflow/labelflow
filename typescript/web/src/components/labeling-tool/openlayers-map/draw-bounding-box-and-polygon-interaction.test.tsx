@@ -9,14 +9,15 @@ import { Geometry } from "ol/geom";
 import Polygon, { fromExtent } from "ol/geom/Polygon";
 import { DrawEvent, DrawEventType } from "ol/interaction/Draw";
 import { MockedProvider as MockedApolloProvider } from "@apollo/client/testing";
-import { BASIC_IMAGE_DATA } from "../../../utils/fixtures";
-import { mockNextRouter } from "../../../utils/tests/router-mocks";
+import { BASIC_IMAGE_DATA } from "../../../dev/fixtures";
+import { mockNextRouter } from "../../../dev/tests/router-mocks";
 
 mockNextRouter({ query: { imageId: BASIC_IMAGE_DATA.id } });
 
 import { useUndoStore } from "../../../connectors/undo-store";
 import { useLabelingStore, Tools } from "../../../connectors/labeling-state";
-import { ApolloMockResponses, getApolloMockLink } from "../../../utils/tests";
+import { ApolloMockResponses } from "../../../dev/common";
+import { getJestApolloMockLink } from "../../../dev/tests";
 import { DrawInteraction } from "./draw-interaction";
 import {
   APOLLO_MOCKS,
@@ -41,7 +42,7 @@ const renderDrawInteraction = (mocks?: ApolloMockResponses) => {
   const sourceVectorLabelsRef: { current: OlSourceVector<Geometry> | null } = {
     current: null,
   };
-  const mockLink = getApolloMockLink(mocks ?? APOLLO_MOCKS);
+  const mockLink = getJestApolloMockLink(mocks ?? APOLLO_MOCKS);
   render(
     <DrawInteraction
       iogSpinnerRef={iogSpinnerRef}

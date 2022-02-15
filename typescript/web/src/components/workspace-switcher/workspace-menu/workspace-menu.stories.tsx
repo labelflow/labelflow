@@ -4,11 +4,11 @@ import { useState } from "react";
 import {
   USER_WITH_WORKSPACES_QUERY_MOCK,
   WORKSPACE_DATA,
-} from "../../../utils/fixtures";
+} from "../../../dev/fixtures";
 import {
   createTestWrapperDecorator,
   storybookTitle,
-} from "../../../utils/stories";
+} from "../../../dev/stories";
 import { ResponsiveBreadcrumbs } from "../../layout/top-bar/breadcrumbs/responsive-breadcrumbs";
 import { WorkspaceMenu } from "./workspace-menu";
 

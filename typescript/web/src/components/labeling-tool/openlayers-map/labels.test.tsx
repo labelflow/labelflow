@@ -7,7 +7,7 @@ import { render, waitFor } from "@testing-library/react";
 import { Map as OlMap } from "ol";
 import { Geometry } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
-import { mockNextRouter } from "../../../utils/tests/router-mocks";
+import { mockNextRouter } from "../../../dev/tests/router-mocks";
 
 mockNextRouter();
 
@@ -15,8 +15,8 @@ import { MockedProvider as MockedApolloProvider } from "@apollo/client/testing";
 import VectorSource from "ol/source/Vector";
 import { useRouter } from "next/router";
 import { useLabelingStore } from "../../../connectors/labeling-state";
-import { DEEP_DATASET_WITH_LABELS_DATA } from "../../../utils/fixtures";
-import { getApolloMockLink } from "../../../utils/tests";
+import { DEEP_DATASET_WITH_LABELS_DATA } from "../../../dev/fixtures";
+import { getJestApolloMockLink } from "../../../dev/tests";
 import { Labels } from "./labels";
 import { APOLLO_MOCKS } from "./labels.fixtures";
 
@@ -32,7 +32,7 @@ const renderLabels = (imageId: string): { current: OlMap | null } => {
           mapRef.current = map;
         }}
       >
-        <MockedApolloProvider link={getApolloMockLink(APOLLO_MOCKS)}>
+        <MockedApolloProvider link={getJestApolloMockLink(APOLLO_MOCKS)}>
           {children}
         </MockedApolloProvider>
       </Map>

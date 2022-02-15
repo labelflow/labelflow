@@ -10,7 +10,7 @@ import {
   USER_QUERY,
   USER_WITH_WORKSPACES_QUERY,
 } from "../../shared-queries/user.query";
-import { ApolloMockResponse } from "../tests/apollo-mock";
+import { ApolloMockResponse } from "../common";
 import { WORKSPACE_DATA } from "./workspace.fixtures";
 
 export const USER_QUERY_DATA: UserQuery_user = {

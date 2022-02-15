@@ -8,8 +8,8 @@ import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "../../../hooks/use-images-nav
 import {
   BASIC_DATASET_DATA,
   DEEP_DATASET_WITH_IMAGES_DATA,
-} from "../../../utils/fixtures";
-import { ApolloMockResponse, ApolloMockResponses } from "../../../utils/tests";
+} from "../../../dev/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../../../dev/tests";
 
 const DATASET_SLUG_DATA = {
   [BASIC_DATASET_DATA.slug]: BASIC_DATASET_DATA,

@@ -1,10 +1,9 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
-import { chakraDecorator, storybookTitle } from "../../../../../utils/stories";
+import { storybookTitle } from "../../../../../dev/stories";
 import { KeymapModal } from "./keymap-modal";
 
 export default {
   title: storybookTitle(KeymapModal),
-  decorators: [chakraDecorator],
 };
 
 const keymap = {

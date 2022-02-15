@@ -1,10 +1,7 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { SessionProvider } from "next-auth/react";
-import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../utils/fixtures";
-import {
-  createTestWrapperDecorator,
-  storybookTitle,
-} from "../../utils/stories";
+import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../dev/fixtures";
+import { createTestWrapperDecorator, storybookTitle } from "../../dev/stories";
 import { NewMemberModal } from "./new-member-modal";
 
 export default {

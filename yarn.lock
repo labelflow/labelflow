@@ -6993,6 +6993,7 @@ __metadata:
     "@sentry/nextjs": 6.12.0
     "@sentry/tracing": 6.13.3
     "@sentry/utils": 6.13.3
+    "@storybook/react": 6.3.12
     "@stripe/react-stripe-js": 1.6.0
     "@stripe/stripe-js": 1.19.1
     "@supabase/supabase-js": 1.21.0

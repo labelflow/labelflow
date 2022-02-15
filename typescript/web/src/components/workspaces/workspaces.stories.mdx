@@ -10,21 +10,10 @@ import { USER_WITH_WORKSPACES_QUERY } from "../../shared-queries/user.query";
 import {
   mockUserQuery,
   USER_WITHOUT_WORKSPACES_DATA,
-} from "../../utils/fixtures";
-import { createTestWrapperDecorator } from "../../utils/stories/test-wrapper-decorator";
+} from "../../dev/fixtures";
+import { createTestWrapperDecorator } from "../../dev/stories/test-wrapper-decorator";
 
-<Meta
-  title="web/Workspaces"
-  component={Workspaces}
-  decorators={[
-    createTestWrapperDecorator({
-      auth: { withWorkspaces: true },
-      apollo: true,
-      router: {},
-      queryParams: {},
-    }),
-  ]}
-/>
+<Meta title="web/Workspaces" component={Workspaces} />
 
 export const Template = Workspaces;
 

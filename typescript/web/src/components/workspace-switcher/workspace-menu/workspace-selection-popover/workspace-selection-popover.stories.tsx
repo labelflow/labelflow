@@ -2,11 +2,11 @@ import { Button, useDisclosure } from "@chakra-ui/react";
 import {
   USER_WITH_WORKSPACES_QUERY_MOCK,
   WORKSPACE_DATA,
-} from "../../../../utils/fixtures";
+} from "../../../../dev/fixtures";
 import {
   createTestWrapperDecorator,
   storybookTitle,
-} from "../../../../utils/stories";
+} from "../../../../dev/stories";
 import { WorkspaceSelectionPopover } from "./workspace-selection-popover";
 
 export default {

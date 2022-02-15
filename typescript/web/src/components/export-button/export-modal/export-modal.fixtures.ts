@@ -7,11 +7,8 @@ import {
   ExportDatasetUrlQueryVariables,
 } from "../../../graphql-types/ExportDatasetUrlQuery";
 import { ExportFormat } from "../../../graphql-types/globalTypes";
-import { BASIC_DATASET_DATA } from "../../../utils/fixtures";
-import {
-  ApolloMockResponse,
-  ApolloMockResponses,
-} from "../../../utils/tests/apollo-mock";
+import { BASIC_DATASET_DATA } from "../../../dev/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../../../dev/common";
 import { EXPORT_DATASET_URL_QUERY } from "./export-dataset";
 import { COUNT_LABELS_OF_DATASET_QUERY } from "./export-modal.context";
 import { getDatasetExportName } from "./get-dataset-export-name";
@@ -68,7 +65,6 @@ const COUNT_LABELS_OF_DATASET_MOCK: ApolloMockResponse<
         id: BASIC_DATASET_DATA.id,
         imagesAggregates: { totalCount: 1 },
         labelsAggregates: { totalCount: 2 },
-        labels: [],
       },
     },
   },

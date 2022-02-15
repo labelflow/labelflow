@@ -2,40 +2,43 @@ import {
   MockedProvider as ApolloProvider,
   MockedProviderProps,
 } from "@apollo/client/testing";
-import { ChakraProvider } from "@chakra-ui/react";
 import { isNil } from "lodash/fp";
 import { SessionProvider } from "next-auth/react";
 import { RouterContext } from "next/dist/shared/lib/router-context";
 import { useRouter } from "next/router";
 import { PropsWithChildren } from "react";
 import { QueryParamProvider } from "use-query-params";
-import { WildcardMockLink } from "wildcard-mock-link";
+import { WildcardMockLink, WildcardMockOptions } from "wildcard-mock-link";
 import {
   Authenticated,
   AuthenticatedProps,
 } from "../../components/auth/authenticated";
-import { theme } from "../../theme";
+import { MockableLocationProvider, OptionalParent } from "../../utils";
+import { ApolloMockResponses, getApolloMockLink } from "../common";
 import {
   USER_QUERY_MOCK,
   USER_WITH_WORKSPACES_DATA,
   USER_WITH_WORKSPACES_QUERY_MOCK,
-} from "../fixtures/user.fixtures";
-import { MockableLocationProvider } from "../mockable-location";
-import { OptionalParent } from "../optional-parent";
-import { ApolloMockResponses, getApolloMockLink } from "./apollo-mock";
+} from "../fixtures";
 import { RouterMock, RouterMockOptions } from "./router-mocks";
 
 export type AuthMockOptions = boolean | Omit<AuthenticatedProps, "children">;
 
-export type DefaultApolloMockOptions = { extraMocks?: ApolloMockResponses };
+export type DefaultApolloOptions = {
+  extraMocks?: ApolloMockResponses;
+  act?: WildcardMockOptions["act"];
+};
 
-export type WithMocksApolloOptions = { mocks: ApolloMockResponses };
+export type WithMocksApolloOptions = {
+  mocks: ApolloMockResponses;
+  act?: WildcardMockOptions["act"];
+};
 
 export type WithLinkApolloOptions = { link: WildcardMockLink };
 
 export type ApolloMockOptions =
   | boolean
-  | DefaultApolloMockOptions
+  | DefaultApolloOptions
   | WithMocksApolloOptions
   | WithLinkApolloOptions;
 
@@ -104,7 +107,7 @@ const OptionalNextRouter = ({ router, children }: OptionalNextRouterProps) => (
 );
 
 type GetDefaultApolloMocksOptions = Pick<TestWrapperProps, "auth"> &
-  DefaultApolloMockOptions;
+  DefaultApolloOptions;
 
 const getDefaultApolloMocks = ({
   auth,
@@ -117,7 +120,7 @@ const getDefaultApolloMocks = ({
 };
 
 export type GetApolloMocksOptions = Pick<TestWrapperProps, "auth"> &
-  (DefaultApolloMockOptions | WithMocksApolloOptions);
+  (DefaultApolloOptions | WithMocksApolloOptions);
 
 export const getApolloMocks = ({
   auth,
@@ -176,27 +179,20 @@ const OptionalAuthProvider = ({
 );
 
 export const TestWrapper = ({
-  chakra = true,
   apollo,
   auth,
   router,
   children,
 }: TestWrapperProps) => (
-  <OptionalParent
-    enabled={chakra}
-    parent={ChakraProvider}
-    parentProps={{ theme, resetCSS: true }}
-  >
-    <MockableLocationProvider location="http://localhost">
-      <OptionalSession auth={auth}>
-        <OptionalNextRouter router={router}>
-          <OptionalApolloProvider apollo={apollo} auth={auth}>
-            <OptionalAuthProvider auth={auth}>{children}</OptionalAuthProvider>
-          </OptionalApolloProvider>
-        </OptionalNextRouter>
-      </OptionalSession>
-    </MockableLocationProvider>
-  </OptionalParent>
+  <MockableLocationProvider location="http://localhost">
+    <OptionalSession auth={auth}>
+      <OptionalNextRouter router={router}>
+        <OptionalApolloProvider apollo={apollo} auth={auth}>
+          <OptionalAuthProvider auth={auth}>{children}</OptionalAuthProvider>
+        </OptionalApolloProvider>
+      </OptionalNextRouter>
+    </OptionalSession>
+  </MockableLocationProvider>
 );
 
 export type CreateTestWrapperOptions = Omit<TestWrapperProps, "children">;

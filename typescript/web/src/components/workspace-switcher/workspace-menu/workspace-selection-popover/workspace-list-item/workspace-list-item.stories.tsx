@@ -1,10 +1,9 @@
-import { WORKSPACE_DATA } from "../../../../../utils/fixtures";
-import { chakraDecorator, storybookTitle } from "../../../../../utils/stories";
+import { WORKSPACE_DATA } from "../../../../../dev/fixtures";
+import { storybookTitle } from "../../../../../dev/stories";
 import { WorkspaceListItem } from "./workspace-list-item";
 
 export default {
   title: storybookTitle("Workspace Switcher", WorkspaceListItem),
-  decorators: [chakraDecorator],
 };
 
 export const Default = () => (

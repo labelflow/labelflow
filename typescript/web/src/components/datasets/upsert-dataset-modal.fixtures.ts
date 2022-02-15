@@ -14,8 +14,8 @@ import {
   UpdateDatasetMutation,
   UpdateDatasetMutationVariables,
 } from "../../graphql-types/UpdateDatasetMutation";
-import { BASIC_DATASET_DATA } from "../../utils/fixtures";
-import { ApolloMockResponse, ApolloMockResponses } from "../../utils/tests";
+import { BASIC_DATASET_DATA } from "../../dev/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../../dev/tests";
 import { CREATE_DATASET_MUTATION } from "./create-dataset.mutation";
 import {
   GET_DATASET_BY_ID_QUERY,

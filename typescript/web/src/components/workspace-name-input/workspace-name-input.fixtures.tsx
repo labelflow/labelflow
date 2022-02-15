@@ -21,7 +21,7 @@ import {
   ApolloMockResponse,
   ApolloMockResponses,
   getApolloMockLink,
-} from "../../utils/tests";
+} from "../../dev/common";
 import { WORKSPACE_EXISTS_QUERY } from "./workspace-exists.query";
 import { WorkspaceNameMessageProps } from "./workspace-name-message";
 

@@ -8,7 +8,7 @@ import { mockMatchMedia } from "../../../utils/mock-window";
 
 mockMatchMedia(jest);
 
-import { mockWorkspace } from "../../../utils/tests/mock-workspace";
+import { mockWorkspace } from "../../../dev/tests/mock-workspace";
 
 mockWorkspace();
 
@@ -17,11 +17,9 @@ import { ResponsiveBreadcrumbs } from "../../layout/top-bar/breadcrumbs";
 import {
   USER_WITH_WORKSPACES_QUERY_MOCK,
   WORKSPACE_DATA,
-} from "../../../utils/fixtures";
-import {
-  ApolloMockResponses,
-  renderWithTestWrapper,
-} from "../../../utils/tests";
+} from "../../../dev/fixtures";
+import { ApolloMockResponses } from "../../../dev/common";
+import { renderWithTestWrapper } from "../../../dev/tests";
 import { WorkspaceMenu } from "./workspace-menu";
 
 const APOLLO_MOCKS: ApolloMockResponses = [USER_WITH_WORKSPACES_QUERY_MOCK];

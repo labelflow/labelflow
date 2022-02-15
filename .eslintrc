@@ -28,7 +28,7 @@
               "setup-tests.ts",
               "cypress/**/*.ts",
               "**/*.@(test|stories|fixtures).@(ts?(x)|mdx)",
-              "**/@(__tests__|__stories__|tests|stories|scripts)/**/*.@(ts?(x)|mdx)"
+              "**/@(__tests__|__stories__|tests|stories|dev|scripts)/**/*.@(ts?(x)|mdx)"
             ]
           }
         ]

@@ -4,8 +4,8 @@ import {
   GetImageLabelsQuery,
   GetImageLabelsQueryVariables,
 } from "../../../graphql-types/GetImageLabelsQuery";
-import { DEEP_DATASET_WITH_LABELS_DATA } from "../../../utils/fixtures";
-import { ApolloMockResponse, ApolloMockResponses } from "../../../utils/tests";
+import { DEEP_DATASET_WITH_LABELS_DATA } from "../../../dev/fixtures";
+import { ApolloMockResponse, ApolloMockResponses } from "../../../dev/tests";
 import { GET_IMAGE_LABELS_QUERY } from "./queries";
 
 const GetImageLabelsMockResult = jest.fn(

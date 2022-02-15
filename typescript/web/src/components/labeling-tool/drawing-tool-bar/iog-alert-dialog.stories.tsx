@@ -1,10 +1,6 @@
 import { Button, useToast } from "@chakra-ui/react";
 import React, { useState } from "react";
-import {
-  chakraDecorator,
-  queryParamsDecorator,
-  storybookTitle,
-} from "../../../utils/stories";
+import { queryParamsDecorator, storybookTitle } from "../../../dev/stories";
 import { IogAlertDialog } from "./iog-alert-dialog";
 
 export default {
@@ -19,7 +15,7 @@ export default {
       },
     },
   },
-  decorators: [chakraDecorator, queryParamsDecorator],
+  decorators: [queryParamsDecorator],
 };
 
 // @ts-ignore

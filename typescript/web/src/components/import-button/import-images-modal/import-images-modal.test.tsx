@@ -2,15 +2,15 @@ import { waitFor, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 
-import { BASIC_DATASET_DATA } from "../../../utils/fixtures";
-import { mockWorkspace } from "../../../utils/tests/mock-workspace";
+import { BASIC_DATASET_DATA } from "../../../dev/fixtures";
+import { mockWorkspace } from "../../../dev/tests/mock-workspace";
 
 mockWorkspace({ queryParams: { datasetSlug: BASIC_DATASET_DATA.slug } });
 
 import {
   renderWithTestWrapper,
   RenderWithWrapperResult,
-} from "../../../utils/tests";
+} from "../../../dev/tests";
 import { ERROR_MOCKS, IMPORT_BUTTON_MOCKS } from "../import-button.fixtures";
 import {
   ImportImagesModal,

@@ -11,7 +11,7 @@ import {
 import { v4 as uuidV4 } from "uuid";
 import { client, user } from "../../dev/apollo-client";
 import { getPrismaClient } from "../../prisma-client";
-import { CREATE_WORKSPACE_MUTATION } from "../../utils/tests";
+import { CREATE_WORKSPACE_MUTATION } from "../../dev/tests";
 
 // @ts-ignore
 fetch.disableFetchMocks();

@@ -3,7 +3,7 @@ import { MembershipRole, User } from "@labelflow/graphql-types";
 import { v4 as uuidV4 } from "uuid";
 import { client, user as loggedInUser, user } from "../../dev/apollo-client";
 import { getPrismaClient } from "../../prisma-client";
-import { createMembership, createWorkspace } from "../../utils/tests";
+import { createMembership, createWorkspace } from "../../dev/tests";
 
 // @ts-ignore
 fetch.disableFetchMocks();

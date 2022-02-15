@@ -1,17 +1,17 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 
-import { mockWorkspace } from "../../utils/tests/mock-workspace";
+import { mockWorkspace } from "../../dev/tests/mock-workspace";
 
 mockWorkspace();
 
 import {
   BASIC_DATASET_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
-} from "../../utils/fixtures";
+} from "../../dev/fixtures";
 import {
   renderWithTestWrapper,
   RenderWithWrapperResult,
-} from "../../utils/tests";
+} from "../../dev/tests";
 import { DatasetClasses } from "./dataset-classes";
 import { APOLLO_MOCKS } from "./dataset-classes.fixtures";
 

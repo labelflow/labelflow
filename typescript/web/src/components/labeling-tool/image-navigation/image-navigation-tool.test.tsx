@@ -3,7 +3,7 @@ import { waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 
-import { mockWorkspace } from "../../../utils/tests/mock-workspace";
+import { mockWorkspace } from "../../../dev/tests/mock-workspace";
 
 mockWorkspace();
 
@@ -11,11 +11,9 @@ import { useRouter } from "next/router";
 import {
   BASIC_IMAGE_DATA,
   DEEP_DATASET_WITH_IMAGES_DATA,
-} from "../../../utils/fixtures";
-import {
-  ApolloMockResponses,
-  renderWithTestWrapper,
-} from "../../../utils/tests";
+} from "../../../dev/fixtures";
+import { ApolloMockResponses } from "../../../dev/common";
+import { renderWithTestWrapper } from "../../../dev/tests";
 import { ImageNavigationTool } from "./image-navigation-tool";
 import { APOLLO_MOCKS } from "./image-navigation-tool.fixtures";
 

@@ -5,12 +5,12 @@ import "@testing-library/jest-dom/extend-expect";
 
 initMockedDate();
 
-import { BASIC_DATASET_DATA } from "../../../utils/fixtures";
-import { mockWorkspace } from "../../../utils/tests/mock-workspace";
+import { BASIC_DATASET_DATA } from "../../../dev/fixtures";
+import { mockWorkspace } from "../../../dev/tests/mock-workspace";
 
 mockWorkspace({ queryParams: { datasetSlug: BASIC_DATASET_DATA.slug } });
 
-import { renderWithTestWrapper } from "../../../utils/tests";
+import { renderWithTestWrapper } from "../../../dev/tests";
 import { ExportModal } from ".";
 import { APOLLO_MOCKS } from "./export-modal.fixtures";
 

@@ -1,15 +1,14 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 import {
   apolloMockDecorator,
-  chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
-} from "../../utils/stories";
+} from "../../dev/stories";
 import { DeleteDatasetModal } from "./delete-dataset-modal";
 
 export default {
   title: storybookTitle(DeleteDatasetModal),
-  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
+  decorators: [apolloMockDecorator, queryParamsDecorator],
 };
 
 export const Default = () => {
@@ -25,7 +24,6 @@ export const Default = () => {
 
 export const OpenedByDefault = () => {
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
-
   return (
     <div>
       <Button onClick={onOpen}>Display</Button>

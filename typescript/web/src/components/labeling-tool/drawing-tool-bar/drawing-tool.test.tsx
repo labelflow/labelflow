@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Tools, useLabelingStore } from "../../../connectors/labeling-state";
-import { mockNextRouter } from "../../../utils/tests";
+import { mockNextRouter } from "../../../dev/tests";
 
 mockNextRouter();
 

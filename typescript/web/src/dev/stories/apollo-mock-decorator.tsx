@@ -1,9 +1,6 @@
 import { Story } from "@storybook/react";
 import { WildcardMockLink } from "wildcard-mock-link";
-import {
-  ApolloMockResponses,
-  getApolloMockWrapper,
-} from "../tests/apollo-mock";
+import { ApolloMockResponses, getApolloMockWrapper } from "../common";
 
 export const getApolloMockDecorator =
   (data?: WildcardMockLink | ApolloMockResponses) =>

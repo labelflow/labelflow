@@ -1,9 +1,9 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
-import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../../utils/fixtures";
+import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../../dev/fixtures";
 import {
   createTestWrapperDecorator,
   storybookTitle,
-} from "../../../utils/stories";
+} from "../../../dev/stories";
 import { IMPORT_BUTTON_MOCKS } from "../import-button.fixtures";
 import { ImportImagesModal } from "./import-images-modal";
 

@@ -3,7 +3,7 @@ import {
   Membership,
   MutationCreateMembershipArgs,
 } from "@labelflow/graphql-types";
-import { client } from "../../dev/apollo-client";
+import { client } from "../apollo-client";
 
 export const CREATE_MEMBERSHIP_MUTATION = gql`
   mutation createMembership($data: MembershipCreateInput!) {

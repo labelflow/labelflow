@@ -1,11 +1,11 @@
 import { Button, Flex, HStack } from "@chakra-ui/react";
 import { Story } from "@storybook/react";
 import React from "react";
-import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../../utils/fixtures";
+import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../../dev/fixtures";
 import {
   createTestWrapperDecorator,
   storybookTitle,
-} from "../../../utils/stories";
+} from "../../../dev/stories";
 import { ImageNavigationTool } from "./image-navigation-tool";
 import { APOLLO_MOCKS } from "./image-navigation-tool.fixtures";
 

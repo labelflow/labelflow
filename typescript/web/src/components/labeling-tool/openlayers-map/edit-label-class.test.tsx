@@ -4,9 +4,9 @@ import userEvent from "@testing-library/user-event";
 import {
   BASIC_LABEL_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
-} from "../../../utils/fixtures";
+} from "../../../dev/fixtures";
 
-import { mockWorkspace } from "../../../utils/tests/mock-workspace";
+import { mockWorkspace } from "../../../dev/tests/mock-workspace";
 
 mockWorkspace({
   queryParams: {
@@ -22,7 +22,7 @@ import {
   updateLabelClassActionMockResult,
   updateLabelClassOfLabelMockResult,
 } from "../edit-label-class.fixtures";
-import { renderWithTestWrapper } from "../../../utils/tests";
+import { renderWithTestWrapper } from "../../../dev/tests";
 import { EditLabelClass } from "./edit-label-class";
 
 const onCloseEditLabelClass = jest.fn();

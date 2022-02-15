@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { mockNextRouter } from "../../../utils/tests";
+import { mockNextRouter } from "../../../dev/tests";
 
 mockNextRouter();
 

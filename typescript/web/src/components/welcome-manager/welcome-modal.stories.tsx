@@ -1,20 +1,14 @@
 import { WelcomeModal } from ".";
 import {
   apolloMockDecorator,
-  chakraDecorator,
-  queryParamsDecorator,
   cookieDecorator,
+  queryParamsDecorator,
   storybookTitle,
-} from "../../utils/stories";
+} from "../../dev/stories";
 
 export default {
   title: storybookTitle(WelcomeModal),
-  decorators: [
-    chakraDecorator,
-    apolloMockDecorator,
-    queryParamsDecorator,
-    cookieDecorator,
-  ],
+  decorators: [apolloMockDecorator, queryParamsDecorator, cookieDecorator],
 };
 
 export const Closed = () => {

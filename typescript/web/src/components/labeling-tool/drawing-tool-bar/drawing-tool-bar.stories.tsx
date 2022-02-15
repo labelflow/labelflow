@@ -1,11 +1,7 @@
 import { VStack } from "@chakra-ui/react";
 import { Story } from "@storybook/react";
 import React from "react";
-import {
-  chakraDecorator,
-  queryParamsDecorator,
-  storybookTitle,
-} from "../../../utils/stories";
+import { queryParamsDecorator, storybookTitle } from "../../../dev/stories";
 import { DrawingToolbar, Props } from "./drawing-tool-bar";
 
 export default {
@@ -20,7 +16,7 @@ export default {
       },
     },
   },
-  decorators: [chakraDecorator, queryParamsDecorator],
+  decorators: [queryParamsDecorator],
 };
 
 const Template: Story<Props> = (args: Props) => (

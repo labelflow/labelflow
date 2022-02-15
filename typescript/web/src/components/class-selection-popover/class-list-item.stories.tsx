@@ -1,10 +1,9 @@
 import { omit } from "lodash/fp";
-import { chakraDecorator, storybookTitle } from "../../utils/stories";
+import { storybookTitle } from "../../dev/stories";
 import { ClassListItem } from "./class-list-item";
 
 export default {
   title: storybookTitle(ClassListItem),
-  decorators: [chakraDecorator],
 };
 
 const classDefault = { color: "#F59E0B", name: "aClass", shortcut: "1" };

@@ -1,9 +1,9 @@
 import { TabBar, TabBarItem } from ".";
-import { WORKSPACE_DATA } from "../../../utils/fixtures";
+import { WORKSPACE_DATA } from "../../../dev/fixtures";
 import {
   createTestWrapperDecorator,
   storybookTitle,
-} from "../../../utils/stories";
+} from "../../../dev/stories";
 
 export default {
   title: storybookTitle(TabBar),
