@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 
-const DISCOVER_WHATS_NEW = "Discover what's new";
+const DISCOVER_WHATS_NEW = "Register now";
 
 export const Banner = () => {
   const theme = useTheme();
@@ -38,18 +38,25 @@ export const Banner = () => {
             letterSpacing="tight"
             color="gray.600"
           >
-            Product Release
+            Webinar
             <br />
-            01-2022
           </Heading>
 
           <Text mt="4" fontSize="lg" color="gray.800">
-            Over the last months we have been working hard to release a new
-            version of LabelFlow, the open platform for image labeling. In short
-            you can now collaborate online and label your datasets faster using
-            the Auto Polygon feature powered by AI.
+            <b>
+              How to Succeed an Image Labeling Project to Bring your ML Models
+              at Scale
+            </b>
+            <br />
+            High volume and quality datasets are some key success factors of a
+            machine learning project. In this 30 min webinar, we will share with
+            you the best practices to properly run an image labeling project
+            (work organisation, type of labels, format, etc.). That will be also
+            the opportunity to exchange with you around the future of LabelFlow
+            open platform.
             <br />
             <br />
+            <b>March 3rd, 2022 at 4pm CET</b>
           </Text>
 
           <Center>
@@ -58,7 +65,7 @@ export const Banner = () => {
                 <Button
                   mt="8"
                   as="a"
-                  href="https://labelflow.ai/posts/product-release-collaboration-and-boosted-labeling-productivity-with-auto-polygon-1"
+                  href="https://app.livestorm.co/labelflow/how-to-succeed-an-image-labeling-project-to-bring-your-ml-models-at-scale?type=detailed"
                   target="blank"
                   size="lg"
                   colorScheme="brand"
