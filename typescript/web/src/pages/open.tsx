@@ -51,7 +51,7 @@ export default function About() {
         <iframe
           style={{ minHeight: "1300px" }}
           src="https://labelflow.metabaseapp.com/public/dashboard/7288172a-11f5-4e71-9651-9ab3cb720136"
-          title="Metabase Dasboard"
+          title="Metabase Dashboard"
         />
 
         <Footer />
