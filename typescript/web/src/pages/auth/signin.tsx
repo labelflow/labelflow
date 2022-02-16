@@ -11,7 +11,7 @@ const useRedirectIfAuthenticated = (redirectUrl?: string) => {
   const router = useRouter();
   useEffect(() => {
     if (status === "authenticated") {
-      router.replace(redirectUrl || `/`);
+      router.replace(redirectUrl || "/");
     }
   });
 };
