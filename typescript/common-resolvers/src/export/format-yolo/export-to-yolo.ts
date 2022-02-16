@@ -65,9 +65,9 @@ export const generateLabelsOfImageFile = (
     .trim();
 };
 
-export const exportToYolo: ExportFunction = async (
+export const exportToYolo: ExportFunction<ExportOptionsYolo> = async (
   datasetId,
-  options: ExportOptionsYolo = {},
+  options = {},
   { repository, req },
   user
 ) => {

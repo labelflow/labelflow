@@ -88,6 +88,7 @@ input ExampleWhereUniqueInput {
 enum ExportFormat {
   YOLO
   COCO
+  TensorFlowCSV
 }
 
 input ExportOptions {

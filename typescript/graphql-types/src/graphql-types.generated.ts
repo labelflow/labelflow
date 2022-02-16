@@ -112,7 +112,8 @@ export type ExampleWhereUniqueInput = {
 
 export enum ExportFormat {
   Yolo = 'YOLO',
-  Coco = 'COCO'
+  Coco = 'COCO',
+  TensorFlowCsv = 'TensorFlowCSV'
 }
 
 export type ExportOptions = {

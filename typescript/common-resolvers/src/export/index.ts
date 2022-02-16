@@ -5,6 +5,7 @@ import { exportToCoco } from "./format-coco/index";
 import { exportToYolo } from "./format-yolo/index";
 import { Context } from "../types";
 import { getOrigin } from "../utils/get-origin";
+import { exportCsv } from "./csv";
 
 const generateExportFile = async (
   args: QueryExportDatasetArgs,
@@ -27,6 +28,9 @@ const generateExportFile = async (
         context,
         user
       );
+    }
+    case ExportFormat.TensorFlowCsv: {
+      return await exportCsv(args.where.datasetId, {}, context);
     }
     default: {
       throw new Error("Unsupported format");

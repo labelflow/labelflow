@@ -9,9 +9,9 @@ import { getImageName } from "../common";
 
 import { addImageDimensionsToLabels } from "./add-image-dimensions-to-labels";
 
-export const exportToCoco: ExportFunction = async (
+export const exportToCoco: ExportFunction<ExportOptionsCoco> = async (
   datasetId,
-  options: ExportOptionsCoco = {},
+  options = {},
   { repository, req },
   user
 ) => {

@@ -1,24 +1,25 @@
-enum ExportFormat{
+enum ExportFormat {
   YOLO
   COCO
+  TensorFlowCSV
 }
 
 input ExportOptionsCoco {
-    name: String
-    exportImages: Boolean
-    avoidImageNameCollisions: Boolean
+  name: String
+  exportImages: Boolean
+  avoidImageNameCollisions: Boolean
 }
 
 input ExportOptionsYolo {
-    name: String
-    exportImages: Boolean
-    includePolygons: Boolean
-    avoidImageNameCollisions: Boolean
+  name: String
+  exportImages: Boolean
+  includePolygons: Boolean
+  avoidImageNameCollisions: Boolean
 }
 
 input ExportOptions {
-    coco: ExportOptionsCoco
-    yolo: ExportOptionsYolo
+  coco: ExportOptionsCoco
+  yolo: ExportOptionsYolo
 }
 
 input ExportWhereUniqueInput {

@@ -90,6 +90,7 @@ export const typeDefs = [
   enum ExportFormat {
     YOLO
     COCO
+    TensorFlowCSV
   }
 
   input ExportOptions {
