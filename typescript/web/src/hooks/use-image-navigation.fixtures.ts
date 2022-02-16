@@ -27,7 +27,7 @@ const CURRENT_IMAGE_NOT_PRESENT = [IMAGE_1_DATA, IMAGE_2_DATA, IMAGE_3_DATA];
 
 const createImagesGenerator = (
   images: GetAllImagesOfADatasetQuery_dataset_images[],
-  delay?: number
+  delay: number = 10
 ): ApolloMockResponse<
   GetAllImagesOfADatasetQuery,
   GetAllImagesOfADatasetQueryVariables
