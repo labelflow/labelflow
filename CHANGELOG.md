@@ -1,6 +1,10 @@
 # Changelog
 
-## [1.3.0](https://github.com/labelflow/labelflow/compare/1.2.3...1.3.0)
+## [1.3.1](https://github.com/labelflow/labelflow/compare/1.3.0...1.3.1)
+
+- Add extra delay in the loading state tests of useImagesNavigation [`#895`](https://github.com/labelflow/labelflow/pull/895)
+
+## [1.3.0](https://github.com/labelflow/labelflow/compare/1.2.3...1.3.0) - 2022-02-16
 
 - Update text on workspace list empty state [`#891`](https://github.com/labelflow/labelflow/pull/891)
 - Await refetchQueries when creating a new workspace [`#888`](https://github.com/labelflow/labelflow/pull/888)
