@@ -26,7 +26,8 @@ const CURRENT_IMAGE_IS_LAST = [IMAGE_1_DATA, IMAGE_2_DATA, CURRENT_IMAGE_DATA];
 const CURRENT_IMAGE_NOT_PRESENT = [IMAGE_1_DATA, IMAGE_2_DATA, IMAGE_3_DATA];
 
 const createImagesGenerator = (
-  images: GetAllImagesOfADatasetQuery_dataset_images[]
+  images: GetAllImagesOfADatasetQuery_dataset_images[],
+  delay?: number
 ): ApolloMockResponse<
   GetAllImagesOfADatasetQuery,
   GetAllImagesOfADatasetQueryVariables
@@ -46,26 +47,24 @@ const createImagesGenerator = (
       },
     },
   },
-  delay: 10,
+  delay,
 });
 
 const createImagesMocks = (
-  images: GetAllImagesOfADatasetQuery_dataset_images[]
-): ApolloMockResponses => [createImagesGenerator(images)];
+  images: GetAllImagesOfADatasetQuery_dataset_images[],
+  delay?: number
+): ApolloMockResponses => [createImagesGenerator(images, delay)];
 
-export const THREE_IMAGES_MOCKS: ApolloMockResponses = createImagesMocks(
-  CURRENT_IMAGE_IS_SECOND
+export const THREE_IMAGES_MOCKS = createImagesMocks(CURRENT_IMAGE_IS_SECOND);
+
+export const IMAGE_IS_FIRST_MOCKS = createImagesMocks(CURRENT_IMAGE_IS_FIRST);
+
+export const IMAGE_IS_LAST_MOCKS = createImagesMocks(CURRENT_IMAGE_IS_LAST);
+
+export const NO_IMAGES_MOCKS = createImagesMocks([]);
+
+export const NO_IMAGES_MOCKS_WITH_DELAY = createImagesMocks([], 100);
+
+export const CURRENT_NOT_IN_IMAGES_MOCKS = createImagesMocks(
+  CURRENT_IMAGE_NOT_PRESENT
 );
-
-export const IMAGE_IS_FIRST_MOCKS: ApolloMockResponses = createImagesMocks(
-  CURRENT_IMAGE_IS_FIRST
-);
-
-export const IMAGE_IS_LAST_MOCKS: ApolloMockResponses = createImagesMocks(
-  CURRENT_IMAGE_IS_LAST
-);
-
-export const NO_IMAGES_MOCKS: ApolloMockResponses = createImagesMocks([]);
-
-export const CURRENT_NOT_IN_IMAGES_MOCKS: ApolloMockResponses =
-  createImagesMocks(CURRENT_IMAGE_NOT_PRESENT);

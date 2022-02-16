@@ -9,6 +9,7 @@ import {
   IMAGE_IS_FIRST_MOCKS,
   IMAGE_IS_LAST_MOCKS,
   NO_IMAGES_MOCKS,
+  NO_IMAGES_MOCKS_WITH_DELAY,
   THREE_IMAGES_MOCKS,
 } from "./use-image-navigation.fixtures";
 
@@ -39,7 +40,7 @@ const renderTest = async (extraMocks: ApolloMockResponses) => {
 
 describe(useImagesNavigation, () => {
   it("has an undefined currentImageIndex while loading", async () => {
-    const { result } = await renderTest(NO_IMAGES_MOCKS);
+    const { result } = await renderTest(NO_IMAGES_MOCKS_WITH_DELAY);
     expect(result.current.currentImageIndex).toEqual(undefined);
   });
 
@@ -69,7 +70,7 @@ describe(useImagesNavigation, () => {
 
   describe("Previous and Next ids", () => {
     it("has undefined previous and next ids while loading", async () => {
-      const { result } = await renderTest(NO_IMAGES_MOCKS);
+      const { result } = await renderTest(NO_IMAGES_MOCKS_WITH_DELAY);
       expect(result.current.previousImageId).toEqual(undefined);
       expect(result.current.nextImageId).toEqual(undefined);
     });
