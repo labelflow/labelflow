@@ -9,8 +9,6 @@ import {
 import * as React from "react";
 
 export const Movie = () => {
-  const theme = useTheme();
-
   return (
     <Box id="Movie" as="section">
       <Box>
