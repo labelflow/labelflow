@@ -11,6 +11,7 @@ import { LogoGrid } from "../components/website/Logos/LogoGrid";
 import { NavBar } from "../components/website/Navbar/NavBar";
 import { Pricing } from "../components/website/Pricing/Pricing";
 import { Proof } from "../components/website/proof";
+import { Movie } from "../components/website/Movie/movie";
 import { Roadmap } from "../components/website/roadmap/roadmap";
 import { Why } from "../components/website/Why/Why";
 import { Article, getAllArticles } from "../connectors/strapi";
@@ -29,6 +30,7 @@ export default function Website({
         <NavBar />
         <Hero />
         <Banner />
+        <Movie />
         <Features />
         <Proof />
         <Why />

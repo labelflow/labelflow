@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 
-const DISCOVER_WHATS_NEW = "Register now";
+const DISCOVER_WHATS_NEW = "Register Now";
 
 export const Banner = () => {
   const theme = useTheme();
@@ -34,6 +34,7 @@ export const Banner = () => {
           <Heading
             as="h2"
             size="3xl"
+            py="6"
             fontWeight="extrabold"
             letterSpacing="tight"
             color="gray.600"

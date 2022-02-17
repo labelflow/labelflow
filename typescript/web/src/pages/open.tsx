@@ -5,12 +5,13 @@ import { Footer } from "../components/website/Footer/Footer";
 import { Meta } from "../components/meta";
 import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
 import { CookieBanner } from "../components/cookie-banner";
+import { KpiDashboard } from "../components/metabase";
 
 export default function About() {
   return (
     <>
       <ServiceWorkerManagerBackground />
-      <Meta title="LabelFlow | About" />
+      <Meta title="LabelFlow | Open" />
       <CookieBanner />
       <Flex direction="column">
         <NavBar />
@@ -47,13 +48,7 @@ export default function About() {
             </Text>
           </Box>
         </Box>
-
-        <iframe
-          style={{ minHeight: "1300px" }}
-          src="https://labelflow.metabaseapp.com/public/dashboard/7288172a-11f5-4e71-9651-9ab3cb720136"
-          title="Metabase Dashboard"
-        />
-
+        <KpiDashboard />
         <Footer />
       </Flex>
     </>

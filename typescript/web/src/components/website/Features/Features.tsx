@@ -30,7 +30,7 @@ export const Features = () => {
             height={{ md: "320px" }}
             objectFit="cover"
             src="/static/img/shot-elec-1.jpg"
-            alt="state of the art speaker"
+            alt="Electrical grid picture"
           />
           <Box>
             <Heading size="xl" mb="4" fontWeight="extrabold">
