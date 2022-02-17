@@ -1,5 +1,5 @@
+import { getSlug } from "@labelflow/utils";
 import {
-  getSlug,
   INVALID_WORKSPACE_NAME_MESSAGES,
   validateWorkspaceName,
 } from "@labelflow/common-resolvers";

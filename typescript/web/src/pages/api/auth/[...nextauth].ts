@@ -8,6 +8,7 @@ import { OAuthConfig } from "next-auth/providers";
 import EmailProvider from "next-auth/providers/email";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import { JWT_SECRET } from "../../../constants";
 import { sendVerificationRequestFromPrisma } from "../../../utils/email/send-verification-request";
 
 // https://next-auth.js.org/configuration/options#secret
@@ -49,7 +50,7 @@ export default NextAuth({
     }),
   ],
   adapter: PrismaAdapter(globalThis.prismaInstance),
-  secret: process.env.JWT_SECRET,
+  secret: JWT_SECRET,
   session: { strategy: "jwt" },
   // Uncomment to implement your custom pages
   pages: {

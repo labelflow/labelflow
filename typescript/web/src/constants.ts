@@ -21,3 +21,5 @@ export const WEB_APP_URL_ORIGIN =
 export const DOCUMENTATION_URL = "https://docs.labelflow.ai/";
 
 export const LAST_WORKSPACE_ID_COOKIE_NAME = "lastWorkspaceId";
+
+export const JWT_SECRET = process.env.JWT_SECRET ?? "";

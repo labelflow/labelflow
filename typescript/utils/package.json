@@ -6,6 +6,7 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "lodash": "4.17.21"
+    "lodash": "4.17.21",
+    "slugify": "1.6.5"
   }
 }

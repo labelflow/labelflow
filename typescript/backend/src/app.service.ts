@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import { Injectable } from "@nestjs/common";
 
 @Injectable()

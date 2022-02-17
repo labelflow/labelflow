@@ -7,10 +7,11 @@ import {
   QueryDatasetsArgs,
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
+import { getSlug } from "@labelflow/utils";
 import { trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
 import { Context, DbDataset, Repository } from "./types";
-import { getSlug, addTypename, addTypenames } from "./utils";
+import { addTypename, addTypenames } from "./utils";
 
 const getLabelClassesByDatasetId = async (
   datasetId: string,

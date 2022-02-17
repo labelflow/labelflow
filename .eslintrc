@@ -5,6 +5,7 @@
     "plugin:react-hooks/recommended"
   ],
   "rules": {
+    "class-methods-use-this": "off",
     "func-names": ["error", "always"],
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
@@ -27,6 +28,18 @@
     ]
   },
   "overrides": [
+    {
+      "files": ["typescript/backend/src/**/*.ts"],
+      "rules": {
+        "react/destructuring-assignment": "off"
+      }
+    },
+    {
+      "files": ["typescript/backend/src/model/**/*.@(model|entity).ts"],
+      "rules": {
+        "import/no-cycle": "off"
+      }
+    },
     {
       "files": ["cypress/**/*.ts"],
       "rules": {
