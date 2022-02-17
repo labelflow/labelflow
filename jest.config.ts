@@ -49,7 +49,7 @@ export default {
       setupFiles: ["jest-canvas-mock"],
       testEnvironment: "node",
       testMatch: [
-        "<rootDir>/typescript/(common-resolvers|db|utils)/src/**/(*.)+test.{ts,tsx}",
+        "<rootDir>/typescript/(common-resolvers|db|utils|backend)/src/**/(*.)+test.{ts,tsx}",
       ],
     },
   ],

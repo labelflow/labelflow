@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "lib": ["DOM", "ES2020"],
     "allowJs": true,
-    "alwaysStrict": true,
     "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "lib": ["dom", "es2020"],
     "moduleResolution": "node",
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
@@ -16,8 +18,6 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "esnext",
-    "module": "esnext",
     "strictNullChecks": true
   },
   "include": ["**/*.ts", "**/*.tsx"],

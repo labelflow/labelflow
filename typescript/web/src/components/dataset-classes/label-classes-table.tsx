@@ -55,9 +55,11 @@ const TableHead = () => (
 
 export const TableBody = () => {
   const { labelClasses, onReorder, searchText } = useDatasetClasses();
-  const filteredClasses = labelClasses?.filter((labelClass) =>
-    labelClass.name.toLowerCase()?.includes(searchText.toLowerCase())
-  );
+  const filteredClasses = labelClasses
+    ?.filter((labelClass) =>
+      labelClass.name.toLowerCase()?.includes(searchText.toLowerCase())
+    )
+    ?.sort((a, b) => a.index - b.index);
   return (
     <ReorderableTableBody onReorder={onReorder}>
       {(filteredClasses ?? []).map((labelClass, index) => (
