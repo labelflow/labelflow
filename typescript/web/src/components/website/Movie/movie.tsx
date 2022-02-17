@@ -1,11 +1,4 @@
-import {
-  Box,
-  Heading,
-  Flex,
-  useTheme,
-  Center,
-  AspectRatio,
-} from "@chakra-ui/react";
+import { Box, Heading, Flex, Center, AspectRatio } from "@chakra-ui/react";
 import * as React from "react";
 
 export const Movie = () => {

@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import { chakraDecorator } from "../../utils/chakra-decorator";
+import { chakraDecorator } from "../../utils/stories";
 import { KpiDashboard } from "./kpi-dashboard";
 
 export default {
