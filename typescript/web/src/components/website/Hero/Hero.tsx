@@ -134,7 +134,7 @@ export function Hero() {
             direction="column"
             justify="center"
             flexGrow={1}
-            pos="absolut"
+            pos="relative"
             minW={{ base: "full", lg: "560px" }}
             h={{ base: "auto", lg: "560px" }}
           >
