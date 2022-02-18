@@ -1,9 +1,11 @@
 import {
   ModalBody as ChakraModalBody,
+  SimpleGrid,
   Skeleton,
-  Stack,
 } from "@chakra-ui/react";
 import { Dispatch, SetStateAction } from "react";
+import { APP_NEW_EXPORT_REQUEST_URL } from "../../../constants";
+import { ExportCard } from "./export-card";
 import { ExportFormatCard } from "./export-format-card";
 import { useExportModal } from "./export-modal.context";
 import { formatMainInformation } from "./formats";
@@ -22,8 +24,8 @@ export const ModalBody = () => {
       pb={6}
       flexDirection="column"
     >
-      <Stack
-        direction={{ base: "column", md: "row" }}
+      <SimpleGrid
+        columns={{ base: 1, md: 2 }}
         spacing="4"
         justifyContent="center"
         pt={6}
@@ -44,7 +46,14 @@ export const ModalBody = () => {
             </Skeleton>
           );
         })}
-      </Stack>
+        <ExportCard
+          colorScheme="brand"
+          logoSrc="/static/export-formats/request.svg"
+          title="Request new Format"
+          subtext="Let us know the export format you need"
+          href={APP_NEW_EXPORT_REQUEST_URL}
+        />
+      </SimpleGrid>
     </ChakraModalBody>
   );
 };

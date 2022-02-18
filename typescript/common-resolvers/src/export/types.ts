@@ -1,9 +1,15 @@
-import { ExportOptionsCoco, ExportOptionsYolo } from "@labelflow/graphql-types";
+import {
+  ExportOptionsCoco,
+  ExportOptionsYolo,
+  ExportOptionsCsv,
+} from "@labelflow/graphql-types";
 import { Context } from "../types";
 
-export type ExportFunction = (
+export type ExportFunction<
+  TOptions extends ExportOptionsCoco | ExportOptionsYolo | ExportOptionsCsv
+> = (
   datasetId: string,
-  options: ExportOptionsCoco | ExportOptionsYolo,
+  options: TOptions,
   context: Context,
   user?: { id: string }
 ) => Promise<Blob>;

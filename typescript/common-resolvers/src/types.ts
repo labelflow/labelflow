@@ -214,6 +214,7 @@ export type Repository = {
     ) => Promise<UploadTarget> | UploadTarget;
     put: (url: string, file: Blob, req?: Request) => Promise<void>;
     get: (url: string, req?: Request) => Promise<ArrayBuffer>;
+    getSignedDownloadUrl: (key: string, expiresIn: number) => Promise<string>;
     delete: (url: string) => Promise<void>;
   };
   imageProcessing: {

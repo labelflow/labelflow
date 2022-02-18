@@ -6,7 +6,7 @@ import {
 export type Format = keyof ExportOptions;
 type RequiredExportOptions = Required<ExportOptions>;
 
-export const defaultOptions: RequiredExportOptions = {
+export const DEFAULT_EXPORT_OPTIONS: RequiredExportOptions = {
   coco: {
     exportImages: false,
   },
@@ -14,6 +14,7 @@ export const defaultOptions: RequiredExportOptions = {
     exportImages: false,
     includePolygons: false,
   },
+  csv: { includeImageUrl: false },
 };
 
 export const formatMainInformation: {
@@ -36,11 +37,20 @@ export const formatMainInformation: {
     title: "Export to YOLO",
     description: "Annotation file used by YOLO frameworks",
   },
+  csv: {
+    format: ExportFormat.CSV,
+    logoSrc: "/static/export-formats/csv.svg",
+    title: "Export to CSV",
+    description: "List of classes contained in each image",
+  },
 };
 
 export const formatsOptionsInformation: {
   [formatKey in keyof RequiredExportOptions]: {
-    [optionKey in keyof Exclude<RequiredExportOptions[formatKey], null>]: {
+    [optionKey in keyof Omit<
+      Exclude<RequiredExportOptions[formatKey], null>,
+      "name"
+    >]: {
       title: string;
       description: string;
     };
@@ -73,6 +83,12 @@ export const formatsOptionsInformation: {
       title: "Include polygons",
       description:
         "Include polygon labels, replacing them by their bounding box when exporting.",
+    },
+  },
+  csv: {
+    includeImageUrl: {
+      title: "Export image URLs",
+      description: "Add a column containing images URLS, valid for 7 days",
     },
   },
 };

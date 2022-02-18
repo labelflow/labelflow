@@ -112,18 +112,25 @@ export type ExampleWhereUniqueInput = {
 
 export enum ExportFormat {
   Yolo = 'YOLO',
-  Coco = 'COCO'
+  Coco = 'COCO',
+  Csv = 'CSV'
 }
 
 export type ExportOptions = {
   coco?: Maybe<ExportOptionsCoco>;
   yolo?: Maybe<ExportOptionsYolo>;
+  csv?: Maybe<ExportOptionsCsv>;
 };
 
 export type ExportOptionsCoco = {
   name?: Maybe<Scalars['String']>;
   exportImages?: Maybe<Scalars['Boolean']>;
   avoidImageNameCollisions?: Maybe<Scalars['Boolean']>;
+};
+
+export type ExportOptionsCsv = {
+  name?: Maybe<Scalars['String']>;
+  includeImageUrl?: Maybe<Scalars['Boolean']>;
 };
 
 export type ExportOptionsYolo = {
@@ -954,6 +961,7 @@ export type ResolversTypes = {
   ExportOptions: ExportOptions;
   ExportOptionsCoco: ExportOptionsCoco;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  ExportOptionsCsv: ExportOptionsCsv;
   ExportOptionsYolo: ExportOptionsYolo;
   ExportWhereUniqueInput: ExportWhereUniqueInput;
   Geometry: ResolverTypeWrapper<Geometry>;
@@ -1038,6 +1046,7 @@ export type ResolversParentTypes = {
   ExportOptions: ExportOptions;
   ExportOptionsCoco: ExportOptionsCoco;
   Boolean: Scalars['Boolean'];
+  ExportOptionsCsv: ExportOptionsCsv;
   ExportOptionsYolo: ExportOptionsYolo;
   ExportWhereUniqueInput: ExportWhereUniqueInput;
   Geometry: Geometry;

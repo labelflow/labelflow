@@ -14,12 +14,10 @@ import {
 } from "../../../utils/tests/apollo-mock";
 import { EXPORT_DATASET_URL_QUERY } from "./export-dataset";
 import { COUNT_LABELS_OF_DATASET_QUERY } from "./export-modal.context";
+import { DEFAULT_EXPORT_OPTIONS } from "./formats";
 import { getDatasetExportName } from "./get-dataset-export-name";
 
-const datasetName = getDatasetExportName(
-  BASIC_DATASET_DATA.slug,
-  ExportFormat.COCO
-);
+const datasetName = getDatasetExportName(BASIC_DATASET_DATA.slug);
 
 const EXPORT_DATASET_URL_MOCK: ApolloMockResponse<
   ExportDatasetUrlQuery,
@@ -31,15 +29,9 @@ const EXPORT_DATASET_URL_MOCK: ApolloMockResponse<
       datasetId: BASIC_DATASET_DATA.id,
       format: ExportFormat.COCO,
       options: {
-        coco: {
-          exportImages: false,
-          name: datasetName,
-        },
-        yolo: {
-          exportImages: false,
-          includePolygons: false,
-          name: datasetName,
-        },
+        coco: { ...DEFAULT_EXPORT_OPTIONS.coco, name: datasetName },
+        yolo: { ...DEFAULT_EXPORT_OPTIONS.yolo, name: datasetName },
+        csv: { ...DEFAULT_EXPORT_OPTIONS.csv, name: datasetName },
       },
     },
   },
@@ -68,7 +60,6 @@ const COUNT_LABELS_OF_DATASET_MOCK: ApolloMockResponse<
         id: BASIC_DATASET_DATA.id,
         imagesAggregates: { totalCount: 1 },
         labelsAggregates: { totalCount: 2 },
-        labels: [],
       },
     },
   },

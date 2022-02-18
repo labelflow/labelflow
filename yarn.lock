@@ -7985,6 +7985,7 @@ __metadata:
     "@turf/intersect": 6.5.0
     "@turf/meta": 6.5.0
     "@types/mime-types": 2.1.0
+    csv-stringify: 6.0.5
     date-fns: 2.23.0
     graphql: 15.5.1
     graphql-type-json: 0.3.2
@@ -19410,6 +19411,13 @@ __metadata:
   version: 3.0.8
   resolution: "csstype@npm:3.0.8"
   checksum: 5939a003858a31a32cbc52a8f45496aa0c2bcb4629b21c5bc14a7ddcac1a3d4adfd655f56843dc14940f60563378e9444af2c9c373b3f212601b9eeb6740b8db
+  languageName: node
+  linkType: hard
+
+"csv-stringify@npm:6.0.5":
+  version: 6.0.5
+  resolution: "csv-stringify@npm:6.0.5"
+  checksum: a51c5af6a610fa7713e63983d440f29acdc60cfe348c8a1d4fcbd72463d9fc2303d979ee5ab0ff2ce772bea09e7f5c2f8394ce10388d3312081e65332b8ae295
   languageName: node
   linkType: hard
 

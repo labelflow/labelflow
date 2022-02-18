@@ -25,6 +25,24 @@ export const EXPORT_DATASET_URL_QUERY = gql`
   }
 `;
 
+const getExtension = (format: ExportFormat, options: ExportOptions): string => {
+  switch (format) {
+    case ExportFormat.COCO: {
+      const suffix = options.coco?.exportImages ? "zip" : "json";
+      return `coco.${suffix}`;
+    }
+    case ExportFormat.YOLO: {
+      return "yolo.zip";
+    }
+    case ExportFormat.CSV: {
+      return "csv";
+    }
+    default: {
+      throw new Error("Unsupported format");
+    }
+  }
+};
+
 export const exportDataset = async ({
   datasetId,
   datasetSlug,
@@ -41,7 +59,7 @@ export const exportDataset = async ({
   options: ExportOptions;
 }) => {
   setIsExportRunning(true);
-  const datasetName = getDatasetExportName(datasetSlug, format);
+  const datasetName = getDatasetExportName(datasetSlug);
   const {
     data: { exportDataset: exportDatasetUrl },
   } = await client.query<ExportDatasetUrlQuery, ExportDatasetUrlQueryVariables>(
@@ -53,6 +71,7 @@ export const exportDataset = async ({
         options: {
           coco: { ...options.coco, name: datasetName },
           yolo: { ...options.yolo, name: datasetName },
+          csv: { ...options.csv, name: datasetName },
         },
       },
     }
@@ -60,8 +79,7 @@ export const exportDataset = async ({
   const blobDataset = await (await fetch(exportDatasetUrl)).blob();
   const url = window.URL.createObjectURL(blobDataset);
   const element = document.createElement("a");
-  const extension =
-    format === ExportFormat.YOLO || options.coco?.exportImages ? "zip" : "json";
+  const extension = getExtension(format, options);
   element.href = url;
   element.download = `${datasetName}.${extension}`;
   setIsExportRunning(false);

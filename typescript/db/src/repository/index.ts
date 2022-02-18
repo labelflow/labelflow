@@ -14,6 +14,7 @@ import { countLabels, listLabels } from "./label";
 import {
   deleteFromStorage,
   getFromStorage,
+  getSignedDownloadUrl,
   getUploadTargetHttp,
   putInStorage,
 } from "./upload-s3";
@@ -344,6 +345,7 @@ export const repository: Repository = {
   upload: {
     delete: deleteFromStorage,
     get: getFromStorage,
+    getSignedDownloadUrl,
     getUploadTarget: getUploadTargetHttp,
     getUploadTargetHttp,
     put: putInStorage,

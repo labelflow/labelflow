@@ -2,10 +2,10 @@ import { ExportOptionsYolo, LabelType } from "@labelflow/graphql-types";
 import { isEmpty, groupBy } from "lodash/fp";
 import JSZip from "jszip";
 import mime from "mime-types";
-import { DbImage, DbLabel, DbLabelClass } from "../../types";
-import { getImageName } from "../common";
+import { DbImage, DbLabel, DbLabelClass } from "../types";
+import { getImageName } from "./common";
 
-import { ExportFunction } from "../types";
+import { ExportFunction } from "./types";
 
 const groupLabelsByImage = (labelsArray: DbLabel[]) => {
   return isEmpty(labelsArray) ? {} : groupBy("imageId", labelsArray);
@@ -65,11 +65,10 @@ export const generateLabelsOfImageFile = (
     .trim();
 };
 
-export const exportToYolo: ExportFunction = async (
+export const exportToYolo: ExportFunction<ExportOptionsYolo> = async (
   datasetId,
-  options: ExportOptionsYolo = {},
-  { repository, req },
-  user
+  options = {},
+  { repository, req, user }
 ) => {
   const images = await repository.image.list({ datasetId, user });
   const labelClasses = await repository.labelClass.list({ datasetId, user });
