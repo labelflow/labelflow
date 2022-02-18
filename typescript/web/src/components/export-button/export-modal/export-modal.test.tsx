@@ -25,18 +25,16 @@ describe(ExportModal, () => {
     window.URL.createObjectURL = jest.fn();
     const { getByRole, getByText } = await renderTest();
 
-    const anchorMocked = {
-      href: "",
-      click: jest.fn(),
-    } as any;
     const createElementOriginal = document.createElement.bind(document);
+    const onDownload = jest.fn();
     jest
       .spyOn(document, "createElement")
       .mockImplementation((name, options) => {
+        const element = createElementOriginal(name, options);
         if (name === "a") {
-          return anchorMocked;
+          element.click = onDownload;
         }
-        return createElementOriginal(name, options);
+        return element;
       });
 
     await waitFor(() => {
@@ -45,10 +43,10 @@ describe(ExportModal, () => {
     });
     userEvent.click(getByRole("button", { name: "Export" }));
 
-    await waitFor(() => expect(anchorMocked.click).toHaveBeenCalledTimes(1));
-    await waitFor(() =>
-      expect(window.URL.createObjectURL).toHaveBeenCalledTimes(1)
-    );
+    await waitFor(() => {
+      expect(window.URL.createObjectURL).toHaveBeenCalledTimes(1);
+      expect(onDownload).toHaveBeenCalledTimes(1);
+    });
   });
 
   it("displays the number of labels", async () => {
