@@ -14,7 +14,7 @@ export const defaultOptions: RequiredExportOptions = {
     exportImages: false,
     includePolygons: false,
   },
-  csv: { exportImageUrls: false },
+  csv: { includeImageUrl: false },
 };
 
 export const formatMainInformation: {
@@ -83,7 +83,7 @@ export const formatsOptionsInformation: {
     },
   },
   csv: {
-    exportImageUrls: {
+    includeImageUrl: {
       title: "Export image URLs",
       description: "Add a column containing images URLS, valid for 7 days",
     },

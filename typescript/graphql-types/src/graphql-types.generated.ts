@@ -130,7 +130,7 @@ export type ExportOptionsCoco = {
 
 export type ExportOptionsCsv = {
   name?: Maybe<Scalars['String']>;
-  exportImageUrls?: Maybe<Scalars['Boolean']>;
+  includeImageUrl?: Maybe<Scalars['Boolean']>;
 };
 
 export type ExportOptionsYolo = {

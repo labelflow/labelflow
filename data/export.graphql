@@ -19,7 +19,7 @@ input ExportOptionsYolo {
 
 input ExportOptionsCsv {
   name: String
-  exportImageUrls: Boolean
+  includeImageUrl: Boolean
 }
 
 input ExportOptions {

@@ -118,7 +118,7 @@ const createRow = async (
     x + width,
     y + height,
   ];
-  if (options.exportImageUrls)
+  if (options.includeImageUrl)
     row.push(await getImageSignedUrl(workspaceId, datasetId, image.url, ctx));
   return row;
 };
@@ -179,7 +179,7 @@ export const exportToCsv: ExportFunction<ExportOptionsCsv> = async (
   const rows = await createRowsFromDb(datasetId, options, ctx);
   const csv = await stringifyCsvAsync(rows, {
     header: true,
-    columns: options.exportImageUrls ? [...CSV_HEADER, "imageUrl"] : CSV_HEADER,
+    columns: options.includeImageUrl ? [...CSV_HEADER, "imageUrl"] : CSV_HEADER,
   });
   return new Blob([csv], { type: "application/csv" });
 };
