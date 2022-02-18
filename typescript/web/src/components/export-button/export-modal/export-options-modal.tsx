@@ -21,7 +21,7 @@ import { ExportOptions } from "../../../graphql-types/globalTypes";
 import { trackEvent } from "../../../utils/google-analytics";
 import { exportDataset } from "./export-dataset";
 import { useExportModal } from "./export-modal.context";
-import { defaultOptions, formatsOptionsInformation } from "./formats";
+import { DEFAULT_EXPORT_OPTIONS, formatsOptionsInformation } from "./formats";
 
 const OptionLine = ({
   header,
@@ -60,8 +60,9 @@ export const ExportOptionsModal = () => {
     setIsOptionsModalOpen,
   } = useExportModal();
   const client = useApolloClient();
-  const [exportOptions, setExportOptions] =
-    useState<ExportOptions>(defaultOptions);
+  const [exportOptions, setExportOptions] = useState<ExportOptions>(
+    DEFAULT_EXPORT_OPTIONS
+  );
   const exportFormatLowerCase =
     exportFormat.toLowerCase() as Lowercase<ExportFormat>;
   const formatOptionsInformation =
