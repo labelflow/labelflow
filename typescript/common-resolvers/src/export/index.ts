@@ -1,11 +1,11 @@
 import { QueryExportDatasetArgs, ExportFormat } from "@labelflow/graphql-types";
 import { v4 as uuidv4 } from "uuid";
 
-import { exportToCoco } from "./format-coco/index";
-import { exportToYolo } from "./format-yolo/index";
+import { exportToYolo } from "./export-to-yolo";
+import { exportToCoco } from "./format-coco";
 import { Context } from "../types";
 import { getOrigin } from "../utils/get-origin";
-import { exportToCsv } from "./csv";
+import { exportToCsv } from "./export-to-csv";
 
 const generateExportFile = async (
   args: QueryExportDatasetArgs,

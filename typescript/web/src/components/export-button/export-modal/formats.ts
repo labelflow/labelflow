@@ -6,7 +6,7 @@ import {
 export type Format = keyof ExportOptions;
 type RequiredExportOptions = Required<ExportOptions>;
 
-export const defaultOptions: RequiredExportOptions = {
+export const DEFAULT_EXPORT_OPTIONS: RequiredExportOptions = {
   coco: {
     exportImages: false,
   },

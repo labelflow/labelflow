@@ -1,5 +1,5 @@
 import { LabelType } from "@labelflow/graphql-types";
-import { DbLabelClass, DbLabel, DbImageCreateInput } from "../../types";
+import { DbLabelClass, DbLabel, DbImageCreateInput } from "../types";
 import {
   generateNamesFile,
   generateDataFile,

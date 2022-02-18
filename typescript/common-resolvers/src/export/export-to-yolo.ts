@@ -2,10 +2,10 @@ import { ExportOptionsYolo, LabelType } from "@labelflow/graphql-types";
 import { isEmpty, groupBy } from "lodash/fp";
 import JSZip from "jszip";
 import mime from "mime-types";
-import { DbImage, DbLabel, DbLabelClass } from "../../types";
-import { getImageName } from "../common";
+import { DbImage, DbLabel, DbLabelClass } from "../types";
+import { getImageName } from "./common";
 
-import { ExportFunction } from "../types";
+import { ExportFunction } from "./types";
 
 const groupLabelsByImage = (labelsArray: DbLabel[]) => {
   return isEmpty(labelsArray) ? {} : groupBy("imageId", labelsArray);

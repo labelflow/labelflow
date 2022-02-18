@@ -93,13 +93,8 @@ export const getFromStorage: Repository["upload"]["get"] = async (url, req) => {
 
 export const getSignedDownloadUrl: Repository["upload"]["getSignedDownloadUrl"] =
   async (key, expiresIn) => {
-    const command = new GetObjectCommand({
-      Bucket: bucket,
-      Key: key,
-    });
-    return await getSignedUrl(getClient(), command, {
-      expiresIn,
-    });
+    const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+    return await getSignedUrl(getClient(), command, { expiresIn });
   };
 
 export const deleteFromStorage: Repository["upload"]["delete"] = async (
