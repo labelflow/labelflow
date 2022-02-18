@@ -121,7 +121,7 @@ const createRow = async (
     Math.round(x + width),
     Math.round(y + height),
   ];
-  if (!options.includeImageUrl) {
+  if (options.includeImageUrl) {
     const url = await getImageSignedUrl(image.url, ctx);
     row.push(url);
   }
