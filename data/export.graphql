@@ -1,7 +1,7 @@
 enum ExportFormat {
   YOLO
   COCO
-  TensorFlowCSV
+  CSV
 }
 
 input ExportOptionsCoco {
@@ -17,9 +17,15 @@ input ExportOptionsYolo {
   avoidImageNameCollisions: Boolean
 }
 
+input ExportOptionsCsv {
+  name: String
+  exportImageUrls: Boolean
+}
+
 input ExportOptions {
   coco: ExportOptionsCoco
   yolo: ExportOptionsYolo
+  csv: ExportOptionsCsv
 }
 
 input ExportWhereUniqueInput {

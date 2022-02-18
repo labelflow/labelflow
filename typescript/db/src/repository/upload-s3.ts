@@ -1,4 +1,8 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import "isomorphic-fetch";
 import memoizeOne from "memoize-one";
@@ -86,6 +90,17 @@ export const getFromStorage: Repository["upload"]["get"] = async (url, req) => {
   }
   return await fetchResult.arrayBuffer();
 };
+
+export const getSignedDownloadUrl: Repository["upload"]["getSignedDownloadUrl"] =
+  async (key, expiresIn) => {
+    const command = new GetObjectCommand({
+      Bucket: bucket,
+      Key: key,
+    });
+    return await getSignedUrl(getClient(), command, {
+      expiresIn,
+    });
+  };
 
 export const deleteFromStorage: Repository["upload"]["delete"] = async (
   url

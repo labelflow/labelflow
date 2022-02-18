@@ -68,8 +68,7 @@ export const generateLabelsOfImageFile = (
 export const exportToYolo: ExportFunction<ExportOptionsYolo> = async (
   datasetId,
   options = {},
-  { repository, req },
-  user
+  { repository, req, user }
 ) => {
   const images = await repository.image.list({ datasetId, user });
   const labelClasses = await repository.labelClass.list({ datasetId, user });

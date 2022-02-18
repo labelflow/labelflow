@@ -25,6 +25,23 @@ export const EXPORT_DATASET_URL_QUERY = gql`
   }
 `;
 
+const getExtension = (format: ExportFormat, options: ExportOptions): string => {
+  switch (format) {
+    case ExportFormat.COCO: {
+      return options.coco?.exportImages ? "zip" : "json";
+    }
+    case ExportFormat.YOLO: {
+      return "zip";
+    }
+    case ExportFormat.CSV: {
+      return "csv";
+    }
+    default: {
+      throw new Error("Unsupported format");
+    }
+  }
+};
+
 export const exportDataset = async ({
   datasetId,
   datasetSlug,
@@ -53,6 +70,7 @@ export const exportDataset = async ({
         options: {
           coco: { ...options.coco, name: datasetName },
           yolo: { ...options.yolo, name: datasetName },
+          csv: { ...options.csv, name: datasetName },
         },
       },
     }
@@ -60,8 +78,7 @@ export const exportDataset = async ({
   const blobDataset = await (await fetch(exportDatasetUrl)).blob();
   const url = window.URL.createObjectURL(blobDataset);
   const element = document.createElement("a");
-  const extension =
-    format === ExportFormat.YOLO || options.coco?.exportImages ? "zip" : "json";
+  const extension = getExtension(format, options);
   element.href = url;
   element.download = `${datasetName}.${extension}`;
   setIsExportRunning(false);

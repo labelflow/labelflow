@@ -14,6 +14,7 @@ export const defaultOptions: RequiredExportOptions = {
     exportImages: false,
     includePolygons: false,
   },
+  csv: { exportImageUrls: false },
 };
 
 export const formatMainInformation: {
@@ -35,6 +36,12 @@ export const formatMainInformation: {
     logoSrc: "/static/export-formats/yolo.png",
     title: "Export to YOLO",
     description: "Annotation file used by YOLO frameworks",
+  },
+  csv: {
+    format: ExportFormat.CSV,
+    logoSrc: "/static/export-formats/csv.svg",
+    title: "Export to CSV",
+    description: "List of classes contained in each image",
   },
 };
 
@@ -73,6 +80,12 @@ export const formatsOptionsInformation: {
       title: "Include polygons",
       description:
         "Include polygon labels, replacing them by their bounding box when exporting.",
+    },
+  },
+  csv: {
+    exportImageUrls: {
+      title: "Export image URLs",
+      description: "Add a column containing images URLS, valid for 7 days",
     },
   },
 };

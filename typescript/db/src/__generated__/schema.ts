@@ -90,18 +90,24 @@ export const typeDefs = [
   enum ExportFormat {
     YOLO
     COCO
-    TensorFlowCSV
+    CSV
   }
 
   input ExportOptions {
     coco: ExportOptionsCoco
     yolo: ExportOptionsYolo
+    csv: ExportOptionsCsv
   }
 
   input ExportOptionsCoco {
     name: String
     exportImages: Boolean
     avoidImageNameCollisions: Boolean
+  }
+
+  input ExportOptionsCsv {
+    name: String
+    exportImageUrls: Boolean
   }
 
   input ExportOptionsYolo {
