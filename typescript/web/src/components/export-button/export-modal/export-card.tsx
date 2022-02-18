@@ -39,7 +39,13 @@ export const ExportCard = ({
     <OptionalParent
       enabled={!isEmpty(href)}
       parent={Link}
-      parentProps={{ href, rel: "noreferrer", isExternal: true, tabIndex: -1 }}
+      parentProps={{
+        href,
+        rel: "noreferrer",
+        isExternal: true,
+        tabIndex: -1,
+        style: { textDecoration: "none" },
+      }}
     >
       <Box
         alignItems="flex-start"
