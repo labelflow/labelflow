@@ -18,43 +18,34 @@ export interface Link {
 export const links: Link[] = [
   { label: "Product", href: "/website" },
   // { label: "For Labeling workers", href: "#" },
-  // {
-  //   label: "Resources",
-  //   children: [
-  //     {
-  //       label: "Get Help",
-  //       description: "Read our documentation and FAQs, or get in touch.",
-  //       href: "#",
-  //       icon: <IoHelpBuoy />,
-  //     },
-  //     {
-  //       label: "Events & Meetups",
-  //       description: "Discover and join your local Sketch community.",
-  //       href: "#",
-  //       icon: <IoCalendar />,
-  //     },
-  //     {
-  //       label: "Extensions",
-  //       description: "Do even more with Assistants, plugins and integrations.",
-  //       href: "#",
-  //       icon: <IoGrid />,
-  //     },
-  //     {
-  //       label: "Blog",
-  //       description: "Get updates, articles and insights from the team.",
-  //       href: "#",
-  //       icon: <MdWeb />,
-  //     },
-  //   ],
-  // },
+
   { label: "Pricing", href: "/pricing" },
-  { label: "About", href: "/about" },
-  { label: "Blog", href: "/posts" },
   { label: "Open", href: "/open" },
   {
-    label: "Documentation",
-    href: DOCUMENTATION_URL,
-    target: "_blank",
+    label: "Resources",
+    children: [
+      { label: "Blog", href: "/posts" },
+      {
+        label: "Documentation",
+        href: DOCUMENTATION_URL,
+        target: "_blank",
+      },
+      { label: "About", href: "/about" },
+      {
+        label: "Jobs",
+        href: "https://labelflow.recruitee.com",
+        target: "_blank",
+      },
+    ],
   },
-  { label: "Jobs", href: "https://labelflow.recruitee.com", target: "_blank" },
 ];
+
+/* { label: "About", href: "/about" },
+{ label: "Blog", href: "/posts" },
+
+{
+  label: "Documentation",
+  href: DOCUMENTATION_URL,
+  target: "_blank",
+},
+{ label: "Jobs", href: "https://labelflow.recruitee.com", target: "_blank" }, */
