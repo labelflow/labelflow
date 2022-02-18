@@ -28,10 +28,11 @@ export const EXPORT_DATASET_URL_QUERY = gql`
 const getExtension = (format: ExportFormat, options: ExportOptions): string => {
   switch (format) {
     case ExportFormat.COCO: {
-      return options.coco?.exportImages ? "zip" : "json";
+      const suffix = options.coco?.exportImages ? "zip" : "json";
+      return `coco.${suffix}`;
     }
     case ExportFormat.YOLO: {
-      return "zip";
+      return "yolo.zip";
     }
     case ExportFormat.CSV: {
       return "csv";
@@ -58,7 +59,7 @@ export const exportDataset = async ({
   options: ExportOptions;
 }) => {
   setIsExportRunning(true);
-  const datasetName = getDatasetExportName(datasetSlug, format);
+  const datasetName = getDatasetExportName(datasetSlug);
   const {
     data: { exportDataset: exportDatasetUrl },
   } = await client.query<ExportDatasetUrlQuery, ExportDatasetUrlQueryVariables>(
