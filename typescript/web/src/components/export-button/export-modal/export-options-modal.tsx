@@ -13,13 +13,15 @@ import {
   Switch,
   Text,
 } from "@chakra-ui/react";
-import { useCallback, useState } from "react";
+import { ExportFormat } from "@labelflow/graphql-types";
 import { isNil } from "lodash";
-import { trackEvent } from "../../../utils/google-analytics";
-import { useExportModal } from "./export-modal.context";
-import { defaultOptions, Format, formatsOptionsInformation } from "./formats";
-import { exportDataset } from "./export-dataset";
+import { isEmpty } from "lodash/fp";
+import { useCallback, useState } from "react";
 import { ExportOptions } from "../../../graphql-types/globalTypes";
+import { trackEvent } from "../../../utils/google-analytics";
+import { exportDataset } from "./export-dataset";
+import { useExportModal } from "./export-modal.context";
+import { defaultOptions, formatsOptionsInformation } from "./formats";
 
 const OptionLine = ({
   header,
@@ -60,7 +62,8 @@ export const ExportOptionsModal = () => {
   const client = useApolloClient();
   const [exportOptions, setExportOptions] =
     useState<ExportOptions>(defaultOptions);
-  const exportFormatLowerCase = exportFormat.toLowerCase() as Format;
+  const exportFormatLowerCase =
+    exportFormat.toLowerCase() as Lowercase<ExportFormat>;
   const formatOptionsInformation =
     formatsOptionsInformation[exportFormatLowerCase];
   const optionsOfFormat = exportOptions[exportFormatLowerCase];
@@ -81,18 +84,17 @@ export const ExportOptionsModal = () => {
 
   const handleChange = useCallback(
     (optionName) => {
-      setExportOptions((previousOptions) => ({
-        ...previousOptions,
-        [exportFormatLowerCase]: {
-          ...previousOptions[exportFormatLowerCase],
-          [optionName]:
-          // @ts-ignore
-            !previousOptions[exportFormatLowerCase][
-              // @ts-ignore
-              optionName as keyof typeof previousOptions[exportFormatLowerCase]
-            ],
-        },
-      }));
+      setExportOptions((previousOptions) => {
+        const prevOpts = previousOptions[exportFormatLowerCase];
+        const optionKey = optionName as keyof typeof prevOpts;
+        return {
+          ...previousOptions,
+          [exportFormatLowerCase]: {
+            ...prevOpts,
+            [optionName]: !prevOpts?.[optionKey],
+          },
+        };
+      });
     },
     [exportFormatLowerCase]
   );
@@ -124,26 +126,21 @@ export const ExportOptionsModal = () => {
           p={{ base: "2", md: "6" }}
           flexDirection="column"
         >
-          {Object.keys(formatOptionsInformation ?? {}).map((optionName) => {
-            const information = (
-              formatOptionsInformation as Required<
-                typeof formatOptionsInformation
-              >
-            )[optionName as keyof typeof formatOptionsInformation];
-            return (
-              <OptionLine
-                key={optionName}
-                header={information.title}
-                description={information.description}
-                isChecked={
-                  optionsOfFormat?.[
-                    optionName as keyof typeof optionsOfFormat
-                  ] as boolean
-                }
-                onChange={() => handleChange(optionName)}
-              />
-            );
-          })}
+          {Object.entries(formatOptionsInformation ?? {}).map(
+            ([optionName, information]) => {
+              const optionKey =
+                optionName as keyof typeof formatOptionsInformation;
+              return (
+                <OptionLine
+                  key={optionName}
+                  header={information.title}
+                  description={information.description}
+                  isChecked={isEmpty(optionsOfFormat?.[optionKey])}
+                  onChange={() => handleChange(optionName)}
+                />
+              );
+            }
+          )}
           <Button
             colorScheme="brand"
             size="md"
