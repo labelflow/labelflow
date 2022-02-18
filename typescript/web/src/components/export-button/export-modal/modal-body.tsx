@@ -54,6 +54,7 @@ export const ModalBody = () => {
             href={APP_CANNY_EXPORT_FORMATS_URL}
             rel="noreferrer"
             isExternal
+            tabIndex={-1}
           >
             <ExportCard
               colorScheme="brand"
