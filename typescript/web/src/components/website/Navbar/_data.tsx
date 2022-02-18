@@ -12,6 +12,7 @@ export interface Link {
     description?: string;
     href: string;
     icon?: React.ReactElement;
+    target?: "_blank";
   }>;
 }
 
