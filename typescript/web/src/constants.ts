@@ -9,7 +9,7 @@ export const APP_OFFICIAL_URL = "https://labelflow.ai/";
 
 export const APP_GITHUB_URL = "https://github.com/labelflow/labelflow";
 
-export const APP_CANNY_EXPORT_FORMATS_URL =
+export const APP_NEW_EXPORT_REQUEST_URL =
   "https://labelflow.canny.io/export-formats";
 
 export const WEB_APP_URL_ORIGIN =

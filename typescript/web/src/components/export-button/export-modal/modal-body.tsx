@@ -4,7 +4,7 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 import { Dispatch, SetStateAction } from "react";
-import { APP_CANNY_EXPORT_FORMATS_URL } from "../../../constants";
+import { APP_NEW_EXPORT_REQUEST_URL } from "../../../constants";
 import { ExportCard } from "./export-card";
 import { ExportFormatCard } from "./export-format-card";
 import { useExportModal } from "./export-modal.context";
@@ -51,7 +51,7 @@ export const ModalBody = () => {
           logoSrc="/static/export-formats/request.svg"
           title="Request new Format"
           subtext="Let us know the export format you need"
-          href={APP_CANNY_EXPORT_FORMATS_URL}
+          href={APP_NEW_EXPORT_REQUEST_URL}
         />
       </SimpleGrid>
     </ChakraModalBody>
