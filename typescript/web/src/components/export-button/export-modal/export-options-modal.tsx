@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { ExportFormat } from "@labelflow/graphql-types";
 import { isNil } from "lodash";
-import { isEmpty } from "lodash/fp";
+import { omit } from "lodash/fp";
 import { useCallback, useState } from "react";
 import { ExportOptions } from "../../../graphql-types/globalTypes";
 import { trackEvent } from "../../../utils/google-analytics";
@@ -67,7 +67,7 @@ export const ExportOptionsModal = () => {
     exportFormat.toLowerCase() as Lowercase<ExportFormat>;
   const formatOptionsInformation =
     formatsOptionsInformation[exportFormatLowerCase];
-  const optionsOfFormat = exportOptions[exportFormatLowerCase];
+  const optionsOfFormat = omit(["name"], exportOptions[exportFormatLowerCase]);
   const exportFunction = useCallback(
     async (options: ExportOptions) => {
       if (isNil(datasetId)) return await Promise.resolve();
@@ -136,7 +136,7 @@ export const ExportOptionsModal = () => {
                   key={optionName}
                   header={information.title}
                   description={information.description}
-                  isChecked={isEmpty(optionsOfFormat?.[optionKey])}
+                  isChecked={optionsOfFormat?.[optionKey]}
                   onChange={() => handleChange(optionName)}
                 />
               );

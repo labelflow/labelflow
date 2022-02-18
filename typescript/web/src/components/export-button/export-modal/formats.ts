@@ -47,7 +47,10 @@ export const formatMainInformation: {
 
 export const formatsOptionsInformation: {
   [formatKey in keyof RequiredExportOptions]: {
-    [optionKey in keyof Exclude<RequiredExportOptions[formatKey], null>]: {
+    [optionKey in keyof Omit<
+      Exclude<RequiredExportOptions[formatKey], null>,
+      "name"
+    >]: {
       title: string;
       description: string;
     };
