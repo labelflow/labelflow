@@ -113,10 +113,10 @@ const createRow = async (
     image.width,
     image.height,
     labelClassName,
-    x,
-    y,
-    x + width,
-    y + height,
+    Math.round(x),
+    Math.round(y),
+    Math.round(x + width),
+    Math.round(y + height),
   ];
   if (options.includeImageUrl)
     row.push(await getImageSignedUrl(workspaceId, datasetId, image.url, ctx));
