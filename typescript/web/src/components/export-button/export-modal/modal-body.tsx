@@ -5,7 +5,6 @@ import {
   SimpleGrid,
   Skeleton,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
 import { Dispatch, SetStateAction } from "react";
 import { APP_CANNY_EXPORT_FORMATS_URL } from "../../../constants";
 import { ExportCard } from "./export-card";
