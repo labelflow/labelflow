@@ -1,4 +1,6 @@
 import {
+  Box,
+  Link,
   ModalBody as ChakraModalBody,
   SimpleGrid,
   Skeleton,
@@ -47,11 +49,11 @@ export const ModalBody = () => {
             </Skeleton>
           );
         })}
-        <NextLink href={APP_CANNY_EXPORT_FORMATS_URL} passHref>
-          <a
+        <Box>
+          <Link
             href={APP_CANNY_EXPORT_FORMATS_URL}
-            target="_blank"
             rel="noreferrer"
+            isExternal
           >
             <ExportCard
               colorScheme="brand"
@@ -59,8 +61,8 @@ export const ModalBody = () => {
               title="Request new Format"
               subtext="Let us know the export format you need"
             />
-          </a>
-        </NextLink>
+          </Link>
+        </Box>
       </SimpleGrid>
     </ChakraModalBody>
   );
