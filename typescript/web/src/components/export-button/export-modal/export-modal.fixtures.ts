@@ -38,7 +38,7 @@ const EXPORT_DATASET_URL_MOCK: ApolloMockResponse<
           name: datasetName,
         },
         csv: {
-          includeImageUrl: true,
+          includeImageUrl: false,
           name: datasetName,
         },
       },
