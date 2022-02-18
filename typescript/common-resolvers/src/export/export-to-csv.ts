@@ -12,6 +12,7 @@ import {
   DbLabelClass,
   DbWorkspaceWithType,
 } from "../types";
+import { getOrigin } from "../utils/get-origin";
 import { ExportFunction } from "./types";
 
 const stringifyCsvAsync = (
@@ -75,13 +76,15 @@ const getImage = (images: DbImage[], imageId: string): DbImage => {
 };
 
 const getImageSignedUrl = async (
-  workspaceId: string,
-  datasetId: string,
   imageUrl: string,
-  { repository }: Context
+  { req, repository }: Context
 ) => {
-  const keyPrefix = `${workspaceId}/${datasetId}/`;
-  const key = keyPrefix + imageUrl.split(keyPrefix)[1];
+  const origin = getOrigin(req);
+  const urlPrefix = `${origin}/api/downloads/`;
+  if (!imageUrl.startsWith(urlPrefix)) return imageUrl;
+  const key = imageUrl.substring(urlPrefix.length);
+  const isKey = /^[^/]+\/[^/]+\/[^/]+$/.test(key);
+  if (!isKey) return imageUrl;
   return await repository.upload.getSignedDownloadUrl(key, 7 * 24 * 60 * 60);
 };
 
@@ -118,8 +121,10 @@ const createRow = async (
     Math.round(x + width),
     Math.round(y + height),
   ];
-  if (options.includeImageUrl)
-    row.push(await getImageSignedUrl(workspaceId, datasetId, image.url, ctx));
+  if (!options.includeImageUrl) {
+    const url = await getImageSignedUrl(image.url, ctx);
+    row.push(url);
+  }
   return row;
 };
 
