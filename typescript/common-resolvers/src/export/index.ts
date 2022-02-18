@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/return-await */
 import { QueryExportDatasetArgs, ExportFormat } from "@labelflow/graphql-types";
 import { v4 as uuidv4 } from "uuid";
 
