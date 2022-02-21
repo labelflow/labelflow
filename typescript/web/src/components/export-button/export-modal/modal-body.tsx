@@ -49,6 +49,7 @@ export const ModalBody = () => {
         <ExportCard
           colorScheme="brand"
           logoSrc="/static/export-formats/request.svg"
+          logoUsesColorMode
           title="Request new Format"
           subtext="Let us know the export format you need"
           href={APP_NEW_EXPORT_REQUEST_URL}

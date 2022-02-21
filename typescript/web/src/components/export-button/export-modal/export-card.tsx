@@ -19,6 +19,7 @@ export type ExportCardProps = {
   onClick?: () => void;
   loading?: boolean;
   logoSrc: string;
+  logoUsesColorMode: boolean;
   title: string;
   subtext: string;
 };
@@ -30,6 +31,7 @@ export const ExportCard = ({
   href,
   loading,
   logoSrc,
+  logoUsesColorMode = false,
   title,
   subtext,
 }: ExportCardProps) => {
@@ -92,7 +94,17 @@ export const ExportCard = ({
           spacing={4}
           boxSizing="border-box"
         >
-          <Image src={logoSrc} w="16" flexGrow={0} flexShrink={0} />
+          <Image
+            src={logoSrc}
+            w="16"
+            flexGrow={0}
+            flexShrink={0}
+            filter={
+              logoUsesColorMode
+                ? mode("brightness(0)", "brightness(0) invert()")
+                : undefined
+            }
+          />
           <VStack
             alignItems="flex-start"
             spacing="1"

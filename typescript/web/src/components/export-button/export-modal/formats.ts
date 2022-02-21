@@ -14,13 +14,14 @@ export const DEFAULT_EXPORT_OPTIONS: RequiredExportOptions = {
     exportImages: false,
     includePolygons: false,
   },
-  csv: { includeImageUrl: false },
+  csv: {},
 };
 
 export const formatMainInformation: {
   [format in keyof RequiredExportOptions]: {
     format: ExportFormat;
     logoSrc: string;
+    logoUsesColorMode: boolean;
     title: string;
     description: string;
   };
@@ -28,18 +29,21 @@ export const formatMainInformation: {
   coco: {
     format: ExportFormat.COCO,
     logoSrc: "/static/export-formats/coco.png",
+    logoUsesColorMode: false,
     title: "Export to COCO",
     description: "Annotation file used with Pytorch and Detectron 2",
   },
   yolo: {
     format: ExportFormat.YOLO,
     logoSrc: "/static/export-formats/yolo.png",
+    logoUsesColorMode: false,
     title: "Export to YOLO",
     description: "Annotation file used by YOLO frameworks",
   },
   csv: {
     format: ExportFormat.CSV,
     logoSrc: "/static/export-formats/csv.svg",
+    logoUsesColorMode: true,
     title: "Export to CSV",
     description: "List of classes contained in each image",
   },
@@ -85,10 +89,5 @@ export const formatsOptionsInformation: {
         "Include polygon labels, replacing them by their bounding box when exporting.",
     },
   },
-  csv: {
-    includeImageUrl: {
-      title: "Export image URLs",
-      description: "Add a column containing images URLS, valid for 7 days",
-    },
-  },
+  csv: {},
 };

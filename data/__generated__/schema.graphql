@@ -105,7 +105,6 @@ input ExportOptionsCoco {
 
 input ExportOptionsCsv {
   name: String
-  includeImageUrl: Boolean
 }
 
 input ExportOptionsYolo {
