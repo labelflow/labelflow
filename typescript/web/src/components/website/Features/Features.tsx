@@ -71,8 +71,8 @@ export const Features = () => {
             <Link color="brand.600" href="https://labelflow.ai/open">
               KPIs public
             </Link>
-            , our code is open under Business Source Licence and that's just the
-            beginning.
+            , our code is open under Business Source Licence and that is just
+            the beginning.
           </Feature>
         </SimpleGrid>
       </Box>
