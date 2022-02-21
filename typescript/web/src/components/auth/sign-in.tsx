@@ -1,54 +1,47 @@
 import {
   Box,
   Heading,
-  SimpleGrid,
   Text,
   useColorModeValue as mode,
-  useColorModeValue,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 import React from "react";
 import { Logo } from "../logo";
+import { TextLink } from "../text-link";
 import { DividerWithText } from "./divider-with-text";
 import { EmailSignIn } from "./email-sign-in";
-import { Features } from "./features";
 import { OAuthSignIn } from "./oauth-sign-in";
 import { SignInError } from "./sign-in-error";
 import { useSignIn } from "./sign-in.context";
 
 const BigLogo = () => (
-  <Logo
-    h="9"
-    mb={{ base: "16", lg: "10" }}
-    iconColor="brand.600"
-    mx={{ base: "auto", lg: "unset" }}
-    visibility={{ base: "visible", lg: "hidden" }}
-  />
+  <NextLink href="/">
+    <Logo h="9" mb="10" iconColor="brand.600" mx="auto" cursor="pointer" />
+  </NextLink>
 );
 
-const RightHeader = () => (
-  <Box mb="8" textAlign={{ base: "center", lg: "start" }}>
-    <Heading size="lg" mb="2" fontWeight="extrabold">
+const Header = () => (
+  <Box mb="8" textAlign="center">
+    <Heading
+      size="lg"
+      mb="2"
+      fontWeight="bold"
+      color={mode("gray.900", "white")}
+    >
       Sign in to LabelFlow
     </Heading>
-    <Text
-      fontSize="lg"
-      color={mode("gray.600", "gray.400")}
-      fontWeight="medium"
-    >
-      Free account. No credit card required
+    <Text fontSize="lg" color={mode("gray.600", "gray.400")}>
+      Get a free account. No credit card required
     </Text>
   </Box>
 );
 
 const Disclaimer = () => (
-  <Text
-    mb="8"
-    textAlign={{ base: "center", lg: "start" }}
-    mt="12"
-    fontSize="xs"
-    color={useColorModeValue("gray.600", "gray.400")}
-  >
-    By continuing, you agree to LabelFlow Terms of Service and Privacy Policy
+  <Text textAlign="center" my="6" fontSize="xs" color="gray.400">
+    <Text>By continuing, you agree to LabelFlow</Text>
+    <TextLink href="/legal/terms-and-conditions">
+      Terms of Service and Privacy Policy
+    </TextLink>
   </Text>
 );
 
@@ -57,20 +50,13 @@ const Status = () => {
   return error ? <SignInError /> : <Disclaimer />;
 };
 
-const RightBody = () => (
+export const SignIn = () => (
   <Box w="full">
     <BigLogo />
-    <RightHeader />
+    <Header />
     <OAuthSignIn />
     <DividerWithText>or sign in with email</DividerWithText>
     <EmailSignIn />
     <Status />
   </Box>
-);
-
-export const SignIn = () => (
-  <SimpleGrid columns={{ base: 1, lg: 2 }} spacing="14">
-    <Features />
-    <RightBody />
-  </SimpleGrid>
 );

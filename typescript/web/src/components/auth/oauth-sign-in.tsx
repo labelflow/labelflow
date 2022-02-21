@@ -1,13 +1,8 @@
-import {
-  Box,
-  Button,
-  ButtonProps,
-  Stack,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { Box, Button, ButtonProps, Stack } from "@chakra-ui/react";
 import { OAuthProviderType } from "next-auth/providers";
 import React, { useCallback } from "react";
-import { FaGithub, FaGoogle } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import { useSignIn } from "./sign-in.context";
 
 type OAuthButtonProps = {
@@ -30,11 +25,11 @@ const useOAuthSignIn = (): Partial<
   Record<OAuthProviderType, Omit<OAuthButtonProps, "provider">>
 > => ({
   google: {
-    icon: <Box as={FaGoogle} color="red.500" />,
+    icon: <Box as={FcGoogle} />,
     label: "Sign in with Google",
   },
   github: {
-    icon: <Box as={FaGithub} color={mode("github.500", "github.300")} />,
+    icon: <Box as={FaGithub} />,
     label: "Sign in with GitHub",
   },
 });

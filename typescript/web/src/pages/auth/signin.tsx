@@ -1,4 +1,9 @@
-import { Heading, VStack } from "@chakra-ui/react";
+import {
+  Flex,
+  Heading,
+  VStack,
+  useColorModeValue as mode,
+} from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -27,10 +32,25 @@ type BodyProps = {
 const Body = ({ redirectUrl }: BodyProps) => {
   return (
     <SignInProvider>
-      <VStack mt={10} mx="auto" maxW="4xl" spacing={10}>
-        {redirectUrl && <MustLogInMessage />}
-        <SignIn />
-      </VStack>
+      <Flex
+        direction="column"
+        align="center"
+        bg={mode("gray.100", "gray.800")}
+        flexGrow={1}
+        justify="center"
+      >
+        <VStack
+          mt={10}
+          maxW="md"
+          spacing={10}
+          bg={mode("white", "gray.700")}
+          p="8"
+          borderRadius="8"
+        >
+          {redirectUrl && <MustLogInMessage />}
+          <SignIn />
+        </VStack>
+      </Flex>
     </SignInProvider>
   );
 };
