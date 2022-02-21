@@ -10,7 +10,6 @@ import {
 import * as React from "react";
 import {
   BsFillLightningFill,
-  BsFillShieldLockFill,
   BsHeartFill,
   BsFillEmojiSmileFill,
 } from "react-icons/bs";
