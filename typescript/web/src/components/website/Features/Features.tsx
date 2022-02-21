@@ -3,15 +3,19 @@ import {
   Heading,
   Img,
   SimpleGrid,
+  Button,
+  Stack,
   Text,
   Link,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 import * as React from "react";
 import {
   BsFillLightningFill,
   BsHeartFill,
   BsFillEmojiSmileFill,
+  BsArrowRight,
 } from "react-icons/bs";
 import { Feature } from "./Feature";
 
@@ -30,14 +34,6 @@ export const Features = () => {
         py={{ base: "12", md: "20" }}
       >
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing="10">
-          <Img
-            htmlWidth="500px"
-            htmlHeight="320px"
-            height={{ md: "320px" }}
-            objectFit="contain"
-            src="/static/img/feature-picture.jpg"
-            alt="Electrical grid picture"
-          />
           <Box>
             <Heading size="xl" mb="4" fontWeight="extrabold">
               The image labeling tool you need to unleash your AI projects
@@ -52,6 +48,14 @@ export const Features = () => {
               algorithms has never been that easy
             </Text>
           </Box>
+          <Img
+            htmlWidth="500px"
+            htmlHeight="320px"
+            height={{ md: "320px" }}
+            objectFit="contain"
+            src="/static/img/feature-picture.jpg"
+            alt="Electrical grid picture"
+          />
         </SimpleGrid>
         <SimpleGrid columns={{ base: 1, md: 3 }} mt="16" spacing="8">
           <Feature icon={BsFillLightningFill} title="Build Datasets at Scale">
@@ -75,6 +79,36 @@ export const Features = () => {
             the beginning.
           </Feature>
         </SimpleGrid>
+        <Stack
+          direction={{ base: "column", md: "row" }}
+          justifyContent="space-around"
+          mt="8"
+        >
+          <NextLink href="/auth/signin">
+            <Button
+              size="lg"
+              minW="210px"
+              colorScheme="brand"
+              height="14"
+              px="8"
+              rightIcon={<BsArrowRight />}
+            >
+              Try it now
+            </Button>
+          </NextLink>
+          {/* <Button
+                size="lg"
+                bg="white"
+                color="gray.900"
+                _hover={{ bg: "gray.50" }}
+                height="14"
+                px="8"
+                shadow="base"
+                leftIcon={<Box as={HiPlay} fontSize="2xl" />}
+              >
+                Watch Demo
+              </Button> */}
+        </Stack>
       </Box>
     </Box>
   );
