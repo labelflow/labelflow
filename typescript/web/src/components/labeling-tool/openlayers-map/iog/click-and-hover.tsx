@@ -13,7 +13,7 @@ import { createUpdateIogLabelEffect } from "../../../../connectors/undo-store/ef
 import { useUndoStore } from "../../../../connectors/undo-store";
 import { getIogMaskIdFromLabelId } from "../../../../connectors/iog";
 
-import { IMAGE_QUERY } from "./queries";
+import { LABEL_QUERY } from "./queries";
 
 export const HandleIogClick = () => {
   const map = useMap();
@@ -29,7 +29,7 @@ export const HandleIogClick = () => {
     useCallback((state) => state.setSelectedLabelId, [])
   );
 
-  const { data: dataLabelQuery } = useQuery(IMAGE_QUERY, {
+  const { data: dataLabelQuery } = useQuery(LABEL_QUERY, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });
