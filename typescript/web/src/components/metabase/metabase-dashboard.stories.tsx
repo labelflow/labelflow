@@ -8,7 +8,7 @@ export default {
 };
 
 export const Default = () => (
-  <Flex w="full" orientation="column">
+  <Flex maxW="1xl" w="full" orientation="column">
     <KpiDashboard />;
   </Flex>
 );
