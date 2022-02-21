@@ -4,14 +4,7 @@ import {
   stringify as stringifyCsv,
 } from "csv-stringify";
 import { isNil } from "lodash";
-import {
-  Context,
-  DbDataset,
-  DbImage,
-  DbLabel,
-  DbLabelClass,
-  DbWorkspaceWithType,
-} from "../types";
+import { Context, DbDataset, DbImage, DbLabel, DbLabelClass } from "../types";
 import { getOrigin } from "../utils/get-origin";
 import { ExportFunction } from "./types";
 
@@ -53,22 +46,6 @@ const getDataset = async (
   return dataset;
 };
 
-const getDatasetWorkspace = async (
-  dataset: DbDataset,
-  { repository, user }: Context
-): Promise<DbWorkspaceWithType> => {
-  const workspace = await repository.workspace.get(
-    { slug: dataset.workspaceSlug },
-    user
-  );
-  if (isNil(workspace)) {
-    throw new Error(
-      `Could not find workspace with slug ${dataset.workspaceSlug}`
-    );
-  }
-  return workspace;
-};
-
 const getImage = (images: DbImage[], imageId: string): DbImage => {
   const image = images.find(({ id }) => id === imageId);
   if (!isNil(image)) return image;
@@ -98,8 +75,6 @@ const getLabelClass = (
 };
 
 const createRow = async (
-  workspaceId: string,
-  datasetId: string,
   images: DbImage[],
   labelClasses: DbLabelClass[],
   { imageId, labelClassId, x, y, width, height }: DbLabel,
@@ -129,8 +104,6 @@ const createRow = async (
 };
 
 const createRows = async (
-  workspaceId: string,
-  datasetId: string,
   images: DbImage[],
   labelClasses: DbLabelClass[],
   labels: DbLabel[],
@@ -138,17 +111,7 @@ const createRows = async (
   ctx: Context
 ): Promise<unknown[][]> =>
   await Promise.all(
-    labels.map((label) =>
-      createRow(
-        workspaceId,
-        datasetId,
-        images,
-        labelClasses,
-        label,
-        options,
-        ctx
-      )
-    )
+    labels.map((label) => createRow(images, labelClasses, label, options, ctx))
   );
 
 const createRowsFromDb = async (
@@ -158,22 +121,13 @@ const createRowsFromDb = async (
 ): Promise<unknown[][]> => {
   const { repository } = ctx;
   const dataset = await getDataset(datasetId, ctx);
-  const workspace = await getDatasetWorkspace(dataset, ctx);
   const images = await repository.image.list({ datasetId, user: ctx.user });
   const labelClasses = await repository.labelClass.list({
     datasetId: dataset.id,
     user: ctx.user,
   });
   const labels = await repository.label.list({ datasetId, user: ctx.user });
-  return await createRows(
-    workspace.id,
-    datasetId,
-    images,
-    labelClasses,
-    labels,
-    options,
-    ctx
-  );
+  return await createRows(images, labelClasses, labels, options, ctx);
 };
 
 export const exportToCsv: ExportFunction<ExportOptionsCsv> = async (
