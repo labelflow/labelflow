@@ -6,7 +6,7 @@ import { Meta } from "../components/meta";
 import { CookieBanner } from "../components/cookie-banner";
 import { KpiDashboard } from "../components/metabase";
 
-export default function About() {
+export default function Open() {
   return (
     <>
       <Meta title="LabelFlow | Open" />
@@ -32,8 +32,8 @@ export default function About() {
             </Heading>
             <Text textAlign="justify">
               LabelFlow.ai is an Open Startup, which means it operates fully
-              transparent sharing its core metrics. Here is bunch of first
-              metrics made public (tracked with{" "}
+              transparent sharing its core metrics. Here are some first metrics
+              made public (tracked with{" "}
               <Link
                 href="https://www.metabase.com/"
                 isExternal
@@ -42,7 +42,7 @@ export default function About() {
                 Metabase
               </Link>{" "}
               connected to our database). Over time we plan to add additional
-              information:
+              information.
             </Text>
           </Box>
         </Box>

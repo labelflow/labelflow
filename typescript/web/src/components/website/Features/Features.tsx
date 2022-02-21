@@ -4,6 +4,7 @@ import {
   Img,
   SimpleGrid,
   Text,
+  Link,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import * as React from "react";
@@ -11,12 +12,18 @@ import {
   BsFillLightningFill,
   BsFillShieldLockFill,
   BsHeartFill,
+  BsFillEmojiSmileFill,
 } from "react-icons/bs";
 import { Feature } from "./Feature";
 
 export const Features = () => {
   return (
-    <Box as="section" py={{ md: "12" }} bg={mode("gray.50", "gray.800")}>
+    <Box
+      id="features"
+      as="section"
+      py={{ md: "12" }}
+      bg={mode("gray.50", "gray.800")}
+    >
       <Box
         maxW={{ base: "xl", md: "7xl" }}
         mx="auto"
@@ -28,8 +35,8 @@ export const Features = () => {
             htmlWidth="500px"
             htmlHeight="320px"
             height={{ md: "320px" }}
-            objectFit="cover"
-            src="/static/img/shot-elec-1.jpg"
+            objectFit="contain"
+            src="/static/img/feature-picture.jpg"
             alt="Electrical grid picture"
           />
           <Box>
@@ -48,29 +55,25 @@ export const Features = () => {
           </Box>
         </SimpleGrid>
         <SimpleGrid columns={{ base: 1, md: 3 }} mt="16" spacing="8">
-          <Feature
-            icon={BsFillLightningFill}
-            title="Blazing Fast Image Labeling Tool"
-          >
+          <Feature icon={BsFillLightningFill} title="Build Datasets at Scale">
             LabelFlow is an image labeling tool designed for optimum
             productivity. Keyboard shortcuts, interface layout, collaboration,
             everything is designed to build the most accurate datasets for
             machine learning.
           </Feature>
-          <Feature
-            icon={BsFillShieldLockFill}
-            title="Own your data and algorithms"
-          >
-            LabelFlow image annotation tool does not try to own your data or
-            algorithms, but integrates with them seamlessly. No duplicate source
-            of truth and complicated scripts to synchronize your data between
-            various tools.
+          <Feature icon={BsFillEmojiSmileFill} title="Optimum User Experience">
+            Our obsession is to develop and keep developing a simple product. We
+            prefer you to focus on building the next big thing with AI rather
+            than finding a button to upload images.
           </Feature>
           <Feature icon={BsHeartFill} title="Open community and standard">
-            LabelFlow is building a community around an open source data
-            labeling tool (under Business Source Licence) to set the standard
-            around visual data management. Data cleaning should not require any
-            &ldquo;secret sauce&rdquo;.
+            We believe that collaboration could be the new word for competition.
+            We have made our{" "}
+            <Link color="brand.600" href="https://labelflow.ai/open">
+              KPIs public
+            </Link>
+            , our code is open under Business Source Licence and that's just the
+            beginning.
           </Feature>
         </SimpleGrid>
       </Box>

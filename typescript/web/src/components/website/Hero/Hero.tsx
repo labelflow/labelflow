@@ -53,21 +53,11 @@ export function Hero() {
           align={{ lg: "center" }}
           justify="space-between"
         >
-          <Box flex="1" maxW={{ lg: "520px" }}>
-            {/* <Text
-              size="xs"
-              textTransform="uppercase"
-              fontWeight="semibold"
-              color={mode("brand.600", "brand.300")}
-              letterSpacing="wide"
-            >
-              Hire Talents
-            </Text> */}
+          <Box flex="1">
             <Heading
               as="h1"
               size="3xl"
               color={mode("gray.600", "gray.300")}
-              mt="8"
               py="6"
               fontWeight="extrabold"
               letterSpacing="tight"
@@ -135,6 +125,7 @@ export function Hero() {
             justify="center"
             flexGrow={1}
             pos="relative"
+            MaxH="0"
             minW={{ base: "full", lg: "560px" }}
             h={{ base: "auto", lg: "560px" }}
           >
