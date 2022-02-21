@@ -58,13 +58,13 @@ export const Features = () => {
           />
         </SimpleGrid>
         <SimpleGrid columns={{ base: 1, md: 3 }} mt="16" spacing="8">
-          <Feature icon={BsFillLightningFill} title="Build Datasets at Scale">
+          <Feature icon={BsFillLightningFill} title="Build datasets at scale">
             LabelFlow is an image labeling tool designed for optimum
             productivity. Keyboard shortcuts, interface layout, collaboration,
             everything is designed to build the most accurate datasets for
             machine learning.
           </Feature>
-          <Feature icon={BsFillEmojiSmileFill} title="Optimum User Experience">
+          <Feature icon={BsFillEmojiSmileFill} title="Optimum user experience">
             Our obsession is to develop and keep developing a simple product. We
             prefer you to focus on building the next big thing with AI rather
             than finding a button to upload images.
@@ -96,18 +96,6 @@ export const Features = () => {
               Try it now
             </Button>
           </NextLink>
-          {/* <Button
-                size="lg"
-                bg="white"
-                color="gray.900"
-                _hover={{ bg: "gray.50" }}
-                height="14"
-                px="8"
-                shadow="base"
-                leftIcon={<Box as={HiPlay} fontSize="2xl" />}
-              >
-                Watch Demo
-              </Button> */}
         </Stack>
       </Box>
     </Box>
