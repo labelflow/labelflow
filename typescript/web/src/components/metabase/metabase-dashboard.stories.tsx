@@ -5,6 +5,9 @@ import { KpiDashboard } from "./kpi-dashboard";
 export default {
   title: storybookTitle(MetabaseDashboard),
   decorators: [chakraDecorator],
+  parameters: {
+    chromatic: { disableSnapshot: true },
+  },
 };
 
 export const Default = () => (
