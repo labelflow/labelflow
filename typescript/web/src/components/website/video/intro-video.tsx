@@ -1,4 +1,4 @@
-import { Flex, AspectRatio, Center } from "@chakra-ui/react";
+import { Flex, AspectRatio } from "@chakra-ui/react";
 
 export const IntroVideo = () => (
   <Flex direction="column" mt="4" minH="315">
