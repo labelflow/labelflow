@@ -16,6 +16,7 @@ import {
   useState,
 } from "react";
 import { useQueryParam } from "use-query-params";
+import { WorkspacePlan } from "../../../graphql-types";
 import {
   CreateWorkspaceMutation,
   CreateWorkspaceMutationVariables,
@@ -24,8 +25,11 @@ import { USER_WITH_WORKSPACES_QUERY } from "../../../shared-queries/user.query";
 import { BoolParam } from "../../../utils/query-param-bool";
 
 const CREATE_WORKSPACE_MUTATION = gql`
-  mutation CreateWorkspaceMutation($name: String!) {
-    createWorkspace(data: { name: $name }, options: { createTutorial: true }) {
+  mutation CreateWorkspaceMutation($name: String!, $plan: WorkspacePlan) {
+    createWorkspace(
+      data: { name: $name, plan: $plan }
+      options: { createTutorial: true }
+    ) {
       id
       slug
     }
@@ -91,7 +95,8 @@ const useCreateWorkspaceMutationCompleted = () => {
 };
 
 export function useCreateWorkspaceMutation(
-  workspaceName: string
+  workspaceName: string,
+  plan: string
 ): MutationTuple<
   CreateWorkspaceMutation,
   CreateWorkspaceMutationVariables,
@@ -100,11 +105,16 @@ export function useCreateWorkspaceMutation(
 > {
   const [onError, isUpToDate] = useCreateWorkspaceMutationError(workspaceName);
   const onCompleted = useCreateWorkspaceMutationCompleted();
+  const capitalizePlan = plan[0].toUpperCase() + plan.slice(1);
+  const workspacePlan =
+    capitalizePlan in WorkspacePlan
+      ? WorkspacePlan[capitalizePlan as keyof typeof WorkspacePlan]
+      : WorkspacePlan.Pro;
   const [createWorkspace, result] = useMutation<
     CreateWorkspaceMutation,
     CreateWorkspaceMutationVariables
   >(CREATE_WORKSPACE_MUTATION, {
-    variables: { name: workspaceName },
+    variables: { name: workspaceName, plan: workspacePlan },
     refetchQueries: [USER_WITH_WORKSPACES_QUERY],
     awaitRefetchQueries: true,
     onCompleted,

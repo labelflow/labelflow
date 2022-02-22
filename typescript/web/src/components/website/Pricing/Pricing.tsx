@@ -46,7 +46,12 @@ export const Pricing = () => (
         }}
         icon={BsPeopleFill}
         button={
-          <NextLink href="/auth/signin">
+          <NextLink
+            href={{
+              pathname: "/auth/signin",
+              query: { redirect: "/workspaces?plan=community" },
+            }}
+          >
             <ActionButton>Try it now</ActionButton>
           </NextLink>
         }
@@ -71,7 +76,12 @@ export const Pricing = () => (
         }}
         icon={GiCommercialAirplane}
         button={
-          <NextLink href="/request-access">
+          <NextLink
+            href={{
+              pathname: "/auth/signin",
+              query: { redirect: "/workspaces?plan=starter" },
+            }}
+          >
             <ActionButton variant="outline" borderWidth="2px">
               Start Free trial
             </ActionButton>
@@ -96,7 +106,12 @@ export const Pricing = () => (
         }}
         icon={IoRocketSharp}
         button={
-          <NextLink href="/request-access">
+          <NextLink
+            href={{
+              pathname: "/auth/signin",
+              query: { redirect: "/workspaces?plan=pro" },
+            }}
+          >
             <ActionButton variant="outline" borderWidth="2px">
               Start Free trial
             </ActionButton>

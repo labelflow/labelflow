@@ -100,6 +100,7 @@ const createWorkspace = async (
       id: data.id ?? undefined,
       name: data.name,
       image: data.image ?? undefined,
+      plan: data.plan,
     },
     user
   );

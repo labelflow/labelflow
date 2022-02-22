@@ -525,6 +525,7 @@ input WorkspaceCreateInput {
   id: ID
   image: String
   name: String!
+  plan: WorkspacePlan
 }
 
 input WorkspaceCreateOptions {

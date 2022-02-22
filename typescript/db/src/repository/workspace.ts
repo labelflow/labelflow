@@ -7,9 +7,9 @@ import {
   Repository,
   validWorkspaceName,
 } from "@labelflow/common-resolvers";
-import { WorkspaceType } from "@labelflow/graphql-types";
+import { WorkspacePlan, WorkspaceType } from "@labelflow/graphql-types";
 import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
-import { Prisma, UserRole, WorkspacePlan } from "@prisma/client";
+import { Prisma, UserRole } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { isNil } from "lodash";
 import { getPrismaClient } from "../prisma-client";
@@ -46,14 +46,14 @@ export const addWorkspaceImpl: Repository["workspace"]["add"] = async (
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
   }
-  const plan = WorkspacePlan.Community;
   const slug = getSlug(workspace.name);
   validWorkspaceName(workspace.name, slug);
   const stripeCustomerId = await stripe.tryCreateCustomer(workspace.name, slug);
   const db = await getPrismaClient();
+  const workspacePlan = workspace.plan ?? WorkspacePlan.Pro;
   const createdWorkspace = await db.workspace.create({
     data: castObjectNullsToUndefined({
-      plan,
+      plan: workspacePlan,
       ...workspace,
       slug,
       stripeCustomerId,

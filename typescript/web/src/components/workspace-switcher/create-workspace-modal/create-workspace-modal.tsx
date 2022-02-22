@@ -101,8 +101,10 @@ export const useCreateWorkspace = (): [
   string | undefined
 ] => {
   const { name } = useWorkspaceNameInput();
+  const [plan] = useQueryParam("plan", StringParam);
+  const planToCreate = plan ?? "pro";
   const [create, { loading, error: createError, called }] =
-    useCreateWorkspaceMutation(name);
+    useCreateWorkspaceMutation(name, planToCreate);
   const error =
     isNil(createError) || !called
       ? undefined
