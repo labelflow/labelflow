@@ -3,8 +3,6 @@ import {
   Box,
   Button,
   Heading,
-  AspectRatio,
-  // Link,
   Stack,
   Text,
   Flex,
@@ -14,6 +12,7 @@ import NextLink from "next/link";
 import * as React from "react";
 import { RiGithubFill } from "react-icons/ri";
 import { BsArrowRight } from "react-icons/bs";
+import { HomeVideo } from "./HomeVideo";
 // import { GithubButton } from "../Navbar/NavContent";
 
 const GithubIcon = chakra(RiGithubFill);
@@ -125,15 +124,11 @@ export function Hero() {
             justify="center"
             flexGrow={1}
             pos="relative"
-            MaxH="0"
+            maxH="0"
             minW={{ base: "full", lg: "560px" }}
             h={{ base: "auto", lg: "560px" }}
           >
-            <AspectRatio ratio={16 / 9}>
-              <video playsInline autoPlay muted loop>
-                <source src="/static/img/home-video.webm" type="video/webm" />
-              </video>
-            </AspectRatio>
+            <HomeVideo />
           </Flex>
         </Stack>
       </Box>
