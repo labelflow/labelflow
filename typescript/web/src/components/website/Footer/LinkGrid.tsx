@@ -62,7 +62,6 @@ export const LinkGrid = (props: SimpleGridProps) => (
     <GridBox minW="130px" heading="Product" links={productLinks} />
     <GridBox minW="130px" heading="Open Startup" links={openLinks} />
     <GridBox minW="130px" heading="Resources" links={learnLinks} />
-
     <GridBox minW="150px" heading="Legal" links={legalLinks} />
   </SimpleGrid>
 );

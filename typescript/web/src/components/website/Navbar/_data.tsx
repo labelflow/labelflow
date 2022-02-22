@@ -18,8 +18,6 @@ export interface Link {
 
 export const links: Link[] = [
   { label: "Product", href: "/website#features" },
-  // { label: "For Labeling workers", href: "#" },
-
   { label: "Pricing", href: "/pricing" },
   { label: "Open", href: "/open" },
   {
@@ -40,13 +38,3 @@ export const links: Link[] = [
     ],
   },
 ];
-
-/* { label: "About", href: "/about" },
-{ label: "Blog", href: "/posts" },
-
-{
-  label: "Documentation",
-  href: DOCUMENTATION_URL,
-  target: "_blank",
-},
-{ label: "Jobs", href: "https://labelflow.recruitee.com", target: "_blank" }, */
