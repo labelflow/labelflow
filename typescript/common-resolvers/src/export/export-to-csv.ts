@@ -127,15 +127,23 @@ const createRowsFromDb = async (
   return await createRows(images, labelClasses, labels, ctx);
 };
 
-export const exportToCsv: ExportFunction<ExportOptionsCsv> = async (
-  datasetId,
-  _options,
-  ctx
-) => {
+export const createCsv = async (
+  datasetId: string,
+  ctx: Context
+): Promise<string> => {
   const rows = await createRowsFromDb(datasetId, ctx);
   const csv = await stringifyCsvAsync(rows, {
     header: true,
     columns: CSV_HEADER,
   });
+  return csv;
+};
+
+export const exportToCsv: ExportFunction<ExportOptionsCsv> = async (
+  datasetId,
+  _options,
+  ctx
+) => {
+  const csv = await createCsv(datasetId, ctx);
   return new Blob([csv], { type: "application/csv" });
 };
