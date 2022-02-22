@@ -41,8 +41,9 @@ export default function Open() {
               >
                 Metabase
               </Link>{" "}
-              connected to our database). Over time we plan to add additional
-              information.
+              connected to our database). These metrics come from our
+              collaborative version launched early January. Over time we plan to
+              add additional information.
             </Text>
           </Box>
         </Box>
