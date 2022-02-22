@@ -1,3 +1,5 @@
+import { Flex } from "@chakra-ui/react";
+import { Story } from "@storybook/react";
 import React from "react";
 import {
   apolloMockDecorator,
@@ -9,32 +11,35 @@ import { AcceptOrDeclineMembershipInvitation } from "./accept-or-decline-members
 import { InvalidInvitation as InvalidInvitationComponent } from "./invalid-invitation";
 import { UserNeedsToSignIn as UserNeedsToSignInComponent } from "./user-needs-to-sign-in";
 
+const layoutDecorator = (StoryComponent: Story) => (
+  <Flex grow={1} direction="column" as="main" bg="gray">
+    <StoryComponent />
+  </Flex>
+);
+
 export default {
   title: storybookTitle("Invitation manager"),
-  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
+  decorators: [
+    chakraDecorator,
+    apolloMockDecorator,
+    queryParamsDecorator,
+    layoutDecorator,
+  ],
 };
 
 export const AcceptOrDecline = () => (
-  <div style={{ width: "100vw", height: "100vh", backgroundColor: "grey" }}>
-    <AcceptOrDeclineMembershipInvitation
-      accept={() => console.log("accept")}
-      currentUserIdentifier="toto@sterblue.com"
-      decline={() => console.log("decline")}
-      invitationEmailAddress="toto@sterblue.com"
-      workspaceName="Sterblue"
-      disabled={false}
-    />
-  </div>
+  <AcceptOrDeclineMembershipInvitation
+    accept={() => console.log("accept")}
+    currentUserIdentifier="toto@sterblue.com"
+    decline={() => console.log("decline")}
+    invitationEmailAddress="toto@sterblue.com"
+    workspaceName="Sterblue"
+    disabled={false}
+  />
 );
 
 export const InvalidInvitation = () => (
-  <div style={{ width: "100vw", height: "100vh", backgroundColor: "grey" }}>
-    <InvalidInvitationComponent reason="This is the reason" />
-  </div>
+  <InvalidInvitationComponent reason="This is the reason" />
 );
 
-export const UserNeedsToSignIn = () => (
-  <div style={{ width: "100vw", height: "100vh", backgroundColor: "grey" }}>
-    <UserNeedsToSignInComponent />
-  </div>
-);
+export const UserNeedsToSignIn = () => <UserNeedsToSignInComponent />;
