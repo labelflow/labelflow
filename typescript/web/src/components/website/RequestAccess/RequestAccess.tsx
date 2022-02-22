@@ -38,8 +38,6 @@ export const RequestAccess = () => {
             letterSpacing="wide"
           >
             LABELFLOW EARLY ACCESS SHIPS IN Q3 2021
-
-          </Text> */}
           <Heading mt="4" fontWeight="extrabold">
             Get early access and up to 50% off on LabelFlow by joining now
           </Heading>
