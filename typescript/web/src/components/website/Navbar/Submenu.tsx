@@ -31,7 +31,7 @@ const DesktopSubmenu = (props: SubmenuProps) => {
 
       <NavMenu {...getMenuProps()} animate={isOpen ? "open" : "closed"}>
         <Box maxW="7xl" mx="auto" px="400">
-          <SimpleGrid spacing="" columns={2}>
+          <SimpleGrid columns={2}>
             {link.children?.map((item, idx) => (
               <DesktopMenuItem
                 key={idx}
