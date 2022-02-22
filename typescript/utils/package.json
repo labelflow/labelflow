@@ -6,6 +6,7 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "dependencies": {
+    "@labelflow/graphql-types": "workspace:typescript/graphql-types",
     "lodash": "4.17.21"
   }
 }

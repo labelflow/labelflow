@@ -534,9 +534,8 @@ input WorkspaceCreateOptions {
 
 enum WorkspacePlan {
   Community
-  Enterprise
-  Pro
   Starter
+  Pro
 }
 
 input WorkspaceSlugAndDatasetSlug {

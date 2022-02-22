@@ -6,6 +6,7 @@ import {
   MutationTuple,
   useMutation,
 } from "@apollo/client";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/utils";
 import { isNil } from "lodash/fp";
 import { useRouter } from "next/router";
 import {
@@ -109,7 +110,7 @@ export function useCreateWorkspaceMutation(
   const workspacePlan =
     capitalizePlan in WorkspacePlan
       ? WorkspacePlan[capitalizePlan as keyof typeof WorkspacePlan]
-      : WorkspacePlan.Pro;
+      : DEFAULT_WORKSPACE_PLAN;
   const [createWorkspace, result] = useMutation<
     CreateWorkspaceMutation,
     CreateWorkspaceMutationVariables

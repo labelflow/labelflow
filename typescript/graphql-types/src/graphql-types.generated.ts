@@ -806,9 +806,8 @@ export type WorkspaceCreateOptions = {
 
 export enum WorkspacePlan {
   Community = "Community",
-  Enterprise = "Enterprise",
-  Pro = "Pro",
   Starter = "Starter",
+  Pro = "Pro",
 }
 
 export type WorkspaceSlugAndDatasetSlug = {

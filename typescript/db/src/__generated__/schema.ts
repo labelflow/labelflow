@@ -536,9 +536,8 @@ export const typeDefs = [
 
   enum WorkspacePlan {
     Community
-    Enterprise
-    Pro
     Starter
+    Pro
   }
 
   input WorkspaceSlugAndDatasetSlug {

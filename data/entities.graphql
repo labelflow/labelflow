@@ -126,7 +126,6 @@ enum WorkspacePlan {
   Community
   Starter
   Pro
-  Enterprise
 }
 
 enum MembershipRole {

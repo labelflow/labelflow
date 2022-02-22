@@ -213,5 +213,4 @@ enum WorkspacePlan {
   Community
   Starter
   Pro
-  Enterprise
 }

@@ -7,8 +7,12 @@ import {
   Repository,
   validWorkspaceName,
 } from "@labelflow/common-resolvers";
-import { WorkspacePlan, WorkspaceType } from "@labelflow/graphql-types";
-import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
+import { WorkspaceType } from "@labelflow/graphql-types";
+import {
+  DEFAULT_WORKSPACE_PLAN,
+  ErrorOverride,
+  withErrorOverridesAsync,
+} from "@labelflow/utils";
 import { Prisma, UserRole } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { isNil } from "lodash";
@@ -48,9 +52,13 @@ export const addWorkspaceImpl: Repository["workspace"]["add"] = async (
   }
   const slug = getSlug(workspace.name);
   validWorkspaceName(workspace.name, slug);
-  const stripeCustomerId = await stripe.tryCreateCustomer(workspace.name, slug);
+  const workspacePlan = workspace.plan ?? DEFAULT_WORKSPACE_PLAN;
+  const stripeCustomerId = await stripe.tryCreateCustomer(
+    workspace.name,
+    slug,
+    workspacePlan
+  );
   const db = await getPrismaClient();
-  const workspacePlan = workspace.plan ?? WorkspacePlan.Pro;
   const createdWorkspace = await db.workspace.create({
     data: castObjectNullsToUndefined({
       plan: workspacePlan,
