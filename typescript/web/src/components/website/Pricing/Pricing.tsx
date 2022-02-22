@@ -19,12 +19,6 @@ export const Pricing = () => (
     <Heading align="center" fontWeight="extrabold" maxW="lg" mx="auto">
       Multiply the progress speed of your AI
     </Heading>
-    {/* <Text align="center" textAlign="center" maxW="lg" mx="auto" mt="12">
-      Dataset quality is the number one limiting factor for computer vision
-      tasks. For the <strong>price of a cup of coffee a day</strong>, get the
-      tools you need to make your machine learning models the best in their
-      class.
-    </Text> */}
     <SimpleGrid
       mt="24"
       columns={{ base: 1, lg: 3 }}
@@ -48,6 +42,7 @@ export const Pricing = () => (
             "Unlimited users",
             "Sleek labeling interface",
           ],
+          trialPeriod: "Free for ever",
         }}
         icon={BsPeopleFill}
         button={
@@ -58,7 +53,6 @@ export const Pricing = () => (
       />
       <PricingCard
         zIndex={1}
-        // isPopular
         transform={{ lg: "scale(1.05)" }}
         data={{
           price: "$19",
@@ -73,12 +67,13 @@ export const Pricing = () => (
             "Unlimited users",
             "Sleek labeling interface",
           ],
+          trialPeriod: "14 days free trial",
         }}
         icon={GiCommercialAirplane}
         button={
           <NextLink href="/request-access">
             <ActionButton variant="outline" borderWidth="2px">
-              Request Access
+              Start Free trial
             </ActionButton>
           </NextLink>
         }
@@ -97,12 +92,13 @@ export const Pricing = () => (
             "Unlimited users",
             "Sleek labeling interface",
           ],
+          trialPeriod: "14 days free trial",
         }}
         icon={IoRocketSharp}
         button={
           <NextLink href="/request-access">
             <ActionButton variant="outline" borderWidth="2px">
-              Request Access
+              Start Free trial
             </ActionButton>
           </NextLink>
         }

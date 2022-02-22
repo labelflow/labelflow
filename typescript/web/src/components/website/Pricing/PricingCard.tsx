@@ -5,12 +5,10 @@ import {
   List,
   ListIcon,
   ListItem,
-  // Button,
   Text,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-// import NextLink from "next/link";
 import * as React from "react";
 import { HiCheckCircle } from "react-icons/hi";
 import { Card, CardProps } from "./Card";
@@ -20,6 +18,7 @@ export interface PricingCardData {
   name: string;
   price: string;
   pricePost: string;
+  trialPeriod: string;
 }
 
 interface PricingCardProps extends CardProps {
@@ -30,7 +29,7 @@ interface PricingCardProps extends CardProps {
 
 export const PricingCard = (props: PricingCardProps) => {
   const { data, icon, button, ...rest } = props;
-  const { features, price, pricePost, name } = data;
+  const { features, price, pricePost, name, trialPeriod } = data;
   const accentColor = useColorModeValue("brand.500", "brand.200");
 
   return (
@@ -68,19 +67,11 @@ export const PricingCard = (props: PricingCardProps) => {
           </ListItem>
         ))}
       </List>
-      <VStack spacing={6}>
-        {/* <NextLink href="/pricing">
-          <Button
-            variant="unstyled"
-            colorScheme="brand"
-            // size="lg"
-            w="full"
-            // py={{ md: "8" }}
-          >
-            See all features
-          </Button>
-        </NextLink> */}
+      <VStack spacing={2}>
         {button}
+        <Text fontWeight="600" color="gray.400">
+          {trialPeriod}
+        </Text>
       </VStack>
     </Card>
   );
