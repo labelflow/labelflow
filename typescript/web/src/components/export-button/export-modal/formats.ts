@@ -1,3 +1,5 @@
+import { IconType } from "react-icons/lib";
+import { BsTable } from "react-icons/bs";
 import {
   ExportFormat,
   ExportOptions,
@@ -20,30 +22,34 @@ export const DEFAULT_EXPORT_OPTIONS: RequiredExportOptions = {
 export const formatMainInformation: {
   [format in keyof RequiredExportOptions]: {
     format: ExportFormat;
-    logoSrc: string;
-    logoUsesColorMode: boolean;
     title: string;
     description: string;
-  };
+    logoSrc?: string;
+    logoIcon?: IconType;
+  } & (
+    | {
+        logoSrc: string;
+      }
+    | {
+        logoIcon: IconType;
+      }
+  );
 } = {
   coco: {
     format: ExportFormat.COCO,
     logoSrc: "/static/export-formats/coco.png",
-    logoUsesColorMode: false,
     title: "Export to COCO",
     description: "Annotation file used with Pytorch and Detectron 2",
   },
   yolo: {
     format: ExportFormat.YOLO,
     logoSrc: "/static/export-formats/yolo.png",
-    logoUsesColorMode: false,
     title: "Export to YOLO",
     description: "Annotation file used by YOLO frameworks",
   },
   csv: {
     format: ExportFormat.CSV,
-    logoSrc: "/static/export-formats/csv.svg",
-    logoUsesColorMode: true,
+    logoIcon: BsTable,
     title: "Export to CSV",
     description: "List of classes contained in each image",
   },

@@ -24,7 +24,7 @@ export const ExportFormatCard = ({
     format,
     description: subtext,
     logoSrc,
-    logoUsesColorMode,
+    logoIcon,
     title,
   } = formatMainInformation[formatKey as Format];
 
@@ -37,7 +37,7 @@ export const ExportFormatCard = ({
     <ExportCard
       colorScheme={colorScheme}
       logoSrc={logoSrc}
-      logoUsesColorMode={logoUsesColorMode}
+      logoIcon={logoIcon}
       title={title}
       subtext={subtext}
       disabled={disabled}

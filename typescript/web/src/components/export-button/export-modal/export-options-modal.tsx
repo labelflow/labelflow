@@ -110,8 +110,9 @@ export const ExportOptionsModal = () => {
   }, [exportFormat, exportFunction, exportOptions, setIsOptionsModalOpen]);
 
   useEffect(() => {
-    if (isOptionsModalOpen && formatOptionsInformationArray.length === 0)
+    if (isOptionsModalOpen && formatOptionsInformationArray.length === 0) {
       exportAction();
+    }
   });
 
   return (

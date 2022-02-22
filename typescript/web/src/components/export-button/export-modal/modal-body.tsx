@@ -4,6 +4,7 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 import { Dispatch, SetStateAction } from "react";
+import { RiQuestionnaireLine } from "react-icons/ri";
 import { APP_NEW_EXPORT_REQUEST_URL } from "../../../constants";
 import { ExportCard } from "./export-card";
 import { ExportFormatCard } from "./export-format-card";
@@ -48,8 +49,7 @@ export const ModalBody = () => {
         })}
         <ExportCard
           colorScheme="brand"
-          logoSrc="/static/export-formats/request.svg"
-          logoUsesColorMode
+          logoIcon={RiQuestionnaireLine}
           title="Request new Format"
           subtext="Let us know the export format you need"
           href={APP_NEW_EXPORT_REQUEST_URL}

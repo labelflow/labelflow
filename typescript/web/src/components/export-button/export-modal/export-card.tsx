@@ -1,5 +1,6 @@
 import {
   Box,
+  chakra,
   HStack,
   Image,
   Link,
@@ -9,6 +10,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
+import { IconType } from "react-icons/lib";
 import { OptionalParent } from "../../../utils";
 import { Spinner } from "../../spinner";
 
@@ -18,8 +20,8 @@ export type ExportCardProps = {
   href?: string;
   onClick?: () => void;
   loading?: boolean;
-  logoSrc: string;
-  logoUsesColorMode: boolean;
+  logoSrc?: string;
+  logoIcon?: IconType;
   title: string;
   subtext: string;
 };
@@ -31,11 +33,12 @@ export const ExportCard = ({
   href,
   loading,
   logoSrc,
-  logoUsesColorMode = false,
+  logoIcon,
   title,
   subtext,
 }: ExportCardProps) => {
   const theme = useTheme();
+  const LogoIcon = logoIcon ? chakra(logoIcon) : undefined;
 
   return (
     <OptionalParent
@@ -94,17 +97,16 @@ export const ExportCard = ({
           spacing={4}
           boxSizing="border-box"
         >
-          <Image
-            src={logoSrc}
-            w="16"
-            flexGrow={0}
-            flexShrink={0}
-            filter={
-              logoUsesColorMode
-                ? mode("brightness(0)", "brightness(0) invert()")
-                : undefined
-            }
-          />
+          {LogoIcon ? (
+            <LogoIcon
+              fontSize="64"
+              color={mode("black", "white")}
+              flexGrow={0}
+              flexShrink={0}
+            />
+          ) : (
+            <Image src={logoSrc} w="16" flexGrow={0} flexShrink={0} />
+          )}
           <VStack
             alignItems="flex-start"
             spacing="1"
