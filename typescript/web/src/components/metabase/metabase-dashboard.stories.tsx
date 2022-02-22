@@ -3,7 +3,7 @@ import { chakraDecorator } from "../../utils/stories";
 import { KpiDashboard } from "./kpi-dashboard";
 
 export default {
-  title: "web/Metabase Dashboard",
+  title: storybookTitle(MetabaseDashboard),
   decorators: [chakraDecorator],
 };
 
