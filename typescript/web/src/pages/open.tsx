@@ -42,8 +42,17 @@ export default function Open() {
                 Metabase
               </Link>{" "}
               connected to our database). These metrics come from our
-              collaborative version launched early January. Over time we plan to
-              add additional information.
+              collaborative version launched early January. In the next weeks we
+              plan to add additional information. You can also discover our
+              thesis on why we have launched LabelFlow{" "}
+              <Link
+                href="https://www.labelflow.ai/about/"
+                isExternal
+                color="brand.600"
+              >
+                here
+              </Link>
+              .
             </Text>
           </Box>
         </Box>
