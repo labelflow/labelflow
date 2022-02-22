@@ -64,11 +64,12 @@ const images = async (
   args: QueryImagesArgs,
   { repository, user }: Context
 ) => {
-  return await repository.image.list(
+  const data = await repository.image.list(
     { datasetId: dataset.id, user },
     args?.skip,
     args?.first
   );
+  return addTypenames(data, "Image");
 };
 
 const labels = async (

@@ -83,7 +83,7 @@ const Body = () => {
         topBarRightContent={
           <>
             <KeymapButton />
-            <ImportButton />
+            <ImportButton datasetId={datasetResult?.dataset?.id} />
             <ExportButton />
           </>
         }

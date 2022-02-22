@@ -26,7 +26,6 @@ export const useImagesNavigation = () => {
   const { slug: datasetSlug } = useDataset();
   const { id: currentImageId } = useDatasetImage();
 
-  // Refetch images ?
   const { data } = useQuery<
     GetAllImagesOfADatasetQuery,
     GetAllImagesOfADatasetQueryVariables

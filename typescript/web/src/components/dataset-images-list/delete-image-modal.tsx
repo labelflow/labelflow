@@ -1,5 +1,4 @@
-import { gql, useQuery, useMutation } from "@apollo/client";
-import { useRef } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -10,15 +9,16 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import {
-  PAGINATED_IMAGES_QUERY,
-  useFlushPaginatedImagesCache,
-} from "./paginated-images-query";
-import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../shared-queries/dataset-images-page.query";
+import { useRef } from "react";
 import {
   GetImageByIdQuery,
   GetImageByIdQueryVariables,
 } from "../../graphql-types/GetImageByIdQuery";
+import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../shared-queries/dataset-images-page.query";
+import {
+  PAGINATED_IMAGES_QUERY,
+  useFlushPaginatedImagesCache,
+} from "./paginated-images-query";
 
 const GET_IMAGE_BY_ID_QUERY = gql`
   query GetImageByIdQuery($id: ID!) {
@@ -59,9 +59,9 @@ export const DeleteImageModal = ({
 
   const flushPaginatedImagesCache = useFlushPaginatedImagesCache(datasetId);
   const [deleteImage, { loading: deleteImageLoading }] = useMutation(
-    DELETE_IMAGE_MUTATION
+    DELETE_IMAGE_MUTATION,
+    { update: (cache) => cache.evict({ id: `Dataset:${datasetId}` }) }
   );
-
   const handleDeleteButtonClick = async () => {
     await flushPaginatedImagesCache();
     await deleteImage({

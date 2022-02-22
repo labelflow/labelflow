@@ -1,27 +1,24 @@
-import { useCallback, useEffect, useState } from "react";
+import { useApolloClient } from "@apollo/client";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-  ModalFooter,
   Button,
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalOverlay,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useQueryParam, StringParam, withDefault } from "use-query-params";
-import { useApolloClient } from "@apollo/client";
-import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
-import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
+import { useCallback, useEffect, useState } from "react";
+import { StringParam, useQueryParam, withDefault } from "use-query-params";
+import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "../../../hooks/use-images-navigation.query";
 import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../../shared-queries/dataset-images-page.query";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../../shared-queries/workspace-datasets-page.query";
-import { useDataset, useWorkspace } from "../../../hooks";
-import {
-  DatasetImagesPageDatasetQuery,
-  DatasetImagesPageDatasetQueryVariables,
-} from "../../../graphql-types";
 import { PAGINATED_IMAGES_QUERY } from "../../dataset-images-list";
+import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
+import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
 
 export type ImportImagesModalProps = {
+  datasetId?: string;
   isOpen?: boolean;
   onClose?: () => void;
 };
@@ -29,11 +26,10 @@ export type ImportImagesModalProps = {
 export const ImportImagesModal = ({
   isOpen = false,
   onClose = () => {},
+  datasetId,
 }: ImportImagesModalProps) => {
   const client = useApolloClient();
   const { isReady } = useRouter();
-  const { slug: workspaceSlug } = useWorkspace();
-  const { slug: datasetSlug } = useDataset();
 
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);
@@ -49,23 +45,14 @@ export const ImportImagesModal = ({
   }, [isOpen, isReady]);
 
   useEffect(() => {
-    // Manually refetch
     if (hasUploaded) {
-      client.query<
-        DatasetImagesPageDatasetQuery,
-        DatasetImagesPageDatasetQueryVariables
-      >({
-        query: DATASET_IMAGES_PAGE_DATASET_QUERY,
-        variables: {
-          slug: datasetSlug,
-          workspaceSlug,
-        },
-        fetchPolicy: "network-only",
-      });
+      client.cache.evict({ id: `Dataset:${datasetId}` });
       client.refetchQueries({
         include: [
           WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
           PAGINATED_IMAGES_QUERY,
+          GET_ALL_IMAGES_OF_A_DATASET_QUERY,
+          DATASET_IMAGES_PAGE_DATASET_QUERY,
         ],
       });
     }

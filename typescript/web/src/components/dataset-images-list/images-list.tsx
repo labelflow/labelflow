@@ -14,6 +14,19 @@ import {
   useImagesList,
 } from "./images-list.context";
 
+const ImportImagesButton = () => {
+  const { datasetId } = useImagesList();
+  return (
+    <ImportButton
+      colorScheme="brand"
+      variant="solid"
+      mt="8"
+      showModal={false}
+      datasetId={datasetId}
+    />
+  );
+};
+
 const NoImages = () => (
   <Center h="full">
     <Box as="section">
@@ -29,13 +42,7 @@ const NoImages = () => (
         <Text mt="4" fontSize="lg">
           Fortunately, it’s very easy to add some.
         </Text>
-
-        <ImportButton
-          colorScheme="brand"
-          variant="solid"
-          mt="8"
-          showModal={false}
-        />
+        <ImportImagesButton />
       </Box>
     </Box>
   </Center>
