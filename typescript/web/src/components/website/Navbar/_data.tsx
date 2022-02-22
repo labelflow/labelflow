@@ -39,13 +39,3 @@ export const links: Link[] = [
     ],
   },
 ];
-
-/* { label: "About", href: "/about" },
-{ label: "Blog", href: "/posts" },
-
-{
-  label: "Documentation",
-  href: DOCUMENTATION_URL,
-  target: "_blank",
-},
-{ label: "Jobs", href: "https://labelflow.recruitee.com", target: "_blank" }, */
