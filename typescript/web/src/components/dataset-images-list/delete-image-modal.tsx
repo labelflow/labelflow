@@ -1,5 +1,4 @@
-import { gql, useQuery, useMutation, useApolloClient } from "@apollo/client";
-import { useCallback, useRef } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -10,21 +9,16 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import {
-  PAGINATED_IMAGES_QUERY,
-  useFlushPaginatedImagesCache,
-} from "./paginated-images-query";
-import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../shared-queries/dataset-images-page.query";
+import { useRef } from "react";
 import {
   GetImageByIdQuery,
   GetImageByIdQueryVariables,
 } from "../../graphql-types/GetImageByIdQuery";
-import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "../../hooks/use-images-navigation.query";
+import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../shared-queries/dataset-images-page.query";
 import {
-  GetAllImagesOfADatasetQuery,
-  GetAllImagesOfADatasetQueryVariables,
-} from "../../graphql-types";
-import { useOptionalWorkspace, useDataset } from "../../hooks";
+  PAGINATED_IMAGES_QUERY,
+  useFlushPaginatedImagesCache,
+} from "./paginated-images-query";
 
 const GET_IMAGE_BY_ID_QUERY = gql`
   query GetImageByIdQuery($id: ID!) {
@@ -42,23 +36,6 @@ const DELETE_IMAGE_MUTATION = gql`
     }
   }
 `;
-
-const useRefetchAllImages = () => {
-  const client = useApolloClient();
-  const workspace = useOptionalWorkspace();
-  const workspaceSlug = workspace?.slug ?? "";
-  const { slug: datasetSlug } = useDataset();
-  return useCallback(async () => {
-    client.query<
-      GetAllImagesOfADatasetQuery,
-      GetAllImagesOfADatasetQueryVariables
-    >({
-      query: GET_ALL_IMAGES_OF_A_DATASET_QUERY,
-      variables: { slug: datasetSlug, workspaceSlug },
-      fetchPolicy: "network-only",
-    });
-  }, [client, datasetSlug, workspaceSlug]);
-};
 
 export const DeleteImageModal = ({
   isOpen = false,
@@ -81,9 +58,9 @@ export const DeleteImageModal = ({
   );
 
   const flushPaginatedImagesCache = useFlushPaginatedImagesCache(datasetId);
-  const refetchAllImages = useRefetchAllImages();
   const [deleteImage, { loading: deleteImageLoading }] = useMutation(
-    DELETE_IMAGE_MUTATION
+    DELETE_IMAGE_MUTATION,
+    { update: (cache) => cache.evict({ id: `Dataset:${datasetId}` }) }
   );
   const handleDeleteButtonClick = async () => {
     await flushPaginatedImagesCache();
@@ -94,7 +71,6 @@ export const DeleteImageModal = ({
         PAGINATED_IMAGES_QUERY,
       ],
     });
-    await refetchAllImages();
     onClose();
   };
 
