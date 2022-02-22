@@ -1,5 +1,5 @@
-import { gql, useQuery, useMutation } from "@apollo/client";
-import { useRef } from "react";
+import { gql, useQuery, useMutation, useApolloClient } from "@apollo/client";
+import { useCallback, useRef } from "react";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -19,6 +19,12 @@ import {
   GetImageByIdQuery,
   GetImageByIdQueryVariables,
 } from "../../graphql-types/GetImageByIdQuery";
+import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "../../hooks/use-images-navigation.query";
+import {
+  GetAllImagesOfADatasetQuery,
+  GetAllImagesOfADatasetQueryVariables,
+} from "../../graphql-types";
+import { useOptionalWorkspace, useDataset } from "../../hooks";
 
 const GET_IMAGE_BY_ID_QUERY = gql`
   query GetImageByIdQuery($id: ID!) {
@@ -36,6 +42,23 @@ const DELETE_IMAGE_MUTATION = gql`
     }
   }
 `;
+
+const useRefetchAllImages = () => {
+  const client = useApolloClient();
+  const workspace = useOptionalWorkspace();
+  const workspaceSlug = workspace?.slug ?? "";
+  const { slug: datasetSlug } = useDataset();
+  return useCallback(async () => {
+    client.query<
+      GetAllImagesOfADatasetQuery,
+      GetAllImagesOfADatasetQueryVariables
+    >({
+      query: GET_ALL_IMAGES_OF_A_DATASET_QUERY,
+      variables: { slug: datasetSlug, workspaceSlug },
+      fetchPolicy: "network-only",
+    });
+  }, [client, datasetSlug, workspaceSlug]);
+};
 
 export const DeleteImageModal = ({
   isOpen = false,
@@ -58,10 +81,10 @@ export const DeleteImageModal = ({
   );
 
   const flushPaginatedImagesCache = useFlushPaginatedImagesCache(datasetId);
+  const refetchAllImages = useRefetchAllImages();
   const [deleteImage, { loading: deleteImageLoading }] = useMutation(
     DELETE_IMAGE_MUTATION
   );
-
   const handleDeleteButtonClick = async () => {
     await flushPaginatedImagesCache();
     await deleteImage({
@@ -71,6 +94,7 @@ export const DeleteImageModal = ({
         PAGINATED_IMAGES_QUERY,
       ],
     });
+    await refetchAllImages();
     onClose();
   };
 

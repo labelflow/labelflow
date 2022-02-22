@@ -20,6 +20,7 @@ import {
   DatasetImagesPageDatasetQueryVariables,
 } from "../../../graphql-types";
 import { PAGINATED_IMAGES_QUERY } from "../../dataset-images-list";
+import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "../../../hooks/use-images-navigation.query";
 
 export type ImportImagesModalProps = {
   isOpen?: boolean;
@@ -66,6 +67,7 @@ export const ImportImagesModal = ({
         include: [
           WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
           PAGINATED_IMAGES_QUERY,
+          GET_ALL_IMAGES_OF_A_DATASET_QUERY,
         ],
       });
     }
