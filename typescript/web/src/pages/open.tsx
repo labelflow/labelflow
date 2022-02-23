@@ -42,15 +42,15 @@ export default function Open() {
                 Metabase
               </Link>{" "}
               connected to our database). These metrics come from our
-              collaborative version launched early January. In the next weeks we
-              plan to add additional information. You can also discover our
-              thesis on why we have launched LabelFlow{" "}
+              collaborative version launched early January 2022. In the next
+              weeks we plan to add additional information. If you want to dive
+              deeper into our open startup approach,{" "}
               <Link
-                href="https://www.labelflow.ai/about/"
+                href="https://labelflow.ai/posts/labelflow-becomes-an-open-startup"
                 isExternal
                 color="brand.600"
               >
-                here
+                you can have a look to this post
               </Link>
               .
             </Text>
