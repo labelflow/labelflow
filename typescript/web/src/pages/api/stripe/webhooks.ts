@@ -42,14 +42,16 @@ const relevantEvents = new Set([
 const updateWorkspacePlan = async ({
   workspaceSlug,
   workspacePlan,
+  status,
 }: {
   workspaceSlug: string;
   workspacePlan: keyof typeof WorkspacePlan;
+  status: string;
 }) => {
   const prisma = await getPrismaClient();
   await prisma.workspace.update({
     where: { slug: workspaceSlug },
-    data: { plan: workspacePlan },
+    data: { plan: workspacePlan, status },
   });
 };
 
@@ -106,7 +108,11 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 const workspacePlan =
                   WorkspacePlan[productName as keyof typeof WorkspacePlan];
 
-                await updateWorkspacePlan({ workspacePlan, workspaceSlug });
+                await updateWorkspacePlan({
+                  workspacePlan,
+                  workspaceSlug,
+                  status,
+                });
                 break;
               }
               case "canceled":
@@ -116,6 +122,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 await updateWorkspacePlan({
                   workspacePlan: WorkspacePlan.Community,
                   workspaceSlug,
+                  status,
                 });
                 break;
               }
@@ -127,6 +134,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             await updateWorkspacePlan({
               workspaceSlug,
               workspacePlan: WorkspacePlan.Community,
+              status,
             });
             break;
           }

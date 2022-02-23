@@ -104,6 +104,7 @@ model Workspace {
   image            String?
   plan             WorkspacePlan
   stripeCustomerId String?
+  status           String        @default("active")
   datasets         Dataset[]
   memberships      Membership[]
 
@@ -213,4 +214,16 @@ enum WorkspacePlan {
   Community
   Starter
   Pro
+}
+
+enum WorkspaceStatus {
+  active
+  trialing
+  incomplete
+  past_due
+  unpaid
+  canceled
+  incomplete_expired
+  ended
+  all
 }

@@ -92,6 +92,7 @@ type Workspace {
   datasets: [Dataset!]!
   memberships: [Membership!]!
   stripeCustomerPortalUrl: String
+  status: WorkspaceStatus!
 }
 
 type Membership {
@@ -132,4 +133,16 @@ enum MembershipRole {
   Owner
   Admin
   Member
+}
+
+enum WorkspaceStatus {
+  active
+  trialing
+  incomplete
+  past_due
+  unpaid
+  canceled
+  incomplete_expired
+  ended
+  all
 }

@@ -791,6 +791,7 @@ export type Workspace = {
   stripeCustomerPortalUrl?: Maybe<Scalars["String"]>;
   type: WorkspaceType;
   updatedAt: Scalars["DateTime"];
+  status: WorkspaceStatus;
 };
 
 export type WorkspaceCreateInput = {
@@ -814,6 +815,18 @@ export type WorkspaceSlugAndDatasetSlug = {
   slug: Scalars["String"];
   workspaceSlug: Scalars["String"];
 };
+
+export enum WorkspaceStatus {
+  Active = 'active',
+  Trialing = 'trialing',
+  Incomplete = 'incomplete',
+  PastDue = 'past_due',
+  Unpaid = 'unpaid',
+  Canceled = 'canceled',
+  IncompleteExpired = 'incomplete_expired',
+  Ended = 'ended',
+  All = 'all'
+}
 
 export enum WorkspaceType {
   Local = "Local",
@@ -1025,6 +1038,7 @@ export type ResolversTypes = {
   WorkspaceCreateOptions: WorkspaceCreateOptions;
   WorkspacePlan: WorkspacePlan;
   WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
+  WorkspaceStatus: WorkspaceStatus;
   WorkspaceType: WorkspaceType;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
   WorkspaceWhereInput: WorkspaceWhereInput;
@@ -1743,6 +1757,7 @@ export type UserResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+<<<<<<< HEAD
 export type WorkspaceResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Workspace"] = ResolversParentTypes["Workspace"]
@@ -1770,6 +1785,21 @@ export type WorkspaceResolvers<
   >;
   type?: Resolver<ResolversTypes["WorkspaceType"], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+=======
+export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Workspace'] = ResolversParentTypes['Workspace']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['WorkspaceType'], ParentType, ContextType>;
+  plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;
+  datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType>;
+  memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
+  stripeCustomerPortalUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['WorkspaceStatus'], ParentType, ContextType>;
+>>>>>>> 09f89c09 (Workspace now has a status field)
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

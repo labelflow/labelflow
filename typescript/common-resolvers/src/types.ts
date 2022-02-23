@@ -98,6 +98,7 @@ export type DbWorkspace = Omit<
   | "memberships"
   | "plan"
   | "stripeCustomerPortalUrl"
+  | "status"
 > & { plan: WorkspacePlan; stripeCustomerId?: string | undefined | null };
 
 export type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
