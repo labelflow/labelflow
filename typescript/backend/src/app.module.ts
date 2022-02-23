@@ -14,7 +14,8 @@ import { GraphQlLogger } from "./graphql-logger";
 import { LabelFlowModule } from "./labelflow";
 import { ModelModule } from "./model";
 import { ResolversModule } from "./resolvers";
-import { StripeModule } from "./stripe/stripe.module";
+import { S3Module } from "./s3";
+import { StripeModule } from "./stripe";
 
 const ENV_FILE_SUFFIX = PRODUCTION ? "production" : "development";
 
@@ -72,7 +73,7 @@ const PROJECT_MODULES = [
 ];
 
 @Module({
-  imports: [...EXTERNAL_MODULES, ...PROJECT_MODULES, AuthModule],
+  imports: [...EXTERNAL_MODULES, ...PROJECT_MODULES, AuthModule, S3Module],
   controllers: [AppController],
   providers: [AppService],
 })
