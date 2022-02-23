@@ -30,8 +30,8 @@ const DesktopSubmenu = (props: SubmenuProps) => {
       </NavLink.Desktop>
 
       <NavMenu {...getMenuProps()} animate={isOpen ? "open" : "closed"}>
-        <Box maxW="7xl" mx="auto" px="8">
-          <SimpleGrid spacing="10" columns={2}>
+        <Box maxW="7xl" mx="auto" px="400">
+          <SimpleGrid columns={2}>
             {link.children?.map((item, idx) => (
               <DesktopMenuItem
                 key={idx}

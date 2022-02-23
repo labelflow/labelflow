@@ -8,7 +8,6 @@ import {
   useColorModeValue as mode,
 } from "@chakra-ui/react";
 import * as React from "react";
-import { FaChevronRight } from "react-icons/fa";
 
 interface SubmenuItemProps extends HTMLChakraProps<"a"> {
   title: string;
@@ -29,7 +28,6 @@ export const SubmenuItem = (props: SubmenuItemProps) => {
       alignItems="flex-start"
       transition="all 0.2s"
       rounded="lg"
-      _hover={{ bg: mode("gray.50", "gray.600") }}
       _focus={{ shadow: "outline" }}
       {...rest}
     >
@@ -49,19 +47,10 @@ export const SubmenuItem = (props: SubmenuItemProps) => {
           <Text
             fontWeight="semibold"
             color={mode("gray.900", "white")}
-            _groupHover={{ color: mode("brand.600", "inherit") }}
+            _groupHover={{ color: mode("gray.500", "inherit") }}
           >
             {title}
           </Text>
-          <Box
-            fontSize="xs"
-            as={FaChevronRight}
-            transition="all 0.2s"
-            _groupHover={{
-              color: mode("brand.600", "inherit"),
-              transform: "translateX(2px)",
-            }}
-          />
         </HStack>
         <Text as="dd" color={mode("gray.500", "gray.400")}>
           {children}

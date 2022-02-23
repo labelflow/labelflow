@@ -28,7 +28,7 @@
 
 ## About
 
-<img width="100%" alt="LabelFlow Screenshot" src="https://github.com/labelflow/labelflow/raw/main/typescript/web/public/static/img/home-screenshot5.png">
+<img width="100%" alt="LabelFlow Screenshot" src="https://czeqiukmkichqmwlshce.supabase.in/storage/v1/object/public/labelflow-images/hero-image.jpg">
 
 # Visual Data for absolutely everyone
 
