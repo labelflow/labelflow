@@ -614,7 +614,7 @@ export type Query = {
   labels: Array<Label>;
   dataset: Dataset;
   datasets: Array<Dataset>;
-  searchDataset?: Maybe<Dataset>;
+  datasetExists: Scalars['Boolean'];
   workspace: Workspace;
   workspaces: Array<Workspace>;
   workspaceExists: Scalars['Boolean'];
@@ -693,7 +693,7 @@ export type QueryDatasetsArgs = {
 };
 
 
-export type QuerySearchDatasetArgs = {
+export type QueryDatasetExistsArgs = {
   where: DatasetWhereUniqueInput;
 };
 
@@ -1279,7 +1279,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<QueryLabelsArgs, never>>;
   dataset?: Resolver<ResolversTypes['Dataset'], ParentType, ContextType, RequireFields<QueryDatasetArgs, 'where'>>;
   datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QueryDatasetsArgs, never>>;
-  searchDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<QuerySearchDatasetArgs, 'where'>>;
+  datasetExists?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryDatasetExistsArgs, 'where'>>;
   workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType, RequireFields<QueryWorkspaceArgs, 'where'>>;
   workspaces?: Resolver<Array<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<QueryWorkspacesArgs, never>>;
   workspaceExists?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryWorkspaceExistsArgs, 'where'>>;
