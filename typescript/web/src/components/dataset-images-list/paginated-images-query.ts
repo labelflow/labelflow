@@ -26,7 +26,7 @@ export const flushPaginatedImagesCache = async (
   const storeFieldName = `images:${canonicalStringify({
     where: { datasetId },
   })}`;
-  await apolloClient.cache.modify({
+  apolloClient.cache.modify({
     id: apolloClient.cache.identify(makeReference("ROOT_QUERY")),
     fields: {
       images: (data: ImagesQueryCache, details) =>

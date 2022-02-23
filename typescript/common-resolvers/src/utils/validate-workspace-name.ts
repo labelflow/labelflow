@@ -16,6 +16,7 @@ export const FORBIDDEN_WORKSPACE_SLUGS = [
   "index",
   "legal",
   "local",
+  "open",
   "posts",
   "pricing",
   "request-access",
