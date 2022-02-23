@@ -93,6 +93,17 @@
     "webpack": "5.38.1"
   },
   "resolutions": {
-    "graphql": "15.5.1"
+    "graphql": "15.5.1",
+    "immer": "9.0.6",
+    "node-fetch": "2.6.7",
+    "shelljs": "0.8.5",
+    "follow-redirects": "1.14.7",
+    "axios": "0.21.2",
+    "tar": "6.1.9",
+    "prismjs": "1.25.0",
+    "trim-newlines": "3.0.1",
+    "glob-parent": "5.1.2",
+    "trim": "0.0.3",
+    "elliptic": "6.5.4"
   }
 }
