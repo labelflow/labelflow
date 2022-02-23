@@ -1,10 +1,9 @@
 import {
-  Center,
   Flex,
   Heading,
+  Text,
   useColorModeValue as mode,
   VStack,
-  Text,
 } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
 
@@ -18,18 +17,18 @@ export const InvitationContainer = ({
   details,
   children,
 }: InvitationContainerProps) => (
-  <Center h="full">
+  <Flex orientation="row" justify="center">
     <VStack
+      flexGrow={1}
       role="dialog"
       p={6}
       spacing={6}
-      align="start"
       bg={mode("white", "gray.800")}
       borderRadius="md"
       boxShadow="lg"
       maxW="2xl"
       my="3.75rem"
-      w="full"
+      align="start"
     >
       <Heading fontSize="xl" fontWeight="semibold">
         {header}
@@ -39,5 +38,5 @@ export const InvitationContainer = ({
         {children}
       </Flex>
     </VStack>
-  </Center>
+  </Flex>
 );
