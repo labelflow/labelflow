@@ -5,6 +5,7 @@ import { BsPeopleFill } from "react-icons/bs";
 
 import { IoRocketSharp } from "react-icons/io5";
 import NextLink from "next/link";
+import { WorkspacePlan } from "@labelflow/graphql-types";
 import { ActionButton } from "./ActionButton";
 import { PricingCard } from "./PricingCard";
 
@@ -46,12 +47,7 @@ export const Pricing = () => (
         }}
         icon={BsPeopleFill}
         button={
-          <NextLink
-            href={{
-              pathname: "/auth/signin",
-              query: { redirect: "/workspaces?plan=community" },
-            }}
-          >
+          <NextLink href={`/workspaces?plan=${WorkspacePlan.Community}`}>
             <ActionButton>Try it now</ActionButton>
           </NextLink>
         }
@@ -76,12 +72,7 @@ export const Pricing = () => (
         }}
         icon={GiCommercialAirplane}
         button={
-          <NextLink
-            href={{
-              pathname: "/auth/signin",
-              query: { redirect: "/workspaces?plan=starter" },
-            }}
-          >
+          <NextLink href={`/workspaces?plan=${WorkspacePlan.Starter}`}>
             <ActionButton variant="outline" borderWidth="2px">
               Start Free trial
             </ActionButton>
@@ -106,12 +97,7 @@ export const Pricing = () => (
         }}
         icon={IoRocketSharp}
         button={
-          <NextLink
-            href={{
-              pathname: "/auth/signin",
-              query: { redirect: "/workspaces?plan=pro" },
-            }}
-          >
+          <NextLink href={`/workspaces?plan=${WorkspacePlan.Pro}`}>
             <ActionButton variant="outline" borderWidth="2px">
               Start Free trial
             </ActionButton>

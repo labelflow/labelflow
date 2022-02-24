@@ -11,6 +11,8 @@ import {
   Text,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers/src/constants";
+import { WorkspacePlan } from "@labelflow/graphql-types";
 import { isEmpty, isNil } from "lodash/fp";
 import React, {
   createContext,
@@ -95,6 +97,16 @@ const WorkspaceName = ({ error }: { error: string | undefined }) => {
   );
 };
 
+const getPlanToCreate = (plan: string | undefined | null): WorkspacePlan => {
+  if (isNil(plan)) {
+    return DEFAULT_WORKSPACE_PLAN;
+  }
+  if (!(plan in WorkspacePlan)) {
+    throw new Error("Unknown plan");
+  }
+  return WorkspacePlan[plan as keyof typeof WorkspacePlan];
+};
+
 export const useCreateWorkspace = (): [
   () => void,
   boolean,
@@ -102,7 +114,7 @@ export const useCreateWorkspace = (): [
 ] => {
   const { name } = useWorkspaceNameInput();
   const [plan] = useQueryParam("plan", StringParam);
-  const planToCreate = plan ?? "pro";
+  const planToCreate = getPlanToCreate(plan);
   const [create, { loading, error: createError, called }] =
     useCreateWorkspaceMutation(name, planToCreate);
   const error =

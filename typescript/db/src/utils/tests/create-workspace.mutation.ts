@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers/src/constants";
 import {
   MutationCreateWorkspaceArgs,
   Workspace,
-  WorkspacePlan,
 } from "@labelflow/graphql-types";
 import { USER_WITH_WORKSPACES_QUERY } from "../../../../web/src/shared-queries/user.query";
 import { client } from "../../dev/apollo-client";
@@ -39,7 +39,7 @@ export const createWorkspace = (
       data: {
         ...data,
         name: data?.name === undefined ? "test" : data.name,
-        plan: data?.plan === undefined ? WorkspacePlan.Pro : data.plan,
+        plan: data?.plan === undefined ? DEFAULT_WORKSPACE_PLAN : data.plan,
       },
     },
     refetchQueries: [USER_WITH_WORKSPACES_QUERY],

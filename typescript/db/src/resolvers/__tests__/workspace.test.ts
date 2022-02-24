@@ -103,6 +103,11 @@ describe("createWorkspace mutation", () => {
     expect(data.createWorkspace.slug).toEqual("test-with-spaces-and-caps");
   });
 
+  it("creates a workspace with the Pro plan when no argument is provided", async () => {
+    const { data } = await createWorkspace();
+    expect(data.createWorkspace.plan).toEqual(WorkspacePlan.Pro);
+  });
+
   it("creates a workspace with the Community plan", async () => {
     const { data } = await createWorkspace({
       plan: WorkspacePlan.Community,

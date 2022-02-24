@@ -817,15 +817,13 @@ export type WorkspaceSlugAndDatasetSlug = {
 };
 
 export enum WorkspaceStatus {
-  Active = 'active',
-  Trialing = 'trialing',
-  Incomplete = 'incomplete',
-  PastDue = 'past_due',
-  Unpaid = 'unpaid',
-  Canceled = 'canceled',
-  IncompleteExpired = 'incomplete_expired',
-  Ended = 'ended',
-  All = 'all'
+  Active = 'Active',
+  Trialing = 'Trialing',
+  Incomplete = 'Incomplete',
+  PastDue = 'PastDue',
+  Unpaid = 'Unpaid',
+  Canceled = 'Canceled',
+  IncompleteExpired = 'IncompleteExpired'
 }
 
 export enum WorkspaceType {

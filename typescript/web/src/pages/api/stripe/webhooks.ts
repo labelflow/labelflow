@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 import { getPrismaClient } from "@labelflow/db";
+import { WorkspaceStatus } from "@labelflow/graphql-types";
+import { pascalCase } from "change-case";
 import { WorkspacePlan } from "../../../graphql-types/globalTypes";
 
 const {
@@ -46,7 +48,7 @@ const updateWorkspacePlan = async ({
 }: {
   workspaceSlug: string;
   workspacePlan: keyof typeof WorkspacePlan;
-  status: string;
+  status: WorkspaceStatus;
 }) => {
   const prisma = await getPrismaClient();
   await prisma.workspace.update({
@@ -89,6 +91,19 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           throw new Error("No workspace found for this subscription");
         }
 
+        if (!(status in WorkspaceStatus)) {
+          throw new Error(`Unknown status ${status}`);
+        }
+
+        if (
+          !Object.values(WorkspaceStatus).includes(
+            pascalCase(status) as WorkspaceStatus
+          )
+        ) {
+          throw new Error(`Unknown status ${status}`);
+        }
+
+        const workspaceStatus = pascalCase(status) as WorkspaceStatus;
         switch (event.type) {
           case "customer.subscription.created":
           case "customer.subscription.updated":
@@ -111,7 +126,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 await updateWorkspacePlan({
                   workspacePlan,
                   workspaceSlug,
-                  status,
+                  status: workspaceStatus,
                 });
                 break;
               }
@@ -122,7 +137,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 await updateWorkspacePlan({
                   workspacePlan: WorkspacePlan.Community,
                   workspaceSlug,
-                  status,
+                  status: workspaceStatus,
                 });
                 break;
               }
@@ -134,7 +149,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             await updateWorkspacePlan({
               workspaceSlug,
               workspacePlan: WorkspacePlan.Community,
-              status,
+              status: workspaceStatus,
             });
             break;
           }

@@ -135,14 +135,13 @@ enum MembershipRole {
   Member
 }
 
+# https://stripe.com/docs/api/subscriptions/object#subscription_object-status
 enum WorkspaceStatus {
-  active
-  trialing
-  incomplete
-  past_due
-  unpaid
-  canceled
-  incomplete_expired
-  ended
-  all
+  Active
+  Trialing
+  Incomplete
+  PastDue
+  Unpaid
+  Canceled
+  IncompleteExpired
 }

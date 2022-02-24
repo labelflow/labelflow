@@ -1,8 +1,10 @@
 import { WorkspacePlan } from "@labelflow/graphql-types";
-import { DAYS_OF_TRIAL, DEFAULT_WORKSPACE_PLAN } from "@labelflow/utils";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers/src/constants";
 import { getUnixTime, addDays } from "date-fns";
 import { isNil } from "lodash/fp";
 import Stripe from "stripe";
+
+const DAYS_OF_TRIAL = 14;
 
 const planToStripePriceId: Record<WorkspacePlan, string> = {
   Community: process.env.STRIPE_COMMUNITY_PLAN_PRICE_ID ?? "",
@@ -10,14 +12,15 @@ const planToStripePriceId: Record<WorkspacePlan, string> = {
   Pro: process.env.STRIPE_PRO_PLAN_PRICE_ID ?? "",
 };
 
-const getPrice = (
+const getPriceId = (
   metadata: Stripe.Emptyable<Stripe.MetadataParam> | undefined
 ): string => {
-  if (metadata && !isNil(metadata.plan)) {
-    return planToStripePriceId[metadata.plan as WorkspacePlan];
+  if (metadata && !isNil(metadata.plan) && metadata.plan in WorkspacePlan) {
+    return planToStripePriceId[metadata.plan as keyof typeof WorkspacePlan];
   }
   return planToStripePriceId[DEFAULT_WORKSPACE_PLAN];
 };
+
 export function stripeIsDefined(
   stripeInstance: Stripe | undefined
 ): asserts stripeInstance is NonNullable<Stripe> {
@@ -26,16 +29,18 @@ export function stripeIsDefined(
   }
 }
 
+const STRIPE_ENV_VARIABLES_DEFINED =
+  process.env.STRIPE_SECRET_KEY &&
+  process.env.STRIPE_COMMUNITY_PLAN_PRICE_ID &&
+  process.env.STRIPE_STARTER_PLAN_PRICE_ID &&
+  process.env.STRIPE_PRO_PLAN_PRICE_ID;
+
 export class StripeService {
-  private readonly stripe?: Stripe =
-    process.env.STRIPE_SECRET_KEY &&
-    process.env.STRIPE_COMMUNITY_PLAN_PRICE_ID &&
-    process.env.STRIPE_STARTER_PLAN_PRICE_ID &&
-    process.env.STRIPE_PRO_PLAN_PRICE_ID
-      ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-          apiVersion: "2020-08-27",
-        })
-      : undefined;
+  private readonly stripe?: Stripe = STRIPE_ENV_VARIABLES_DEFINED
+    ? new Stripe(process.env.STRIPE_SECRET_KEY!, {
+        apiVersion: "2020-08-27",
+      })
+    : undefined;
 
   public readonly hasStripe: boolean = !isNil(this.stripe);
 
@@ -52,7 +57,7 @@ export class StripeService {
     metadata?: Stripe.Emptyable<Stripe.MetadataParam>
   ): Promise<Stripe.Subscription> => {
     stripeIsDefined(this.stripe);
-    const price = getPrice(metadata);
+    const price = getPriceId(metadata);
     const items: Stripe.SubscriptionCreateParams.Item[] = [
       { price, quantity: 1 },
     ];

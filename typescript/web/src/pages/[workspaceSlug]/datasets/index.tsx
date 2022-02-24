@@ -12,19 +12,13 @@ import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-ta
 import { NavLogo } from "../../../components/logo/nav-logo";
 import { Meta } from "../../../components/meta";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
-import { UpdatePlanBanner } from "../../../components/workspaces/update-plan-banner";
-import { WorkspaceStatus } from "../../../graphql-types";
+import { UpgradePlanBanner } from "../../../components/workspaces/upgrade-plan-banner";
 import { useWorkspace } from "../../../hooks";
 import { BoolParam, IdParam } from "../../../utils/query-param-bool";
 
 const Body = () => {
-  const { slug: workspaceSlug, status } = useWorkspace();
+  const { slug: workspaceSlug } = useWorkspace();
   const { isReady } = useRouter();
-  const isWorkspaceActive =
-    status === WorkspaceStatus.active ||
-    status === WorkspaceStatus.trialing ||
-    status === WorkspaceStatus.incomplete;
-  const shouldDisplayUpdateBanner = !isWorkspaceActive;
 
   const [isCreatingDataset, setIsCreatingDataset] = useQueryParam(
     "modal-create-dataset",
@@ -62,7 +56,7 @@ const Body = () => {
 
   return (
     <>
-      {shouldDisplayUpdateBanner && <UpdatePlanBanner />}
+      <UpgradePlanBanner />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
       <Layout

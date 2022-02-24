@@ -6,7 +6,7 @@ import {
   MutationTuple,
   useMutation,
 } from "@apollo/client";
-import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/utils";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers/src/constants";
 import { isNil } from "lodash/fp";
 import { useRouter } from "next/router";
 import {

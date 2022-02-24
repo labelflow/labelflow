@@ -547,15 +547,13 @@ export const typeDefs = [
   }
 
   enum WorkspaceStatus {
-    active
-    trialing
-    incomplete
-    past_due
-    unpaid
-    canceled
-    incomplete_expired
-    ended
-    all
+    Active
+    Trialing
+    Incomplete
+    PastDue
+    Unpaid
+    Canceled
+    IncompleteExpired
   }
 
   enum WorkspaceType {

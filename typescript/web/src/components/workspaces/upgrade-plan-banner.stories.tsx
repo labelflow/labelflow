@@ -1,9 +1,10 @@
 import { createCommonDecorator, storybookTitle } from "../../utils/stories";
 import { WORKSPACE_DATA } from "../../utils/fixtures";
-import { UpdatePlanBanner } from "./update-plan-banner";
+import { UpgradePlanBanner as UpgradePlanBannerComponent } from "./upgrade-plan-banner";
 
 export default {
-  title: storybookTitle("Workspaces", "UpdatePlanBanner"),
+  title: storybookTitle("Workspaces", UpgradePlanBannerComponent),
+  component: UpgradePlanBannerComponent,
   decorators: [
     createCommonDecorator({
       auth: { withWorkspaces: true },
@@ -12,5 +13,4 @@ export default {
     }),
   ],
 };
-
-export const Open = () => <UpdatePlanBanner />;
+export const UpgradePlanBanner = () => <UpgradePlanBannerComponent />;

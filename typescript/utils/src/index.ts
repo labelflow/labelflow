@@ -4,4 +4,3 @@ export * from "./override-error";
 export * from "./reorder-array";
 export * from "./sleep";
 export * from "./timeout";
-export * from "./const";

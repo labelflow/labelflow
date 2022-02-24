@@ -8203,7 +8203,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@labelflow/utils@workspace:typescript/utils"
   dependencies:
-    "@labelflow/graphql-types": "workspace:typescript/graphql-types"
     lodash: 4.17.21
   languageName: unknown
   linkType: soft

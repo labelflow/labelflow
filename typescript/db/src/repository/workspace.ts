@@ -7,12 +7,9 @@ import {
   Repository,
   validWorkspaceName,
 } from "@labelflow/common-resolvers";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers/src/constants";
 import { WorkspaceType } from "@labelflow/graphql-types";
-import {
-  DEFAULT_WORKSPACE_PLAN,
-  ErrorOverride,
-  withErrorOverridesAsync,
-} from "@labelflow/utils";
+import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
 import { Prisma, UserRole } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { isNil } from "lodash";

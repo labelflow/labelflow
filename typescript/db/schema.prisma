@@ -95,16 +95,16 @@ model Dataset {
 model Workspace {
   // Id exists for regularity reasons.
   // It's more appropriate to query Workspaces using the slug
-  id               String        @id @default(uuid()) @db.Uuid
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  id               String          @id @default(uuid()) @db.Uuid
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
   deletedAt        DateTime?
-  name             String        @unique
-  slug             String        @unique
+  name             String          @unique
+  slug             String          @unique
   image            String?
   plan             WorkspacePlan
   stripeCustomerId String?
-  status           String        @default("active")
+  status           WorkspaceStatus @default(Active)
   datasets         Dataset[]
   memberships      Membership[]
 
@@ -217,13 +217,11 @@ enum WorkspacePlan {
 }
 
 enum WorkspaceStatus {
-  active
-  trialing
-  incomplete
-  past_due
-  unpaid
-  canceled
-  incomplete_expired
-  ended
-  all
+  Active
+  Trialing
+  Incomplete
+  PastDue
+  Unpaid
+  Canceled
+  IncompleteExpired
 }

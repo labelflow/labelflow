@@ -27,6 +27,21 @@ interface PricingCardProps extends CardProps {
   button: React.ReactElement;
 }
 
+const StartTrial = ({
+  button,
+  trialPeriod,
+}: {
+  button: React.ReactElement;
+  trialPeriod: string;
+}) => (
+  <VStack spacing={2}>
+    {button}
+    <Text fontWeight="600" color="gray.400">
+      {trialPeriod}
+    </Text>
+  </VStack>
+);
+
 export const PricingCard = (props: PricingCardProps) => {
   const { data, icon, button, ...rest } = props;
   const { features, price, pricePost, name, trialPeriod } = data;
@@ -67,12 +82,7 @@ export const PricingCard = (props: PricingCardProps) => {
           </ListItem>
         ))}
       </List>
-      <VStack spacing={2}>
-        {button}
-        <Text fontWeight="600" color="gray.400">
-          {trialPeriod}
-        </Text>
-      </VStack>
+      <StartTrial button={button} trialPeriod={trialPeriod} />
     </Card>
   );
 };
