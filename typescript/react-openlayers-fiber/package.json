@@ -25,7 +25,7 @@
     "react-dom": "17.x"
   },
   "devDependencies": {
-    "@storybook/react": "6.2.9",
+    "@storybook/react": "6.4.19",
     "@turf/turf": "6.3.0",
     "@types/jest": "24.0.13",
     "@types/lodash": "4.14.154",
@@ -33,7 +33,6 @@
     "@types/react": "17.0.0",
     "@types/react-dom": "17.0.0",
     "@types/react-reconciler": "0.26.1",
-    "@types/storybook__react": "4.0.1",
     "ol": "6.6.1",
     "ol-mapbox-style": "6.4.1",
     "proj4": "2.6.3",
