@@ -12,6 +12,7 @@ type Mutation {
   deleteLabel(where: LabelWhereUniqueInput!): Label
 
   createLabelClass(data: LabelClassCreateInput!): LabelClass
+  createManyLabelClasses(data: LabelClassCreateManyInput!): [LabelClass!]!
   updateLabelClass(
     where: LabelClassWhereUniqueInput!
     data: LabelClassUpdateInput!

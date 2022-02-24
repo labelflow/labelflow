@@ -274,6 +274,17 @@ input LabelClassCreateInput {
   datasetId: ID!
 }
 
+input LabelClassCreateManyInput {
+  labelClasses: [LabelClassCreateManySingleInput!]!
+  datasetId: ID!
+}
+
+input LabelClassCreateManySingleInput {
+  id: ID
+  name: String!
+  color: ColorHex
+}
+
 input LabelClassReorderInput {
   index: Int!
 }
@@ -386,6 +397,7 @@ type Mutation {
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
   createLabelClass(data: LabelClassCreateInput!): LabelClass
+  createManyLabelClasses(data: LabelClassCreateManyInput!): [LabelClass!]!
   updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
   reorderLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassReorderInput!): LabelClass
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass

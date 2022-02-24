@@ -180,10 +180,19 @@ export type Repository = {
   };
   labelClass: {
     add: Add<DbLabelClassCreateInput>;
+    addMany: (
+      args: { labelClasses: DbLabelClassCreateInput[] },
+      user?: { id: string }
+    ) => Promise<ID[]>;
     count: Count<LabelClassWhereInput & { user?: { id: string } }>;
     delete: Delete<LabelClassWhereUniqueInput>;
     get: Get<DbLabelClass, LabelClassWhereUniqueInput>;
-    list: List<DbLabelClass, LabelClassWhereInput & { user?: { id: string } }>;
+    list: List<
+      DbLabelClass,
+      LabelClassWhereInput & { user?: { id: string } } & {
+        id?: string | { in: string[] };
+      }
+    >;
     update: Update<DbLabelClass, LabelClassWhereUniqueInput>;
   };
   dataset: {

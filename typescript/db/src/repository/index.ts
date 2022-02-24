@@ -1,6 +1,7 @@
 import { DbLabel, getSlug, Repository } from "@labelflow/common-resolvers";
 import { Image } from "@labelflow/graphql-types";
 import { Prisma } from "@prisma/client";
+import { uniq } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";
 import {
   checkUserAccessToDataset,
@@ -177,12 +178,24 @@ export const repository: Repository = {
         where: { id: labelClass.datasetId },
         user,
       });
-      const createdLabelClass = await (
-        await getPrismaClient()
-      ).labelClass.create({
+      const db = await getPrismaClient();
+      const createdLabelClass = await db.labelClass.create({
         data: castObjectNullsToUndefined(labelClass),
       });
       return createdLabelClass.id;
+    },
+    addMany: async ({ labelClasses }, user) => {
+      const datasetIds = uniq(
+        labelClasses.map((labelClass) => labelClass.datasetId)
+      );
+      await Promise.all(
+        datasetIds.map((datasetId) =>
+          checkUserAccessToDataset({ where: { id: datasetId }, user })
+        )
+      );
+      const db = await getPrismaClient();
+      await db.labelClass.createMany({ data: labelClasses });
+      return labelClasses.map((labelClass) => labelClass.id);
     },
     count: async (whereWithUser) => {
       const { user, ...where } = whereWithUser ?? { user: undefined };
