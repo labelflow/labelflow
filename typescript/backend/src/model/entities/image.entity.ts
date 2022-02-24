@@ -30,7 +30,7 @@ export class Image {
 
   @Field()
   @UpdateDateColumn()
-  updatedAt!: Date;
+  updatedAt?: Date;
 
   // @DeleteDateColumn()
   // deletedAt?: Date;
@@ -87,11 +87,11 @@ export class Image {
 
   @Field(() => [Label])
   @OneToMany(() => Label, (data) => data.labelClass, { lazy: true })
-  labels!: Promisable<Label[]>;
+  labels?: Promisable<Label[]>;
 
   @Field(() => Dataset)
   @ManyToOne(() => Dataset, (data) => data.images)
-  dataset!: Promisable<Dataset>;
+  dataset?: Promisable<Dataset>;
 
   @Column()
   @RelationId((data: Image) => data.dataset)

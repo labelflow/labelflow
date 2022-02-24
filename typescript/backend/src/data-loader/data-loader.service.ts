@@ -255,6 +255,7 @@ export class DataLoaderService {
 
   createLoaders(): DataLoaders {
     return {
+      datasetId: byId(this.datasets, "id"),
       datasetWorkspaceSlug: manyToOne(this.datasets, "workspaceSlug"),
       imageDatasetId: manyToOne(this.images, "datasetId"),
       imagesDatasetIdCount: count(this.images, "datasetId"),

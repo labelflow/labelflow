@@ -7,11 +7,39 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { isEmpty, isNil } from "lodash/fp";
+
 import { DataLoader, DataLoaders } from "../../data-loader";
-import { DatasetCreateInput, DatasetService } from "../../labelflow";
+import {
+  DatasetCreateInput,
+  DatasetService,
+  DatasetUpdateInput,
+} from "../../labelflow";
 import { Dataset, Image, LabelClass, TotalCountAggregates } from "../../model";
 import { PaginationFirstArg, PaginationSkipArg } from "../decorators";
 import { DatasetWhereInput, DatasetWhereUniqueInput } from "../input";
+
+const getUniqueInputWhere = ({
+  id,
+  slugs,
+}: DatasetWhereUniqueInput):
+  | Required<Pick<DatasetWhereUniqueInput, "id">>
+  | Required<NonNullable<DatasetWhereUniqueInput["slugs"]>> => {
+  if (!isNil(id) && !isEmpty(id)) return { id };
+  if (isNil(slugs)) {
+    throw new BadRequestException("ID or slugs must be defined");
+  }
+  const { slug, workspaceSlug } = slugs;
+  if (
+    !isNil(slug) &&
+    !isEmpty(slug) &&
+    !isNil(workspaceSlug) &&
+    !isEmpty(workspaceSlug)
+  ) {
+    return { slug, workspaceSlug };
+  }
+  throw new BadRequestException("Both slug and workspaceSlug must be defined");
+};
 
 @Resolver(() => Dataset)
 export class DatasetResolver {
@@ -20,14 +48,20 @@ export class DatasetResolver {
   @Query(() => Dataset)
   async dataset(
     @Args("where", { type: () => DatasetWhereUniqueInput })
-    { id, slugs }: DatasetWhereUniqueInput
+    input: DatasetWhereUniqueInput
   ): Promise<Dataset> {
-    if (!id && !slugs) {
-      throw new BadRequestException("ID or slugs must be defined");
-    }
-    return !id
-      ? this.service.findOneOrFail({ where: slugs })
-      : this.service.findById(id);
+    const where = getUniqueInputWhere(input);
+    return this.service.findOneOrFail({ where });
+  }
+
+  // FIXME NEST Remove once #917 gets merged
+  @Query(() => Dataset, { nullable: true })
+  async searchDataset(
+    @Args("where", { type: () => DatasetWhereUniqueInput })
+    input: DatasetWhereUniqueInput
+  ): Promise<Dataset | undefined> {
+    const where = getUniqueInputWhere(input);
+    return this.service.findOne({ where });
   }
 
   @Query(() => [Dataset])
@@ -45,6 +79,33 @@ export class DatasetResolver {
     @Args("data") data: DatasetCreateInput
   ): Promise<Dataset> {
     return await this.service.create(data);
+  }
+
+  @Mutation(() => Dataset)
+  async updateDataset(
+    @Args("where") input: DatasetWhereUniqueInput,
+    @Args("data") data: DatasetUpdateInput
+  ): Promise<Dataset> {
+    const where = getUniqueInputWhere(input);
+    if ("id" in where) {
+      await this.service.updateById(where.id, data);
+    } else {
+      await this.service.updateBySlugs(where.workspaceSlug, where.slug, data);
+    }
+    return await this.service.findOneOrFail({ where });
+  }
+
+  @Mutation(() => Dataset) async deleteDataset(
+    @Args("where") input: DatasetWhereUniqueInput
+  ): Promise<Dataset> {
+    const where = getUniqueInputWhere(input);
+    const data = await this.service.findOneOrFail({ where });
+    if ("id" in where) {
+      await this.service.deleteById(where.id);
+    } else {
+      await this.service.deleteBySlugs(where.workspaceSlug, where.slug);
+    }
+    return data;
   }
 
   @ResolveField(() => [LabelClass])
@@ -87,5 +148,14 @@ export class DatasetResolver {
     @DataLoader() { labelClassesDatasetIdCount }: DataLoaders
   ): Promise<TotalCountAggregates> {
     return labelClassesDatasetIdCount.load(id);
+  }
+
+  @ResolveField(() => Boolean)
+  async datasetExists(
+    @Args("where") input: DatasetWhereUniqueInput
+  ): Promise<boolean> {
+    const where = getUniqueInputWhere(input);
+    const found = await this.service.findOne({ where });
+    return !isNil(found);
   }
 }

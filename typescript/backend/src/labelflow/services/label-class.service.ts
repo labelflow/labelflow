@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { getNextClassColor } from "labelflow-utils";
 import { isNil } from "lodash/fp";
 import { Repository } from "typeorm";
+import { v4 as uuid } from "uuid";
 import { LabelClass } from "../../model";
 import { EntityService } from "../common";
 import { LabelClassCreateInput, LabelClassUpdateInput } from "../input";
@@ -34,7 +35,7 @@ export class LabelClassService extends EntityService<
   }
 
   async create({
-    id,
+    id = uuid(),
     datasetId,
     color: inputColor,
     ...input

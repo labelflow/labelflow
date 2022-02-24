@@ -38,6 +38,7 @@ export default async function handler(
 
     const origin =
       (req?.headers?.origin as string | undefined) ||
+      process.env.NEXT_PUBLIC_SITE_URL ||
       process.env.NEXTAUTH_URL || // We use the NEXTAUTH_URL on the production deployments only
       process.env.VERCEL_URL ||
       "https://labelflow.ai";

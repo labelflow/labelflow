@@ -1,5 +1,5 @@
 import { Field, Float, ID, ObjectType } from "@nestjs/graphql";
-import { IsPositive, Min } from "class-validator";
+import { IsOptional, IsPositive, Min } from "class-validator";
 import GqlJSON from "graphql-type-json";
 import {
   Column,
@@ -64,21 +64,25 @@ export class Label {
   @Field(() => Float, { nullable: true })
   @Column("float")
   @Min(0)
+  @IsOptional()
   x?: number;
 
   @Field(() => Float, { nullable: true })
   @Column("float")
   @Min(0)
+  @IsOptional()
   y?: number;
 
   @Field(() => Float, { nullable: true })
   @Column("float")
   @IsPositive()
+  @IsOptional()
   width?: number;
 
   @Field(() => Float, { nullable: true })
   @Column("float")
   @IsPositive()
+  @IsOptional()
   height?: number;
 
   @Field(() => Geometry, { nullable: true })

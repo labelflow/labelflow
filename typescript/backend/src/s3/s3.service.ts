@@ -9,9 +9,8 @@ import { RequestPresigningArguments } from "@aws-sdk/types";
 import { HttpService } from "@nestjs/axios";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { AxiosResponse } from "axios";
 import { isEmpty, isNil } from "lodash/fp";
-import { Observable } from "rxjs";
+import { lastValueFrom } from "rxjs";
 import { URL } from "url";
 import {
   AWS_ACCESS_KEY_ID_ENV,
@@ -20,9 +19,6 @@ import {
   AWS_S3_REGION_ENV,
   DEFAULT_AWS_S3_BUCKET,
 } from "../constants";
-
-const DOWNLOAD_ACCEPT_HEADER =
-  "image/tiff,image/jpeg,image/png,application/zip,image/*,*/*;q=0.8";
 
 const DEFAULT_REQUEST_PRESIGNING_ARGUMENTS: RequestPresigningArguments = {
   expiresIn: 3600,
@@ -38,24 +34,29 @@ export class S3Service {
 
   private readonly s3: S3Client;
 
+  private readonly endpointUrl?: string;
+
+  private readonly region: string;
+
   private readonly bucket: string;
 
   constructor(
     private readonly config: ConfigService,
     private readonly http: HttpService
   ) {
+    this.endpointUrl = this.config.get(AWS_S3_ENDPOINT_ENV);
     const clientConfig = this.getClientConfig();
     this.s3 = new S3Client(clientConfig);
+    this.region = this.getRequiredConfig(AWS_S3_REGION_ENV);
     this.bucket = config.get(AWS_S3_BUCKET_ENV, DEFAULT_AWS_S3_BUCKET);
   }
 
   private getClientConfig(): S3ClientConfig {
-    const region = this.getRequiredConfig(AWS_S3_REGION_ENV);
     const accessKeyId = this.getRequiredConfig(AWS_ACCESS_KEY_ID_ENV);
     const secretAccessKey = this.getRequiredConfig(AWS_ACCESS_KEY_ID_ENV);
     const endpointConfig = this.getEndpointConfig();
     return {
-      region,
+      region: this.region,
       credentials: { accessKeyId, secretAccessKey },
       ...endpointConfig,
     };
@@ -69,23 +70,29 @@ export class S3Service {
   }
 
   private getEndpointConfig(): Partial<S3ClientConfig> | undefined {
-    const endpointUrl = this.config.get(AWS_S3_ENDPOINT_ENV);
-    if (isNil(endpointUrl) || isEmpty(endpointUrl)) return undefined;
+    if (isNil(this.endpointUrl) || isEmpty(this.endpointUrl)) return undefined;
     // If we set an given endpoint, it means that we're using MinIO
     // See https://docs.min.io/docs/how-to-use-aws-sdk-for-javascript-with-minio-server.html
-    const { protocol, host, pathname: path } = new URL(endpointUrl);
+    const { protocol, host, pathname } = new URL(this.endpointUrl);
     return {
       endpoint: {
         // Remove trailing colon
         protocol: protocol.slice(0, -1),
-        // Needs to contains the port, so host, not hostname
         hostname: host,
+        // port: parseInt(port, 10),
         // Required, else we have this issue:
         // https://github.com/aws/aws-sdk-js-v3/issues/1941#issuecomment-824194714
-        path,
+        path: pathname,
       },
       forcePathStyle: true,
     };
+  }
+
+  public getBucketUrl(): string {
+    return (
+      `${this.endpointUrl}/${this.bucket}` ??
+      `https://${this.bucket}.s3.${this.region}.amazonaws.com`
+    );
   }
 
   public async getSignedUploadUrl(
@@ -96,7 +103,9 @@ export class S3Service {
       throw new Error("S3 key cannot be empty");
     }
     const command = new PutObjectCommand({ Bucket: this.bucket, Key: key });
-    return await this.getSignedUrl(command, options);
+    const url = await this.getSignedUrl(command, options);
+    this.logger.verbose("getSignedUploadUrl", { key, url });
+    return url;
   }
 
   public async getSignedDownloadUrl(
@@ -104,7 +113,9 @@ export class S3Service {
     options?: RequestPresigningArguments
   ): Promise<string> {
     const command = new GetObjectCommand({ Bucket: this.bucket, Key: key });
-    return await this.getSignedUrl(command, options);
+    const url = await this.getSignedUrl(command, options);
+    this.logger.verbose("getSignedDownloadUrl", { key, url });
+    return url;
   }
 
   private async getSignedUrl(
@@ -115,31 +126,60 @@ export class S3Service {
     return await getSignedUrl(this.s3, command, allOptions);
   }
 
-  public async upload(
-    key: string,
-    data: unknown
-  ): Promise<Observable<AxiosResponse>> {
+  public async upload(key: string, data: ArrayBuffer): Promise<void> {
+    this.logger.verbose("upload", { key, bytes: data.byteLength });
+    // const command = new PutObjectCommand({
+    //   Bucket: this.bucket,
+    //   Key: key,
+    //   Body: data,
+    // });
+    // await this.s3.send(command);
     const url = await this.getSignedUploadUrl(key);
-    return this.http.put(url, { body: data });
-  }
-
-  public async download(
-    key: string,
-    { cookieHeader: cookie, ...options }: DownloadOptions = {}
-  ): Promise<Observable<AxiosResponse>> {
-    const cookieHeader =
-      isNil(cookie) || isEmpty(cookie) ? undefined : { Cookie: cookie };
-    const headers = {
-      Accept: DOWNLOAD_ACCEPT_HEADER,
-      "Sec-Fetch-Dest": "image",
-      ...cookieHeader,
-    };
-    const url = await this.getSignedDownloadUrl(key, options);
-    return this.http.get(url, { headers });
+    const observable = this.http.put(url, data, {
+      headers: { "Content-Length": data.byteLength },
+    });
+    const response = await lastValueFrom(observable);
+    if (response.status === 200) return;
+    throw new Error(`Failed to upload file with key ${key}`);
   }
 
   public async delete(key: string): Promise<void> {
     const msg = `Unsupported ${S3Service.name}.delete("${key}") called`;
     this.logger.warn(msg);
+  }
+
+  public getApiDownloadsUrl(origin: string, key: string = ""): string {
+    return `${origin}/api/downloads/${key}`;
+  }
+
+  public isBucketUrl(url: string): boolean {
+    const bucketUrl = this.getBucketUrl();
+    return url.startsWith(bucketUrl);
+  }
+
+  public isApiDownloadUrl(
+    url: string,
+    origin: string | undefined
+  ): origin is NonNullable<string> {
+    return !isNil(origin) && url.startsWith(this.getApiDownloadsUrl(origin));
+  }
+
+  public isInternalUrl(
+    url: string,
+    origin: string | undefined
+  ): origin is NonNullable<string> {
+    return this.isBucketUrl(url) || this.isApiDownloadUrl(url, origin);
+  }
+
+  public getKeyFromApiDownloads(
+    url: string,
+    origin: string | undefined
+  ): string {
+    if (!this.isApiDownloadUrl(url, origin))
+      throw new Error("URL does not points to /api/downloads");
+    const apiDownloads = this.getApiDownloadsUrl(origin);
+    const output = url.substring(apiDownloads.length);
+    this.logger.verbose("getKeyFromApiDownloads", { url, origin, output });
+    return output;
   }
 }

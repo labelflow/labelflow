@@ -49,6 +49,7 @@ export type CountDataLoader = DataLoader<DataLoaderKey, TotalCountAggregates>;
 
 export type DataLoaders = {
   datasetWorkspaceSlug: ManyToOneDataLoader<Dataset>;
+  datasetId: ByIdDataLoader<Dataset>;
   imageDatasetId: ManyToOneDataLoader<Image>;
   imagesDatasetIdCount: CountDataLoader;
   labelClassDatasetId: ManyToOneDataLoader<LabelClass>;

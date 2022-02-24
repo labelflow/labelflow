@@ -13,7 +13,7 @@ const getValuesMap = <TEnum extends object>(
     {}
   );
 
-const registerEnum = <TEnum extends object>(
+export const registerEnum = <TEnum extends object>(
   enumName: string,
   enumRef: TEnum
 ): void =>

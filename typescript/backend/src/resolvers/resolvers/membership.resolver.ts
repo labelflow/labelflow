@@ -1,10 +1,22 @@
-import { Args, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from "@nestjs/graphql";
 import { isEmpty, isNil } from "lodash/fp";
 import { DataLoader, DataLoaders } from "../../data-loader";
-import { MembershipService } from "../../labelflow";
-import { Membership, User, Workspace } from "../../model";
+import { MembershipService, MembershipUpdateInput } from "../../labelflow";
+import {
+  CurrentUserCanAcceptInvitation,
+  Membership,
+  User,
+  Workspace,
+} from "../../model";
+import { PaginationFirstArg, PaginationSkipArg, UserId } from "../decorators";
 import { MembershipWhereInput, MembershipWhereUniqueInput } from "../input";
-import { PaginationFirstArg, PaginationSkipArg } from "../decorators";
 
 @Resolver(() => Membership)
 export class MembershipResolver {
@@ -43,5 +55,50 @@ export class MembershipResolver {
   ): Promise<User | undefined> {
     if (isEmpty(id) || isNil(id)) return undefined;
     return await userId.load(id);
+  }
+
+  @Mutation(() => Membership)
+  async updateMembership(
+    @Args("where") { id }: MembershipWhereUniqueInput,
+    data: MembershipUpdateInput
+  ): Promise<Membership> {
+    await this.service.updateById(id, data);
+    return await this.service.findById(id);
+  }
+
+  @Mutation(() => Membership)
+  async deleteMembership(
+    @Args("where") { id }: MembershipWhereUniqueInput
+  ): Promise<Membership> {
+    const data = await this.service.findById(id);
+    await this.service.deleteById(id);
+    return data;
+  }
+
+  @ResolveField(() => CurrentUserCanAcceptInvitation)
+  async currentUserCanAcceptInvitation(
+    @Parent()
+    membership: Membership,
+    @UserId() userId: string
+  ): Promise<CurrentUserCanAcceptInvitation> {
+    return await this.service.canAcceptInvitation(userId, membership);
+  }
+
+  @Mutation(() => Membership)
+  async acceptInvitation(
+    @Args("where") { id }: MembershipWhereUniqueInput,
+    @UserId() userId: string
+  ): Promise<Membership> {
+    await this.service.acceptInvitation(userId, id);
+    return await this.service.findById(id);
+  }
+
+  @Mutation(() => Membership)
+  async declineInvitation(
+    @Args("where") { id }: MembershipWhereUniqueInput,
+    @UserId() userId: string
+  ): Promise<Membership> {
+    await this.service.declineInvitation(userId, id);
+    return await this.service.findById(id);
   }
 }

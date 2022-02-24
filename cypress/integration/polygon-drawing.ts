@@ -30,7 +30,7 @@ describe("Polygon drawing (online)", () => {
     });
     cy.task("createWorkspaceAndDatasets").then(async ({ datasetId }: any) => {
       const { id } = await createImage({
-        url: "https://labelflow.ai/static/icon-512x512.png",
+        externalUrl: "https://labelflow.ai/static/icon-512x512.png",
         datasetId,
       });
       imageId = id;

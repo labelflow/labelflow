@@ -1,6 +1,6 @@
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -16,11 +16,14 @@ import { ModelModule } from "./model";
 import { ResolversModule } from "./resolvers";
 import { S3Module } from "./s3";
 import { StripeModule } from "./stripe";
+import { WorkerClientModule } from "./worker-client";
 
-const ENV_FILE_SUFFIX = PRODUCTION ? "production" : "development";
+const ENV_FILE_SUFFIX = PRODUCTION
+  ? "production"
+  : process.env.NODE_ENV || "development";
 
 const CONFIG_MODULE = ConfigModule.forRoot({
-  envFilePath: [".env.development.local", `.env.${ENV_FILE_SUFFIX}`],
+  envFilePath: [".env.local", `.env.${ENV_FILE_SUFFIX}`],
   cache: true,
 });
 
@@ -29,17 +32,24 @@ const THROTTLER_MODULE = ThrottlerModule.forRoot({
   limit: 10,
 });
 
-const TYPEORM_MODULE = TypeOrmModule.forRoot({
-  type: "postgres",
-  host: "localhost",
-  port: 5433,
-  username: "admin",
-  password: "admin",
-  database: "labelflow",
-  entities: [],
-  // synchronize: !PRODUCTION,
-  autoLoadEntities: true,
-  logging: !PRODUCTION,
+const TYPEORM_MODULE = TypeOrmModule.forRootAsync({
+  imports: [ConfigModule],
+  inject: [ConfigService],
+  useFactory: (config: ConfigService) => ({
+    type: "postgres",
+    host: config.get("POSTGRES_HOST"),
+    port: config.get("POSTGRES_PORT"),
+    username: config.get("POSTGRES_ADMIN_USER"),
+    password: config.get("POSTGRES_ADMIN_PASSWORD"),
+    database:
+      config.get("NODE_ENV") === "test"
+        ? config.get("POSTGRES_DB_TEST")
+        : config.get("POSTGRES_DB"),
+    entities: [],
+    // synchronize: !PRODUCTION,
+    autoLoadEntities: true,
+    logging: !PRODUCTION,
+  }),
 });
 
 const GRAPHQL_MODULE = GraphQLModule.forRootAsync<ApolloDriverConfig>({
@@ -66,14 +76,17 @@ const EXTERNAL_MODULES = [
 ];
 
 const PROJECT_MODULES = [
-  ResolversModule,
+  AuthModule,
   LabelFlowModule,
   ModelModule,
+  ResolversModule,
+  S3Module,
   StripeModule,
+  WorkerClientModule,
 ];
 
 @Module({
-  imports: [...EXTERNAL_MODULES, ...PROJECT_MODULES, AuthModule, S3Module],
+  imports: [...EXTERNAL_MODULES, ...PROJECT_MODULES],
   controllers: [AppController],
   providers: [AppService],
 })

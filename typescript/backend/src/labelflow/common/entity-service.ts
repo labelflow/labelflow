@@ -7,6 +7,7 @@ import {
   Repository,
   UpdateResult,
 } from "typeorm";
+import { v4 as uuid } from "uuid";
 
 export type FindByIdOptions<TEntity> = Pick<
   RepoFindOneOptions<TEntity>,
@@ -25,8 +26,8 @@ export type FindManyOptions<TEntity> = Pick<
 
 export class EntityService<
   TEntity,
-  TCreateInput = DeepPartial<TEntity>,
-  TUpdateInput = DeepPartial<TEntity>
+  TCreateInput extends DeepPartial<TEntity> = DeepPartial<TEntity>,
+  TUpdateInput extends DeepPartial<TEntity> = DeepPartial<TEntity>
 > {
   constructor(
     private readonly entityType: Class<TEntity>,
@@ -34,8 +35,17 @@ export class EntityService<
   ) {}
 
   async create(input: TCreateInput): Promise<TEntity> {
-    const data = await this.entityRepository.create(input);
-    return await this.entityRepository.save(data);
+    const data = this.entityRepository.create(input);
+    const anyInput = input as any;
+    // FIXME NEST Update db schema to make these generated fields nullable
+    const withId = {
+      ...data,
+      id: anyInput.id ?? uuid(),
+      updatedAt: anyInput.updatedAt ?? new Date(),
+    };
+    const inserted = await this.entityRepository.insert(withId as any);
+    const [{ id }] = inserted.identifiers;
+    return await this.findById(id);
   }
 
   findById(id: string, options?: FindByIdOptions<TEntity>): Promise<TEntity> {

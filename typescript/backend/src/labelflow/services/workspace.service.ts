@@ -47,7 +47,7 @@ export class WorkspaceService extends EntityService<Workspace> {
 
   async softDeleteById(id: string): Promise<void> {
     await this.stripe.tryDeleteCustomer(id);
-    return await super.softDeleteById(id);
+    await super.softDeleteById(id);
   }
 
   async getStripeCustomerPortalUrl(

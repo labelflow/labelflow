@@ -6,6 +6,7 @@ import { execute, parse } from "graphql";
 import { isEmpty, isNil } from "lodash/fp";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
+import { WEB_APP_URL_ORIGIN } from "../../constants";
 import { reEncodeJwt } from "../../utils";
 
 const DEBUG = !isEmpty(process.env.DEBUG);
@@ -25,6 +26,7 @@ const redirectIfNeeded = async (
   const headers = {
     "content-type": "application/json",
     Authorization: authorization,
+    Origin: WEB_APP_URL_ORIGIN,
   };
   const { method } = req;
   const body = JSON.stringify(req.body);

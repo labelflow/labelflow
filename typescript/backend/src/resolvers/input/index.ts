@@ -4,5 +4,6 @@ export * from "./label-class.reorder.input";
 export * from "./label-class.where.input";
 export * from "./label.where.input";
 export * from "./membership.where.input";
+export * from "./upload-target.input";
 export * from "./user.where.input";
 export * from "./workspace.update.input";

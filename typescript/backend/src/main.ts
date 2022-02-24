@@ -10,9 +10,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ["error", "warn", ...LOGGER_DEBUG],
   });
-  app.useGlobalPipes(
-    new ValidationPipe({ transform: true, enableDebugMessages: !PRODUCTION })
-  );
+  const validationPipe = new ValidationPipe({
+    transform: true,
+    enableDebugMessages: !PRODUCTION,
+  });
+  app.useGlobalPipes(validationPipe);
   const config = app.get(ConfigService);
   const port = config.get("PORT") || 3100;
   await app.listen(port);

@@ -13,6 +13,7 @@ export const APP_NEW_EXPORT_REQUEST_URL =
   "https://labelflow.canny.io/export-formats";
 
 export const WEB_APP_URL_ORIGIN =
+  process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXTAUTH_URL ??
   (process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`) ??
   APP_OFFICIAL_URL;

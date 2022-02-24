@@ -14,7 +14,8 @@ describe("Class selection popover", () => {
     cy.task("createWorkspaceAndDatasets").then(async (createResult: any) => {
       datasetId = createResult.datasetId;
       const { id } = await createImage({
-        url: "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
+        externalUrl:
+          "https://images.unsplash.com/photo-1579513141590-c597876aefbc?auto=format&fit=crop&w=882&q=80",
         datasetId,
       });
       imageId = id;

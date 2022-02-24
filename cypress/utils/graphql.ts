@@ -59,8 +59,8 @@ export const createDataset = (
   });
 
 const CREATE_IMAGE_MUTATION = gql`
-  mutation createImage($url: String, $datasetId: ID!) {
-    createImage(data: { url: $url, datasetId: $datasetId }) {
+  mutation createImage($externalUrl: String, $datasetId: ID!) {
+    createImage(data: { externalUrl: $externalUrl, datasetId: $datasetId }) {
       id
       name
       width
@@ -70,7 +70,10 @@ const CREATE_IMAGE_MUTATION = gql`
   }
 `;
 
-export type CreateImageInput = Pick<ImageCreateInput, "url" | "datasetId">;
+export type CreateImageInput = Pick<
+  ImageCreateInput,
+  "externalUrl" | "datasetId"
+>;
 
 export const createImage = (variables: CreateImageInput): Promise<Image> =>
   mutate<"createImage", CreateImageInput>("createImage", {
@@ -99,7 +102,11 @@ export const createLabel = (
   });
 
 const CREATE_LABEL_CLASS_MUTATION = gql`
-  mutation createLabelClass($name: String!, $color: String!, $datasetId: ID!) {
+  mutation createLabelClass(
+    $name: String!
+    $color: ColorHex!
+    $datasetId: ID!
+  ) {
     createLabelClass(
       data: { name: $name, color: $color, datasetId: $datasetId }
     ) {

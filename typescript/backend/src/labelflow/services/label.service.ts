@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { isNil } from "lodash/fp";
+import { isEmpty, isNil } from "lodash/fp";
 import { Repository } from "typeorm";
+import { v4 as uuid } from "uuid";
 import { Geometry, Label, LabelType } from "../../model";
 import { computeLabelBounds, LabelBounds } from "../../utils";
 import { EntityService } from "../common";
@@ -26,6 +27,7 @@ export class LabelService extends EntityService<
     const bounds = await this.computeBounds(input.geometry, input.imageId);
     const data = {
       type: LabelType.Polygon,
+      id: isEmpty(input.id) ? uuid() : input.id,
       ...input,
       createdAt,
       updatedAt: createdAt,

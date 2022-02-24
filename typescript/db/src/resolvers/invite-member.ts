@@ -16,29 +16,21 @@ const inviteMember = async (
   const {
     where: { email: inviteeEmail, role: inviteeRole, workspaceSlug },
   } = args;
-  const workspace = await (
-    await getPrismaClient()
-  ).workspace.findUnique({
+  const workspace = await db.workspace.findUnique({
     where: { slug: workspaceSlug },
     select: { name: true },
   });
-  const inviterMembership = await (
-    await getPrismaClient()
-  ).membership.findMany({
+  const inviterMembership = await db.membership.findMany({
     where: { AND: [{ userId: user?.id }, { workspaceSlug }] },
   });
   if (!workspace || !inviterMembership) {
     return InvitationResult.Error;
   }
-  const inviter = await (
-    await getPrismaClient()
-  ).user.findUnique({
+  const inviter = await db.user.findUnique({
     where: { id: user?.id },
     select: { name: true, email: true },
   });
-  const isInviteeAlreadyInWorkspace = await (
-    await getPrismaClient()
-  ).membership.count({
+  const isInviteeAlreadyInWorkspace = await db.membership.count({
     where: {
       AND: [
         { workspaceSlug: { equals: workspaceSlug } },
@@ -50,9 +42,7 @@ const inviteMember = async (
     return InvitationResult.UserAlreadyIn;
   }
 
-  const membershipAlreadyExists = await (
-    await getPrismaClient()
-  ).membership.findFirst({
+  const membershipAlreadyExists = await db.membership.findFirst({
     where: {
       AND: [
         { workspaceSlug: { equals: workspaceSlug } },
@@ -66,9 +56,7 @@ const inviteMember = async (
   let membershipId;
   if (!membershipAlreadyExists) {
     // Create that membership
-    const membership = await (
-      await getPrismaClient()
-    ).membership.create({
+    const membership = await db.membership.create({
       data: {
         role: inviteeRole,
         workspaceSlug,
@@ -80,9 +68,7 @@ const inviteMember = async (
     membershipId = membership.id;
   } else {
     // Update that membership
-    const membership = await (
-      await getPrismaClient()
-    ).membership.update({
+    const membership = await db.membership.update({
       where: { id: membershipAlreadyExists.id },
       data: {
         role: inviteeRole,

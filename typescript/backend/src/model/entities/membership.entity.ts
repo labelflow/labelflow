@@ -10,7 +10,11 @@ import {
   RelationId,
   UpdateDateColumn,
 } from "typeorm";
-import { MembershipRole, MembershipStatus } from "../enums";
+import {
+  CurrentUserCanAcceptInvitation,
+  MembershipRole,
+  MembershipStatus,
+} from "../enums";
 import { User } from "./user.entity";
 import { Workspace } from "./workspace.entity";
 
@@ -74,4 +78,7 @@ export class Membership {
 
   @Field(() => MembershipStatus, { nullable: true })
   status?: MembershipStatus;
+
+  @Field(() => CurrentUserCanAcceptInvitation)
+  currentUserCanAcceptInvitation!: CurrentUserCanAcceptInvitation;
 }
