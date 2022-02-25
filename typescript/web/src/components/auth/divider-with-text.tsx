@@ -1,10 +1,4 @@
-import {
-  Divider,
-  HStack,
-  StackProps,
-  Text,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { Divider, HStack, StackProps, Text } from "@chakra-ui/react";
 import * as React from "react";
 
 export const DividerWithText = ({ children, ...props }: StackProps) => (
@@ -14,7 +8,7 @@ export const DividerWithText = ({ children, ...props }: StackProps) => (
       px="3"
       fontSize="sm"
       fontWeight="semibold"
-      color={mode("gray.600", "gray.200")}
+      color="gray.400"
       minW="fit-content"
     >
       {children}
