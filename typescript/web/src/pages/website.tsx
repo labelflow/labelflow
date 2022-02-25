@@ -14,14 +14,10 @@ import { Proof } from "../components/website/proof";
 import { IntroVideo } from "../components/website/intro-video";
 import { Roadmap } from "../components/website/roadmap/roadmap";
 import { Why } from "../components/website/Why/Why";
-import { Article, getAllArticles } from "../connectors/strapi";
 import { APP_TITLE } from "../constants";
+import { getHomeStaticProps, HomeProps } from "../utils/get-home-static-props";
 
-export default function Website({
-  previewArticles,
-}: {
-  previewArticles: Omit<Article, "content">[];
-}) {
+export default function Website({ previewArticles }: HomeProps) {
   return (
     <>
       <Meta title={APP_TITLE} />
@@ -44,11 +40,4 @@ export default function Website({
   );
 }
 
-export async function getStaticProps(): Promise<{
-  props: { previewArticles: Omit<Article, "content">[] };
-}> {
-  const previewArticles = (await getAllArticles({ limit: 3 })) || [];
-  return {
-    props: { previewArticles },
-  };
-}
+export const getStaticProps = getHomeStaticProps;
