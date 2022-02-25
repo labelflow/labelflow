@@ -1,7 +1,4 @@
-import { isEmpty } from "lodash/fp";
-import { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
-import { ParsedUrlQuery } from "querystring";
 import React from "react";
 import { Authenticated } from "../components/auth";
 import { CookieBanner } from "../components/cookie-banner";
@@ -10,6 +7,7 @@ import { Layout } from "../components/layout";
 import { NavLogo } from "../components/logo/nav-logo";
 import { Meta } from "../components/meta";
 import { APP_TITLE } from "../constants";
+import { getHomeStaticProps, HomeProps } from "../utils/get-home-static-props";
 import Website from "./website";
 
 const App = () => (
@@ -22,33 +20,18 @@ const App = () => (
   </Authenticated>
 );
 
-const IndexPage = () => {
+const IndexPage = ({ previewArticles }: HomeProps) => {
   const { status } = useSession();
   return (
     <>
       {status === "authenticated" && <App />}
-      {status === "unauthenticated" && <Website previewArticles={[]} />}
+      {status === "unauthenticated" && (
+        <Website previewArticles={previewArticles} />
+      )}
     </>
   );
 };
 
-const getQueryParams = (query: ParsedUrlQuery): string => {
-  return Object.entries(query)
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(`${value}`)}`
-    )
-    .join("&");
-};
-
-export const getServerSideProps: GetServerSideProps = async ({ query }) => ({
-  props: {},
-  redirect: isEmpty(query)
-    ? undefined
-    : {
-        destination: `/website?${getQueryParams(query)}`,
-        permanent: false,
-      },
-});
+export const getStaticProps = getHomeStaticProps;
 
 export default IndexPage;
