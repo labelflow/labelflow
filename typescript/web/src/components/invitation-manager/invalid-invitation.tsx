@@ -1,20 +1,17 @@
-import { useRouter } from "next/router";
 import { Button } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { InvitationContainer } from "./invitation-container";
 
-export const InvalidInvitation = ({ reason }: { reason: string }) => {
-  const router = useRouter();
+const GoHomeButton = () => (
+  <NextLink href="/">
+    <Button autoFocus colorScheme="brand" ml={3}>
+      Continue to Home Page
+    </Button>
+  </NextLink>
+);
 
-  return (
-    <InvitationContainer header="This invitation is invalid" details={reason}>
-      <Button
-        autoFocus
-        colorScheme="brand"
-        ml={3}
-        onClick={() => router.push("/")}
-      >
-        Continue to Home Page
-      </Button>
-    </InvitationContainer>
-  );
-};
+export const InvalidInvitation = ({ reason }: { reason: string }) => (
+  <InvitationContainer header="This invitation is invalid" details={reason}>
+    <GoHomeButton />
+  </InvitationContainer>
+);

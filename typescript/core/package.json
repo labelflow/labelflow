@@ -1,0 +1,15 @@
+{
+  "name": "@labelflow/core",
+  "repository": "git@github.com:labelflow/labelflow.git",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "sideEffects": false,
+  "devDependencies": {
+    "change-case": "4.1.2"
+  },
+  "dependencies": {
+    "lodash": "4.17.21",
+    "type-fest": "2.12.0"
+  }
+}

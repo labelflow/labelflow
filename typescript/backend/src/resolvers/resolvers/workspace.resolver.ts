@@ -16,7 +16,6 @@ import {
   WorkspaceService,
 } from "../../labelflow";
 import { Dataset, Membership, MembershipRole, Workspace } from "../../model";
-import { WorkerClientService } from "../../worker-client";
 import { UserId } from "../decorators";
 import { WorkspaceUpdateInput } from "../input";
 import { WorkspaceWhereUniqueInput } from "../input/workspace.where.input";
@@ -24,7 +23,6 @@ import { WorkspaceWhereUniqueInput } from "../input/workspace.where.input";
 @Resolver(() => Workspace)
 export class WorkspaceResolver {
   constructor(
-    private readonly worker: WorkerClientService,
     private readonly service: WorkspaceService,
     private readonly membershipService: MembershipService
   ) {}
@@ -109,11 +107,5 @@ export class WorkspaceResolver {
   ): Promise<boolean> {
     const found = await this.service.findOne({ where });
     return !isNil(found);
-  }
-
-  @Mutation(() => Boolean)
-  async testWorker(): Promise<boolean> {
-    await this.worker.run({ name: "send-invitation", input: { wo: "rld" } });
-    return true;
   }
 }

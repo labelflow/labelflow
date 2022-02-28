@@ -2,7 +2,7 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
 import { useRouter } from "next/router";
-import React from "react";
+import { useCallback } from "react";
 import { CurrentUserCanAcceptInvitation } from "../../graphql-types/globalTypes";
 import { useUser } from "../../hooks";
 import { USER_QUERY } from "../../shared-queries/user.query";
@@ -56,6 +56,11 @@ export const InvitationManager = () => {
   );
   const membership = data?.membership;
 
+  const goWorkspace = useCallback(
+    () => router.push(`/${membership?.workspace?.slug}`),
+    [membership?.workspace?.slug, router]
+  );
+
   const [acceptInvitation, { called: hasAccepted }] = useMutation(
     ACCEPT_INVITATION_MUTATION,
     {
@@ -68,10 +73,8 @@ export const InvitationManager = () => {
           duration: 10000,
           isClosable: true,
           position: "bottom-right",
+          onCloseComplete: goWorkspace,
         });
-        setTimeout(() => {
-          router.push(`/${membership?.workspace?.slug}`);
-        }, 5000);
       },
       onError: (error) => {
         toast({
@@ -85,6 +88,9 @@ export const InvitationManager = () => {
       },
     }
   );
+
+  const goHome = useCallback(() => router.push(`/`), [router]);
+
   const [declineInvitation, { called: hasDeclined }] = useMutation(
     DECLINE_INVITATION_MUTATION,
     {
@@ -97,10 +103,8 @@ export const InvitationManager = () => {
           duration: 10000,
           isClosable: true,
           position: "bottom-right",
+          onCloseComplete: goHome,
         });
-        setTimeout(() => {
-          router.push(`/`);
-        }, 5000);
       },
       onError: (error) => {
         toast({

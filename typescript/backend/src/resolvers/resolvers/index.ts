@@ -5,4 +5,5 @@ export * from "./label.resolver";
 export * from "./membership.resolver";
 export * from "./user.resolver";
 export * from "./upload.resolver";
+export * from "./worker.resolver";
 export * from "./workspace.resolver";

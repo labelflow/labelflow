@@ -16,7 +16,8 @@
     "moduleResolution": "node",
     "outDir": "dist",
     "paths": {
-      "labelflow-utils": ["../utils/src/index"]
+      "labelflow-utils": ["../utils/src/index"],
+      "labelflow-core": ["../core/src/index"]
     },
     "removeComments": true,
     "skipLibCheck": true,
