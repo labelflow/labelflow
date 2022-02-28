@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { IsOptional, IsUUID } from "class-validator";
 import { Promisable } from "type-fest";
 import {
   Column,
@@ -23,6 +24,8 @@ import { Membership } from "./membership.entity";
 export class Workspace {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
+  @IsUUID()
+  @IsOptional()
   id!: string;
 
   @Field()
@@ -49,7 +52,7 @@ export class Workspace {
   image?: string;
 
   @Field(() => WorkspacePlan)
-  @Column()
+  @Column({ type: "enum", enum: WorkspacePlan, default: WorkspacePlan.Pro })
   plan!: WorkspacePlan;
 
   @Field(() => [Dataset])

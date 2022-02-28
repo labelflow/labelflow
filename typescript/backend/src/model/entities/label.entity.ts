@@ -1,5 +1,5 @@
 import { Field, Float, ID, ObjectType } from "@nestjs/graphql";
-import { IsOptional, IsPositive, Min } from "class-validator";
+import { IsOptional, IsPositive, IsUUID, Min } from "class-validator";
 import GqlJSON from "graphql-type-json";
 import {
   Column,
@@ -23,13 +23,12 @@ import { LabelClass } from "./label-class.entity";
 export class Label {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
+  @IsUUID()
+  @IsOptional()
   id!: string;
 
   @Field(() => LabelType)
-  @Column({
-    type: "enum",
-    enum: LabelType,
-  })
+  @Column({ type: "enum", enum: LabelType })
   type!: LabelType;
 
   @Field()
@@ -47,7 +46,7 @@ export class Label {
   @ManyToOne(() => Image, (data) => data.labels)
   image!: Image;
 
-  // FIXME This should not be a GraphQL field but DeleteLabelInUndoStoreMutation uses it
+  // FIXME NEST This should not be a GraphQL field but DeleteLabelInUndoStoreMutation uses it
   @Field()
   @Column()
   @RelationId((data: Label) => data.image)

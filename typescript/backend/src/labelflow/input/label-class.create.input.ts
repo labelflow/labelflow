@@ -6,6 +6,7 @@ import {
   PartialType,
   PickType,
 } from "@nestjs/graphql";
+import { IsUUID } from "class-validator";
 import { LabelClass } from "../../model/entities";
 
 @InputType()
@@ -14,5 +15,6 @@ export class LabelClassCreateInput extends IntersectionType(
   PartialType(PickType(LabelClass, ["id"] as const, InputType))
 ) {
   @Field(() => ID)
+  @IsUUID()
   datasetId!: string;
 }

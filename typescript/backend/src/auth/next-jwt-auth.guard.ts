@@ -10,17 +10,15 @@ import { NEXT_JWT_AUTH_STRATEGY_ID } from "./constants";
 
 @Injectable()
 export class NextJwtAuthGuard extends AuthGuard(NEXT_JWT_AUTH_STRATEGY_ID) {
-  private logger = new Logger();
+  private logger = new Logger(NextJwtAuthGuard.name);
 
   canActivate(ctx: ExecutionContext) {
-    this.logger.verbose("NextJwtPassportStrategy.canActivate", ctx);
-    // Add your custom authentication logic here
-    // for example, call super.logIn(request) to establish a session.
+    this.logger.verbose("canActivate");
     return super.canActivate(ctx);
   }
 
   getRequest(ctx: ExecutionContext) {
-    this.logger.verbose("NextJwtPassportStrategy.getRequest", ctx);
+    this.logger.verbose("getRequest");
     const gqlCtx = GqlExecutionContext.create(ctx);
     return gqlCtx.getContext().req;
   }
@@ -29,7 +27,7 @@ export class NextJwtAuthGuard extends AuthGuard(NEXT_JWT_AUTH_STRATEGY_ID) {
     err: Error | undefined,
     user: ContextUser | undefined
   ) {
-    this.logger.verbose("NextJwtPassportStrategy.handleRequest", { err, user });
+    this.logger.verbose("handleRequest", { err, user });
     if (err || !user) {
       throw err || new UnauthorizedException();
     }

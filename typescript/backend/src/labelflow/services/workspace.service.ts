@@ -1,10 +1,10 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getSlug } from "labelflow-utils";
 import { isEmpty, isNil } from "lodash/fp";
 import { Repository } from "typeorm";
-import { MembershipRole, Workspace } from "../../model";
+import { MembershipRole, Workspace, WorkspacePlan } from "../../model";
 import { StripeService } from "../../stripe";
 import { EntityService } from "../common";
 import { WorkspaceCreateInput, WorkspaceCreateOptions } from "../input";
@@ -12,8 +12,6 @@ import { MembershipService } from "./membership.service";
 
 @Injectable()
 export class WorkspaceService extends EntityService<Workspace> {
-  private readonly logger = new Logger(WorkspaceService.name);
-
   constructor(
     @InjectRepository(Workspace) repository: Repository<Workspace>,
     private readonly stripe: StripeService,
@@ -24,7 +22,7 @@ export class WorkspaceService extends EntityService<Workspace> {
   }
 
   async create(
-    { name, ...data }: WorkspaceCreateInput,
+    { name, plan, ...data }: WorkspaceCreateInput,
     { createTutorial }: WorkspaceCreateOptions = {}
   ): Promise<Workspace> {
     if (createTutorial) {
@@ -33,10 +31,12 @@ export class WorkspaceService extends EntityService<Workspace> {
     const slug = getSlug(name);
     const stripeId = await this.stripe.tryCreateCustomer(name, slug);
     return await super.create({
-      name,
       ...data,
+      name,
       slug,
       stripeCustomerId: stripeId,
+      // FIXME NEST Remove the line below once the DB gets migrated
+      plan: plan || WorkspacePlan.Pro,
     });
   }
 

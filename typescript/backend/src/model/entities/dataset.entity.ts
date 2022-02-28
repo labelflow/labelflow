@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { IsOptional, IsUUID } from "class-validator";
 import { Promisable } from "type-fest";
 import {
   Column,
@@ -26,6 +27,8 @@ import { Workspace } from "./workspace.entity";
 export class Dataset {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
+  @IsUUID()
+  @IsOptional()
   id!: string;
 
   @Field()
@@ -49,10 +52,7 @@ export class Dataset {
 
   @Field(() => Workspace)
   @ManyToOne(() => Workspace, (data) => data.datasets)
-  @JoinColumn({
-    name: "workspaceSlug",
-    referencedColumnName: "slug",
-  })
+  @JoinColumn({ name: "workspaceSlug", referencedColumnName: "slug" })
   workspace!: Workspace;
 
   @Column()

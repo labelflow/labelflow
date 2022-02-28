@@ -1,5 +1,5 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
-import { IsHexColor, Min } from "class-validator";
+import { IsHexColor, IsOptional, IsUUID, Min } from "class-validator";
 import { Promisable } from "type-fest";
 import {
   Column,
@@ -12,8 +12,8 @@ import {
   RelationId,
   UpdateDateColumn,
 } from "typeorm";
-import { ColorHex } from "../scalars";
 import { TotalCountAggregates } from "../models";
+import { ColorHex } from "../scalars";
 import { Dataset } from "./dataset.entity";
 import { Label } from "./label.entity";
 
@@ -24,6 +24,8 @@ import { Label } from "./label.entity";
 export class LabelClass {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
+  @IsUUID()
+  @IsOptional()
   id!: string;
 
   @Field()

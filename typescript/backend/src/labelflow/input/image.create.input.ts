@@ -1,4 +1,5 @@
 import { Field, ID, InputType, PartialType, PickType } from "@nestjs/graphql";
+import { IsUUID } from "class-validator";
 import { Image } from "../../model/entities";
 
 @InputType()
@@ -26,6 +27,7 @@ export class ImageCreateInput extends PartialType(
   )
 ) {
   @Field(() => ID)
+  @IsUUID()
   datasetId!: string;
 
   @Field({ nullable: true })

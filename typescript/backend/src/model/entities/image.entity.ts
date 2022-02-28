@@ -1,5 +1,5 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
-import { IsPositive } from "class-validator";
+import { IsOptional, IsPositive, IsUUID } from "class-validator";
 import GqlJSON from "graphql-type-json";
 import { Promisable } from "type-fest";
 import {
@@ -22,6 +22,8 @@ import { Label } from "./label.entity";
 export class Image {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
+  @IsUUID()
+  @IsOptional()
   id!: string;
 
   @Field()

@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { Field, InputType, PartialType, PickType } from "@nestjs/graphql";
+import { IsNotEmpty } from "class-validator";
 import { Dataset } from "../../model";
 
 @InputType()
@@ -16,6 +17,7 @@ export class WorkspaceSlugAndDatasetSlug extends PickType(
   InputType
 ) {
   @Field()
+  @IsNotEmpty()
   workspaceSlug!: string;
 }
 
@@ -30,5 +32,6 @@ export class DatasetWhereUniqueInput extends PartialType(
 @InputType()
 export class DatasetWhereInput {
   @Field()
+  @IsNotEmpty()
   workspaceSlug!: string;
 }

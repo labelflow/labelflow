@@ -215,7 +215,9 @@ describe("Invitation Manager (online)", () => {
     cy.task("createWorkspaceAndDatasets");
 
     // visit a invite url with a membership id that doesn't exist
-    cy.visit("/test-dataset-cypress/accept-invite?membershipId=fakeId");
+    cy.visit(
+      "/test-dataset-cypress/accept-invite?membershipId=60e6a250-08be-4ba3-941b-80fec3c8c53f"
+    );
 
     cy.get('[role="dialog"]')
       .should("contain", "This invitation is invalid")

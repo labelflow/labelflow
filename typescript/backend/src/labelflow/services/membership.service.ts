@@ -1,20 +1,18 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  UnauthorizedException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { isEmpty, isNil } from "lodash/fp";
-import { Repository } from "typeorm";
+import { DeepPartial, Repository } from "typeorm";
 import { CurrentUserCanAcceptInvitation, Membership } from "../../model";
 import { EntityService } from "../common";
+import { MembershipCreateInput } from "../input";
 import { UserService } from "./user.service";
 
 @Injectable()
-export class MembershipService extends EntityService<Membership> {
-  private readonly logger = new Logger();
-
+export class MembershipService extends EntityService<
+  Membership,
+  MembershipCreateInput,
+  DeepPartial<Membership>
+> {
   constructor(
     @InjectRepository(Membership) repository: Repository<Membership>,
     private readonly users: UserService
@@ -38,9 +36,6 @@ export class MembershipService extends EntityService<Membership> {
     userId: string,
     { userId: membershipUserId, workspaceSlug, declinedAt }: Membership
   ): Promise<CurrentUserCanAcceptInvitation> {
-    if (!isEmpty(membershipUserId) && membershipUserId !== userId) {
-      throw new UnauthorizedException();
-    }
     if (!isEmpty(membershipUserId)) {
       return CurrentUserCanAcceptInvitation.AlreadyAccepted;
     }
@@ -76,12 +71,16 @@ export class MembershipService extends EntityService<Membership> {
   }
 
   async acceptInvitation(userId: string, id: string): Promise<void> {
+    const msg = "Trying to accept membership invitation";
+    this.logger.verbose(msg, { userId, id });
     const membership = await this.findById(id);
     await this.invitationNotAnswered(userId, membership);
     await this.updateById(id, { userId });
   }
 
   async declineInvitation(userId: string, id: string): Promise<void> {
+    const msg = "Trying to decline membership invitation";
+    this.logger.verbose(msg, { userId, id });
     const membership = await this.findById(id);
     await this.invitationNotAnswered(userId, membership);
     await this.updateById(id, { declinedAt: new Date() });

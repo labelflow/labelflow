@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { IsOptional, IsUUID } from "class-validator";
 import {
   Column,
   CreateDateColumn,
@@ -26,6 +27,8 @@ import { Workspace } from "./workspace.entity";
 export class Membership {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
+  @IsUUID()
+  @IsOptional()
   id!: string;
 
   @Field()
@@ -44,15 +47,12 @@ export class Membership {
   declinedAt?: Date;
 
   @Field(() => MembershipRole)
-  @Column()
+  @Column({ type: "enum", enum: MembershipRole })
   role!: MembershipRole;
 
   @Field(() => Workspace, { nullable: true })
   @ManyToOne(() => Workspace, (data) => data.memberships)
-  @JoinColumn({
-    name: "workspaceSlug",
-    referencedColumnName: "slug",
-  })
+  @JoinColumn({ name: "workspaceSlug", referencedColumnName: "slug" })
   workspace!: Workspace;
 
   @Column()

@@ -1,3 +1,4 @@
+import { Logger } from "@nestjs/common";
 import { Class } from "type-fest";
 import {
   DeepPartial,
@@ -29,10 +30,14 @@ export class EntityService<
   TCreateInput extends DeepPartial<TEntity> = DeepPartial<TEntity>,
   TUpdateInput extends DeepPartial<TEntity> = DeepPartial<TEntity>
 > {
+  protected readonly logger: Logger;
+
   constructor(
     private readonly entityType: Class<TEntity>,
     private readonly entityRepository: Repository<TEntity>
-  ) {}
+  ) {
+    this.logger = new Logger(entityType.name);
+  }
 
   async create(input: TCreateInput): Promise<TEntity> {
     const data = this.entityRepository.create(input);
@@ -45,7 +50,13 @@ export class EntityService<
     };
     const inserted = await this.entityRepository.insert(withId as any);
     const [{ id }] = inserted.identifiers;
-    return await this.findById(id);
+    const entities = await this.findAll();
+    const output = await this.findById(id);
+    this.logger.verbose(
+      `Created new entity of type ${this.entityType.name} with ID ${id}`,
+      { input, output, entities }
+    );
+    return output;
   }
 
   findById(id: string, options?: FindByIdOptions<TEntity>): Promise<TEntity> {

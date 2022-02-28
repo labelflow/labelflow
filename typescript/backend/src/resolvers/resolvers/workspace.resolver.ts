@@ -10,11 +10,12 @@ import {
 import { isNil } from "lodash/fp";
 import { DataLoader, DataLoaders } from "../../data-loader";
 import {
+  MembershipService,
   WorkspaceCreateInput,
   WorkspaceCreateOptions,
   WorkspaceService,
 } from "../../labelflow";
-import { Dataset, Membership, Workspace } from "../../model";
+import { Dataset, Membership, MembershipRole, Workspace } from "../../model";
 import { WorkerClientService } from "../../worker-client";
 import { UserId } from "../decorators";
 import { WorkspaceUpdateInput } from "../input";
@@ -24,15 +25,23 @@ import { WorkspaceWhereUniqueInput } from "../input/workspace.where.input";
 export class WorkspaceResolver {
   constructor(
     private readonly worker: WorkerClientService,
-    private readonly service: WorkspaceService
+    private readonly service: WorkspaceService,
+    private readonly membershipService: MembershipService
   ) {}
 
   @Mutation(() => Workspace)
   async createWorkspace(
     @Args("data") data: WorkspaceCreateInput,
-    @Args("options") options: WorkspaceCreateOptions
+    @Args("options") options: WorkspaceCreateOptions,
+    @UserId() userId: string
   ): Promise<Workspace> {
-    return await this.service.create(data, options);
+    const workspace = await this.service.create(data, options);
+    const membership = await this.membershipService.create({
+      workspaceSlug: workspace.slug,
+      role: MembershipRole.Owner,
+      userId,
+    });
+    return { ...workspace, memberships: [membership] };
   }
 
   @Query(() => Workspace)
@@ -49,8 +58,8 @@ export class WorkspaceResolver {
   }
 
   @Query(() => [Workspace])
-  workspaces(): Promise<Workspace[]> {
-    return this.service.findAll();
+  workspaces(@UserId() userId: string): Promise<Workspace[]> {
+    return this.service.findAll({ where: { memberships: { userId } } });
   }
 
   @ResolveField(() => String)

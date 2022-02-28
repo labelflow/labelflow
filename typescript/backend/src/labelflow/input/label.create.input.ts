@@ -5,6 +5,7 @@ import {
   PartialType,
   PickType,
 } from "@nestjs/graphql";
+import { IsOptional, IsUUID } from "class-validator";
 import { Label } from "../../model/entities";
 import { GeometryInput } from "./geometry.input";
 
@@ -18,9 +19,12 @@ export class LabelCreateInput extends IntersectionType(
   PartialType(PickType(Label, ["type", "id"], InputType))
 ) {
   @Field()
+  @IsUUID()
   imageId!: string;
 
   @Field({ nullable: true })
+  @IsUUID()
+  @IsOptional()
   labelClassId?: string;
 
   @Field()

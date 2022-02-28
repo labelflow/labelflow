@@ -1,4 +1,4 @@
-import { Logger, LogLevel, ValidationPipe } from "@nestjs/common";
+import { Logger, LogLevel } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { RedisOptions, Transport } from "@nestjs/microservices";
 import { AppModule } from "./app.module";

@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { IsEmail } from "class-validator";
+import { IsEmail, IsOptional, IsUUID } from "class-validator";
 import { Promisable } from "type-fest";
 import {
   Column,
@@ -19,6 +19,8 @@ import { Membership } from "./membership.entity";
 export class User {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
+  @IsUUID()
+  @IsOptional()
   id!: string;
 
   @Field()
@@ -39,6 +41,7 @@ export class User {
   @Field({ nullable: true })
   @Column()
   @IsEmail()
+  @IsOptional()
   email!: string;
 
   @Column()

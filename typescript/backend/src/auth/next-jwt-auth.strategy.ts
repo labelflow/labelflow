@@ -66,7 +66,7 @@ export class NextJwtAuthStrategy extends NestPassportStrategy(
 
   private jwtSecret: string;
 
-  constructor(private readonly config: ConfigService) {
+  constructor(config: ConfigService) {
     super();
     const jwtSecret = config.get(JWT_SECRET_ENV);
     if (isEmpty(jwtSecret)) {
@@ -77,7 +77,7 @@ export class NextJwtAuthStrategy extends NestPassportStrategy(
   }
 
   async authenticate(req: Request): Promise<void> {
-    this.logger.verbose("NextJwtPassportStrategy.authenticate");
+    this.logger.verbose("authenticate");
     const { sub, ...payloadRest } = await getJwt(req, this.jwtSecret);
     if (isNil(sub) || isEmpty(sub)) {
       this.fail(new UnauthorizedException(), 401);
