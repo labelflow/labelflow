@@ -78,6 +78,7 @@ export const EditLabelClassMenu = () => {
     Tools.POLYGON,
     Tools.IOG,
     Tools.CLASSIFICATION,
+    Tools.FREEHAND,
   ].includes(selectedTool);
   const selectedLabelClass = isInDrawingMode
     ? dataLabelClass?.labelClass
