@@ -18,7 +18,7 @@ import {
 } from "../../graphql-types/GetWorkspaceDetailsQuery";
 import { useWorkspace } from "../../hooks";
 
-const GET_WORKSPACE_DETAILS_QUERY = gql`
+export const GET_WORKSPACE_DETAILS_QUERY = gql`
   query GetWorkspaceDetailsQuery($workspaceSlug: String) {
     workspace(where: { slug: $workspaceSlug }) {
       id
@@ -27,6 +27,9 @@ const GET_WORKSPACE_DETAILS_QUERY = gql`
       image
       name
       stripeCustomerPortalUrl
+      imagesAggregates {
+        totalCount
+      }
     }
   }
 `;
@@ -42,6 +45,7 @@ const Body = () => {
     {
       variables: { workspaceSlug },
       skip: isEmpty(workspaceSlug),
+      pollInterval: 1000 * 60 * 5,
     }
   );
 

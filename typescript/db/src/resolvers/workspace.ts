@@ -202,6 +202,8 @@ const stripeCustomerPortalUrl = async (
   return await stripe.createBillingPortalSession(stripeCustomerId, returnUrl);
 };
 
+const imagesAggregates = () => ({});
+
 export default {
   Query: {
     workspace,
@@ -209,5 +211,10 @@ export default {
     workspaceExists,
   },
   Mutation: { createWorkspace, updateWorkspace, deleteWorkspace },
-  Workspace: { memberships, datasets, stripeCustomerPortalUrl },
+  Workspace: {
+    memberships,
+    datasets,
+    stripeCustomerPortalUrl,
+    imagesAggregates,
+  },
 };
