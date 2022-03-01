@@ -92,6 +92,7 @@ type Workspace {
   datasets: [Dataset!]!
   memberships: [Membership!]!
   stripeCustomerPortalUrl: String
+  imagesAggregates: ImagesAggregates!
 }
 
 type Membership {
@@ -126,7 +127,6 @@ enum WorkspacePlan {
   Community
   Starter
   Pro
-  Enterprise
 }
 
 enum MembershipRole {

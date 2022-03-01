@@ -831,6 +831,7 @@ export type Workspace = {
   stripeCustomerPortalUrl?: Maybe<Scalars['String']>;
   type: WorkspaceType;
   updatedAt: Scalars['DateTime'];
+  imagesAggregates: ImagesAggregates;
 };
 
 export type WorkspaceCreateInput = {
@@ -845,9 +846,8 @@ export type WorkspaceCreateOptions = {
 
 export enum WorkspacePlan {
   Community = 'Community',
-  Enterprise = 'Enterprise',
-  Pro = 'Pro',
-  Starter = 'Starter'
+  Starter = 'Starter',
+  Pro = 'Pro'
 }
 
 export type WorkspaceSlugAndDatasetSlug = {
@@ -1340,8 +1340,12 @@ export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversPa
   plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   stripeCustomerPortalUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+<<<<<<< HEAD
   type?: Resolver<ResolversTypes['WorkspaceType'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+=======
+  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
+>>>>>>> 14c43f61 (Add images workspace consumption based on plan)
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

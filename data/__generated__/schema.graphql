@@ -518,6 +518,7 @@ type Workspace {
   stripeCustomerPortalUrl: String
   type: WorkspaceType!
   updatedAt: DateTime!
+  imagesAggregates: ImagesAggregates!
 }
 
 input WorkspaceCreateInput {
@@ -532,9 +533,8 @@ input WorkspaceCreateOptions {
 
 enum WorkspacePlan {
   Community
-  Enterprise
-  Pro
   Starter
+  Pro
 }
 
 input WorkspaceSlugAndDatasetSlug {

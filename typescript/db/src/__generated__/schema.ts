@@ -520,6 +520,7 @@ export const typeDefs = [
     stripeCustomerPortalUrl: String
     type: WorkspaceType!
     updatedAt: DateTime!
+    imagesAggregates: ImagesAggregates!
   }
 
   input WorkspaceCreateInput {
@@ -534,9 +535,8 @@ export const typeDefs = [
 
   enum WorkspacePlan {
     Community
-    Enterprise
-    Pro
     Starter
+    Pro
   }
 
   input WorkspaceSlugAndDatasetSlug {
