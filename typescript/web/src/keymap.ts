@@ -86,12 +86,12 @@ export const keymap: Keymap = {
   changeSelectionMode: {
     key: "e",
     description:
-      "Change between default selection and auto annotate modification tool",
+      "Switch between default selection and Auto Polygon edition tool",
     category: "Tools",
   },
   validateIogLabel: {
     key: "enter",
-    description: "Validate the edition of an IOG label",
+    description: "Validate the edition of an Auto Polygon label",
     category: "Tools",
   },
   enterFullScreen: {
