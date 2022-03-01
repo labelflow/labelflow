@@ -18,7 +18,7 @@ import {
 } from "../../graphql-types/GetWorkspaceDetailsQuery";
 import { useWorkspace } from "../../hooks";
 
-export const GET_WORKSPACE_DETAILS_QUERY = gql`
+const GET_WORKSPACE_DETAILS_QUERY = gql`
   query GetWorkspaceDetailsQuery($workspaceSlug: String) {
     workspace(where: { slug: $workspaceSlug }) {
       id

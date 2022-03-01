@@ -24,9 +24,7 @@ const MAX_IMAGES_BY_PLAN: Record<WorkspacePlan, number> = {
   Starter: 5000,
   Pro: 50000,
 };
-
 const WARNING_PERCENTAGE_LEVEL = 80;
-
 const ERROR_PERCENTAGE_LEVEL = 100;
 
 const Header = () => (
@@ -40,6 +38,7 @@ const getPercentageValue = (value: number, plan: WorkspacePlan) => {
   const maxPlanValue = MAX_IMAGES_BY_PLAN[plan];
   return (value / maxPlanValue) * 100;
 };
+
 const getColorScheme = (value: number, plan: WorkspacePlan) => {
   const percentageValue = getPercentageValue(value, plan);
   if (percentageValue < WARNING_PERCENTAGE_LEVEL) {
