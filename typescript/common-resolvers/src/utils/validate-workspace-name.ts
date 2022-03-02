@@ -1,5 +1,5 @@
 import { isEmpty, isNil } from "lodash/fp";
-import { getSlug } from "./get-slug";
+import { getSlug } from "@labelflow/utils";
 
 /**
  * List of reserved slugs reserved for internal purposes

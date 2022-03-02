@@ -14,7 +14,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
-import { getSlug } from "@labelflow/common-resolvers";
+import { getSlug } from "@labelflow/utils";
 import { isEmpty } from "lodash/fp";
 import debounce from "lodash/fp/debounce";
 import { useCallback, useEffect, useRef, useState } from "react";

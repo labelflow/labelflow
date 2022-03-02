@@ -16,6 +16,7 @@
     "test:all": "dotenv -e .env.test -- jest --runInBand",
     "cypress:open": "dotenv -e .env.test -- cypress open",
     "cypress:run": "dotenv -e .env.test -- cypress run",
+    "dev:backend": "cd ./typescript/backend && yarn start:dev",
     "dev:web": "cd ./typescript/web && yarn dev",
     "dev:web:test": "cd ./typescript/web && yarn dev:test",
     "build:web": "cd ./typescript/web && yarn build",

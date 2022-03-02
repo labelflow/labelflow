@@ -17,7 +17,7 @@ import {
 import { useWorkspace } from "../../hooks";
 
 const GET_MEMBERSHIPS_MEMBERS_QUERY = gql`
-  query GetMembershipsMembersQuery($workspaceSlug: String) {
+  query GetMembershipsMembersQuery($workspaceSlug: String!) {
     memberships(where: { workspaceSlug: $workspaceSlug }) {
       id
       role

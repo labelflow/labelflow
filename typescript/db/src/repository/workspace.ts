@@ -1,14 +1,17 @@
 import {
   DbWorkspace,
   DbWorkspaceWithType,
-  getSlug,
   INVALID_WORKSPACE_NAME_MESSAGES,
   PartialWithNullAllowed,
   Repository,
   validWorkspaceName,
 } from "@labelflow/common-resolvers";
 import { WorkspaceType } from "@labelflow/graphql-types";
-import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
+import {
+  ErrorOverride,
+  getSlug,
+  withErrorOverridesAsync,
+} from "@labelflow/utils";
 import { Prisma, UserRole, WorkspacePlan } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { isNil } from "lodash";

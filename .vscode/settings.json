@@ -27,5 +27,6 @@
     "upsert"
   ],
   "python.pythonPath": ".venv/bin/python",
-  "jest.jestCommandLine": "yarn test"
+  "jest.jestCommandLine": "yarn test",
+  "typescript.preferences.importModuleSpecifier": "relative"
 }
