@@ -7,9 +7,4 @@ import { Context } from "../types";
 
 export type ExportFunction<
   TOptions extends ExportOptionsCoco | ExportOptionsYolo | ExportOptionsCsv
-> = (
-  datasetId: string,
-  options: TOptions,
-  context: Context,
-  user?: { id: string }
-) => Promise<Blob>;
+> = (datasetId: string, options: TOptions, context: Context) => Promise<Blob>;

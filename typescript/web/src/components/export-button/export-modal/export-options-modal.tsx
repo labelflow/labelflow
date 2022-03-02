@@ -16,7 +16,7 @@ import {
 import { ExportFormat } from "@labelflow/graphql-types";
 import { isNil } from "lodash";
 import { omit } from "lodash/fp";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ExportOptions } from "../../../graphql-types/globalTypes";
 import { trackEvent } from "../../../utils/google-analytics";
 import { exportDataset } from "./export-dataset";
@@ -67,6 +67,9 @@ export const ExportOptionsModal = () => {
     exportFormat.toLowerCase() as Lowercase<ExportFormat>;
   const formatOptionsInformation =
     formatsOptionsInformation[exportFormatLowerCase];
+  const formatOptionsInformationArray = Object.entries(
+    formatOptionsInformation ?? {}
+  );
   const optionsOfFormat = omit(["name"], exportOptions[exportFormatLowerCase]);
   const exportFunction = useCallback(
     async (options: ExportOptions) => {
@@ -100,11 +103,17 @@ export const ExportOptionsModal = () => {
     [exportFormatLowerCase]
   );
 
-  const handleClick = useCallback(() => {
+  const exportAction = useCallback(() => {
     exportFunction(exportOptions);
     trackEvent(`export_button_click_${exportFormat.toLocaleLowerCase()}`, {});
     setIsOptionsModalOpen(false);
   }, [exportFormat, exportFunction, exportOptions, setIsOptionsModalOpen]);
+
+  useEffect(() => {
+    if (isOptionsModalOpen && formatOptionsInformationArray.length === 0) {
+      exportAction();
+    }
+  });
 
   return (
     <Modal
@@ -127,27 +136,25 @@ export const ExportOptionsModal = () => {
           p={{ base: "2", md: "6" }}
           flexDirection="column"
         >
-          {Object.entries(formatOptionsInformation ?? {}).map(
-            ([optionName, information]) => {
-              const optionKey =
-                optionName as keyof typeof formatOptionsInformation;
-              return (
-                <OptionLine
-                  key={optionName}
-                  header={information.title}
-                  description={information.description}
-                  isChecked={optionsOfFormat?.[optionKey]}
-                  onChange={() => handleChange(optionName)}
-                />
-              );
-            }
-          )}
+          {formatOptionsInformationArray.map(([optionName, information]) => {
+            const optionKey =
+              optionName as keyof typeof formatOptionsInformation;
+            return (
+              <OptionLine
+                key={optionName}
+                header={information.title}
+                description={information.description}
+                isChecked={optionsOfFormat?.[optionKey]}
+                onChange={() => handleChange(optionName)}
+              />
+            );
+          })}
           <Button
             colorScheme="brand"
             size="md"
             alignSelf="flex-end"
             flexShrink={0}
-            onClick={handleClick}
+            onClick={exportAction}
           >
             Export
           </Button>

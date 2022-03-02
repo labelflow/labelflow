@@ -33,6 +33,7 @@ const CSV_HEADER = [
   "ymin",
   "xmax",
   "ymax",
+  "imageUrl",
 ];
 
 const getDataset = async (
@@ -62,6 +63,7 @@ const getImageSignedUrl = async (
   const key = imageUrl.substring(urlPrefix.length);
   const isKey = /^[^/]+\/[^/]+\/[^/]+$/.test(key);
   if (!isKey) return imageUrl;
+  // Expires in 7 days
   return await repository.upload.getSignedDownloadUrl(key, 7 * 24 * 60 * 60);
 };
 
@@ -78,13 +80,13 @@ const createRow = async (
   images: DbImage[],
   labelClasses: DbLabelClass[],
   { imageId, labelClassId, x, y, width, height }: DbLabel,
-  options: ExportOptionsCsv = {},
   ctx: Context
 ): Promise<unknown[]> => {
   const image = getImage(images, imageId);
   const labelClassName = labelClassId
     ? getLabelClass(labelClasses, labelClassId).name
     : undefined;
+  const url = await getImageSignedUrl(image.url, ctx);
   const row = [
     image.id,
     image.name,
@@ -95,11 +97,8 @@ const createRow = async (
     Math.round(y),
     Math.round(x + width),
     Math.round(y + height),
+    url,
   ];
-  if (options.includeImageUrl) {
-    const url = await getImageSignedUrl(image.url, ctx);
-    row.push(url);
-  }
   return row;
 };
 
@@ -107,16 +106,14 @@ const createRows = async (
   images: DbImage[],
   labelClasses: DbLabelClass[],
   labels: DbLabel[],
-  options: ExportOptionsCsv = {},
   ctx: Context
 ): Promise<unknown[][]> =>
   await Promise.all(
-    labels.map((label) => createRow(images, labelClasses, label, options, ctx))
+    labels.map((label) => createRow(images, labelClasses, label, ctx))
   );
 
 const createRowsFromDb = async (
   datasetId: string,
-  options: ExportOptionsCsv = {},
   ctx: Context
 ): Promise<unknown[][]> => {
   const { repository } = ctx;
@@ -127,18 +124,26 @@ const createRowsFromDb = async (
     user: ctx.user,
   });
   const labels = await repository.label.list({ datasetId, user: ctx.user });
-  return await createRows(images, labelClasses, labels, options, ctx);
+  return await createRows(images, labelClasses, labels, ctx);
+};
+
+export const createCsv = async (
+  datasetId: string,
+  ctx: Context
+): Promise<string> => {
+  const rows = await createRowsFromDb(datasetId, ctx);
+  const csv = await stringifyCsvAsync(rows, {
+    header: true,
+    columns: CSV_HEADER,
+  });
+  return csv;
 };
 
 export const exportToCsv: ExportFunction<ExportOptionsCsv> = async (
   datasetId,
-  options = {},
+  _options,
   ctx
 ) => {
-  const rows = await createRowsFromDb(datasetId, options, ctx);
-  const csv = await stringifyCsvAsync(rows, {
-    header: true,
-    columns: options.includeImageUrl ? [...CSV_HEADER, "imageUrl"] : CSV_HEADER,
-  });
+  const csv = await createCsv(datasetId, ctx);
   return new Blob([csv], { type: "application/csv" });
 };

@@ -107,7 +107,6 @@ export const typeDefs = [
 
   input ExportOptionsCsv {
     name: String
-    includeImageUrl: Boolean
   }
 
   input ExportOptionsYolo {

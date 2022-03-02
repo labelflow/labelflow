@@ -1,3 +1,5 @@
+import { IconType } from "react-icons/lib";
+import { BsTable } from "react-icons/bs";
 import {
   ExportFormat,
   ExportOptions,
@@ -14,16 +16,19 @@ export const DEFAULT_EXPORT_OPTIONS: RequiredExportOptions = {
     exportImages: false,
     includePolygons: false,
   },
-  csv: { includeImageUrl: false },
+  csv: {},
 };
 
+type ExportFormatDefinition = {
+  format: ExportFormat;
+  title: string;
+  description: string;
+  logoSrc?: string;
+  logoIcon?: IconType;
+} & ({ logoSrc: string } | { logoIcon: IconType });
+
 export const formatMainInformation: {
-  [format in keyof RequiredExportOptions]: {
-    format: ExportFormat;
-    logoSrc: string;
-    title: string;
-    description: string;
-  };
+  [format in keyof RequiredExportOptions]: ExportFormatDefinition;
 } = {
   coco: {
     format: ExportFormat.COCO,
@@ -39,7 +44,7 @@ export const formatMainInformation: {
   },
   csv: {
     format: ExportFormat.CSV,
-    logoSrc: "/static/export-formats/csv.svg",
+    logoIcon: BsTable,
     title: "Export to CSV",
     description: "List of classes contained in each image",
   },
@@ -85,10 +90,5 @@ export const formatsOptionsInformation: {
         "Include polygon labels, replacing them by their bounding box when exporting.",
     },
   },
-  csv: {
-    includeImageUrl: {
-      title: "Export image URLs",
-      description: "Add a column containing images URLS, valid for 7 days",
-    },
-  },
+  csv: {},
 };
