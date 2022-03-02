@@ -164,8 +164,8 @@ const UserMenuGroup = () => {
       {status === "loading" && <SignOutMenuItem cursor="default" disabled />}
       {status === "authenticated" && (
         <>
-          <SignOutMenuItem />
           <SettingsMenuItem />
+          <SignOutMenuItem />
         </>
       )}
       {status === "unauthenticated" && <SignInMenuItem />}
