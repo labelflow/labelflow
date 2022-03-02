@@ -26,6 +26,23 @@ export type ExportCardProps = {
   subtext: string;
 };
 
+const ExportLogoIcon = ({
+  logoSrc,
+  logoIcon,
+}: Pick<ExportCardProps, "logoSrc" | "logoIcon">) => {
+  const LogoIcon = logoIcon ? chakra(logoIcon) : undefined;
+  return LogoIcon ? (
+    <LogoIcon
+      fontSize="64"
+      color={mode("black", "white")}
+      flexGrow={0}
+      flexShrink={0}
+    />
+  ) : (
+    <Image src={logoSrc} w="16" flexGrow={0} flexShrink={0} />
+  );
+};
+
 export const ExportCard = ({
   colorScheme,
   disabled,
@@ -38,7 +55,6 @@ export const ExportCard = ({
   subtext,
 }: ExportCardProps) => {
   const theme = useTheme();
-  const LogoIcon = logoIcon ? chakra(logoIcon) : undefined;
 
   return (
     <OptionalParent
@@ -97,16 +113,7 @@ export const ExportCard = ({
           spacing={4}
           boxSizing="border-box"
         >
-          {LogoIcon ? (
-            <LogoIcon
-              fontSize="64"
-              color={mode("black", "white")}
-              flexGrow={0}
-              flexShrink={0}
-            />
-          ) : (
-            <Image src={logoSrc} w="16" flexGrow={0} flexShrink={0} />
-          )}
+          <ExportLogoIcon logoSrc={logoSrc} logoIcon={logoIcon} />
           <VStack
             alignItems="flex-start"
             spacing="1"

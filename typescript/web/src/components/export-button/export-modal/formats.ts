@@ -19,21 +19,16 @@ export const DEFAULT_EXPORT_OPTIONS: RequiredExportOptions = {
   csv: {},
 };
 
+type ExportFormatDefinition = {
+  format: ExportFormat;
+  title: string;
+  description: string;
+  logoSrc?: string;
+  logoIcon?: IconType;
+} & ({ logoSrc: string } | { logoIcon: IconType });
+
 export const formatMainInformation: {
-  [format in keyof RequiredExportOptions]: {
-    format: ExportFormat;
-    title: string;
-    description: string;
-    logoSrc?: string;
-    logoIcon?: IconType;
-  } & (
-    | {
-        logoSrc: string;
-      }
-    | {
-        logoIcon: IconType;
-      }
-  );
+  [format in keyof RequiredExportOptions]: ExportFormatDefinition;
 } = {
   coco: {
     format: ExportFormat.COCO,
