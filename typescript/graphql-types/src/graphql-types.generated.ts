@@ -304,6 +304,17 @@ export type LabelClassCreateInput = {
   datasetId: Scalars['ID'];
 };
 
+export type LabelClassCreateManyInput = {
+  labelClasses: Array<LabelClassCreateManySingleInput>;
+  datasetId: Scalars['ID'];
+};
+
+export type LabelClassCreateManySingleInput = {
+  id?: Maybe<Scalars['ID']>;
+  name: Scalars['String'];
+  color?: Maybe<Scalars['ColorHex']>;
+};
+
 export type LabelClassReorderInput = {
   index: Scalars['Int'];
 };
@@ -420,6 +431,7 @@ export type Mutation = {
   updateLabel?: Maybe<Label>;
   deleteLabel?: Maybe<Label>;
   createLabelClass?: Maybe<LabelClass>;
+  createManyLabelClasses: Array<LabelClass>;
   updateLabelClass?: Maybe<LabelClass>;
   reorderLabelClass?: Maybe<LabelClass>;
   deleteLabelClass?: Maybe<LabelClass>;
@@ -491,6 +503,11 @@ export type MutationDeleteLabelArgs = {
 
 export type MutationCreateLabelClassArgs = {
   data: LabelClassCreateInput;
+};
+
+
+export type MutationCreateManyLabelClassesArgs = {
+  data: LabelClassCreateManyInput;
 };
 
 
@@ -983,6 +1000,8 @@ export type ResolversTypes = {
   Label: ResolverTypeWrapper<Label>;
   LabelClass: ResolverTypeWrapper<LabelClass>;
   LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassCreateManyInput: LabelClassCreateManyInput;
+  LabelClassCreateManySingleInput: LabelClassCreateManySingleInput;
   LabelClassReorderInput: LabelClassReorderInput;
   LabelClassUpdateInput: LabelClassUpdateInput;
   LabelClassWhereInput: LabelClassWhereInput;
@@ -1067,6 +1086,8 @@ export type ResolversParentTypes = {
   Label: Label;
   LabelClass: LabelClass;
   LabelClassCreateInput: LabelClassCreateInput;
+  LabelClassCreateManyInput: LabelClassCreateManyInput;
+  LabelClassCreateManySingleInput: LabelClassCreateManySingleInput;
   LabelClassReorderInput: LabelClassReorderInput;
   LabelClassUpdateInput: LabelClassUpdateInput;
   LabelClassWhereInput: LabelClassWhereInput;
@@ -1241,6 +1262,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateLabelArgs, 'where' | 'data'>>;
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   createLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateLabelClassArgs, 'data'>>;
+  createManyLabelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateManyLabelClassesArgs, 'data'>>;
   updateLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationUpdateLabelClassArgs, 'where' | 'data'>>;
   reorderLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationReorderLabelClassArgs, 'where' | 'data'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;

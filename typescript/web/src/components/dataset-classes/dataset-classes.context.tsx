@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { OnReorderCallback } from "../reorderable-table";
+import { exportDatasetClasses } from "./dataset-classes-export";
 import { useDatasetLabelClassesQuery } from "./dataset-classes.query";
 import { useReorderLabelClassMutation } from "./reorder-label-class.mutation";
 import { LabelClassWithShortcut } from "./types";
@@ -26,6 +27,7 @@ export interface DatasetClassesState {
   labelClasses?: LabelClassWithShortcut[];
   loading: boolean;
   onReorder: OnReorderCallback;
+  onExportClasses(): void;
 }
 
 export const DatasetClassesContext = createContext({} as DatasetClassesState);
@@ -84,6 +86,11 @@ export const DatasetClassesProvider = ({
     [refetch, reorderLabelClass, updateQuery]
   );
 
+  const onExportClasses = useCallback(
+    async () => await exportDatasetClasses(datasetSlug, labelClasses),
+    [datasetSlug, labelClasses]
+  );
+
   const value: DatasetClassesState = {
     datasetSlug,
     datasetId: data?.dataset.id,
@@ -98,6 +105,7 @@ export const DatasetClassesProvider = ({
     labelClasses,
     loading,
     onReorder,
+    onExportClasses,
   };
 
   return (

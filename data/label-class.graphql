@@ -5,6 +5,17 @@ input LabelClassCreateInput {
   datasetId: ID!
 }
 
+input LabelClassCreateManySingleInput {
+  id: ID
+  name: String!
+  color: ColorHex
+}
+
+input LabelClassCreateManyInput {
+  labelClasses: [LabelClassCreateManySingleInput!]!
+  datasetId: ID!
+}
+
 input LabelClassUpdateInput {
   name: String
   color: ColorHex
