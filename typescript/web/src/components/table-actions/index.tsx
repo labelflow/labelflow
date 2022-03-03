@@ -1,6 +1,7 @@
 import {
   Button,
   ButtonGroup,
+  ButtonProps,
   chakra,
   FormControl,
   FormLabel,
@@ -11,7 +12,8 @@ import {
   Stack,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { createContext, useContext } from "react";
+import { createContext, PropsWithChildren, useContext } from "react";
+import { IconType } from "react-icons/lib";
 import { IoSearch } from "react-icons/io5";
 import { RiAddFill } from "react-icons/ri";
 
@@ -36,6 +38,7 @@ const SearchBar = () => {
             <SearchIcon />
           </InputLeftElement>
           <Input
+            data-testid="search-input"
             rounded="base"
             type="search"
             placeholder={searchBarLabel}
@@ -49,32 +52,60 @@ const SearchBar = () => {
   );
 };
 
-const NewItemButton = () => {
+export type ActionButtonVariant = "brand" | "outline";
+
+export type ActionButtonProps = Pick<ButtonProps, "onClick" | "disabled"> & {
+  label: string;
+  icon: IconType;
+  variant: ActionButtonVariant;
+};
+
+export const TableActionButton = ({
+  label,
+  icon,
+  variant,
+  ...props
+}: ActionButtonProps) => {
+  const Icon = chakra(icon);
+  return (
+    <Button
+      variant="solid"
+      iconSpacing="1"
+      colorScheme={variant === "brand" ? "brand" : undefined}
+      bgColor={variant === "outline" ? mode("white", "gray.800") : undefined}
+      leftIcon={<Icon fontSize="md" />}
+      {...props}
+    >
+      {label}
+    </Button>
+  );
+};
+
+const Buttons = ({ children }: PropsWithChildren<{}>) => {
   const { onNewItem, newButtonLabel } = useContext(TableActionsContext);
   return (
     <ButtonGroup size="sm" variant="outline">
-      <Button
-        colorScheme="brand"
-        variant="solid"
-        iconSpacing="1"
-        leftIcon={<RiAddFill fontSize="1.25em" />}
+      {children}
+      <TableActionButton
+        data-testid="add-button"
+        variant="brand"
+        icon={RiAddFill}
         onClick={onNewItem}
-      >
-        {newButtonLabel}
-      </Button>
+        label={newButtonLabel}
+      />
     </ButtonGroup>
   );
 };
 
-export type TableActionsProps = {
+export type TableActionsProps = PropsWithChildren<{
   searchText: string;
   setSearchText: (text: string) => void;
   onNewItem: () => void;
   searchBarLabel: string;
   newButtonLabel: string;
-};
+}>;
 
-export const TableActions = (props: TableActionsProps) => {
+export const TableActions = ({ children, ...props }: TableActionsProps) => {
   return (
     <TableActionsContext.Provider value={props}>
       <Stack
@@ -83,7 +114,7 @@ export const TableActions = (props: TableActionsProps) => {
         justify="space-between"
       >
         <SearchBar />
-        <NewItemButton />
+        <Buttons>{children}</Buttons>
       </Stack>
     </TableActionsContext.Provider>
   );

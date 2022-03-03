@@ -18,7 +18,12 @@ export const ReorderableTableBody = ({
     <Droppable droppableId="reorderableTable" direction="vertical" type="ROW">
       {({ innerRef, droppableProps, placeholder }) => (
         <>
-          <Tbody ref={innerRef} {...droppableProps} {...props}>
+          <Tbody
+            data-testid="reorderable-table-body"
+            ref={innerRef}
+            {...droppableProps}
+            {...props}
+          >
             {children}
             {placeholder}
           </Tbody>

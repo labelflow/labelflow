@@ -112,8 +112,16 @@ describe("Access control for label-class", () => {
 
   it("gives the amount of label classes the user has access to", async () => {
     await createLabelClass(labelClassData);
-    await createLabelClass({ ...labelClassData, id: undefined });
-    await createLabelClass({ ...labelClassData, id: undefined });
+    await createLabelClass({
+      ...labelClassData,
+      id: undefined,
+      name: `${labelClassData.name} 2`,
+    });
+    await createLabelClass({
+      ...labelClassData,
+      id: undefined,
+      name: `${labelClassData.name} 3`,
+    });
     const { data } = await client.query({
       query: gql`
         query labelClasses {
@@ -133,8 +141,16 @@ describe("Access control for label-class", () => {
 
   it("returns zero elements if user does not have access to any label class", async () => {
     await createLabelClass(labelClassData);
-    await createLabelClass({ ...labelClassData, id: undefined });
-    await createLabelClass({ ...labelClassData, id: undefined });
+    await createLabelClass({
+      ...labelClassData,
+      id: undefined,
+      name: `${labelClassData.name} 2`,
+    });
+    await createLabelClass({
+      ...labelClassData,
+      id: undefined,
+      name: `${labelClassData.name} 3`,
+    });
     user.id = testUser2Id;
     const { data } = await client.query({
       query: gql`

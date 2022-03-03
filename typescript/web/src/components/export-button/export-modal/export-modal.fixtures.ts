@@ -15,7 +15,7 @@ import {
 import { EXPORT_DATASET_URL_QUERY } from "./export-dataset";
 import { COUNT_LABELS_OF_DATASET_QUERY } from "./export-modal.context";
 import { DEFAULT_EXPORT_OPTIONS } from "./formats";
-import { getDatasetExportName } from "./get-dataset-export-name";
+import { getDatasetExportName } from "../../../utils";
 
 const datasetName = getDatasetExportName(BASIC_DATASET_DATA.slug);
 

@@ -1,23 +1,42 @@
-import { TableActions } from "../table-actions";
+import { BiImport } from "react-icons/bi";
+import { useCallback } from "react";
+import { TableActions, TableActionButton } from "../table-actions";
 import { useDatasetClasses } from "./dataset-classes.context";
-import { UpsertClassModal } from "./upsert-class-modal";
+import { AddClassesModal as AddClassesModalComponent } from "./add-classes-modal";
+
+const DownloadAction = () => {
+  const { onExportClasses } = useDatasetClasses();
+  return (
+    <TableActionButton
+      variant="outline"
+      icon={BiImport}
+      onClick={onExportClasses}
+      label="Download"
+    />
+  );
+};
+
+const AddClassesModal = () => {
+  const { isCreating, setIsCreating } = useDatasetClasses();
+  const handleClose = useCallback(() => setIsCreating(false), [setIsCreating]);
+  return <AddClassesModalComponent isOpen={isCreating} onClose={handleClose} />;
+};
 
 export const LabelClassesActions = () => {
-  const { searchText, setSearchText, isCreating, setIsCreating } =
-    useDatasetClasses();
+  const { searchText, setSearchText, setIsCreating } = useDatasetClasses();
+  const handleAdd = useCallback(() => setIsCreating(true), [setIsCreating]);
   return (
     <>
-      <UpsertClassModal
-        isOpen={isCreating}
-        onClose={() => setIsCreating(false)}
-      />
+      <AddClassesModal />
       <TableActions
         searchText={searchText}
         setSearchText={setSearchText}
-        onNewItem={() => setIsCreating(true)}
+        onNewItem={handleAdd}
         searchBarLabel="Find a class"
         newButtonLabel="New class"
-      />
+      >
+        <DownloadAction />
+      </TableActions>
     </>
   );
 };

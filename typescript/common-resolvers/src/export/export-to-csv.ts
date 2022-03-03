@@ -1,26 +1,9 @@
 import { ExportOptionsCsv } from "@labelflow/graphql-types";
-import {
-  Options as StringifyCsvOptions,
-  stringify as stringifyCsv,
-} from "csv-stringify";
 import { isNil } from "lodash";
 import { Context, DbDataset, DbImage, DbLabel, DbLabelClass } from "../types";
+import { stringifyCsv } from "../utils";
 import { getOrigin } from "../utils/get-origin";
 import { ExportFunction } from "./types";
-
-const stringifyCsvAsync = (
-  rows: unknown[][],
-  options?: StringifyCsvOptions
-): Promise<string> =>
-  new Promise((resolve, reject) => {
-    stringifyCsv(rows, options, (error, output) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(output);
-      }
-    });
-  });
 
 // https://github.com/labelflow/labelflow/issues/879
 const CSV_HEADER = [
@@ -132,7 +115,7 @@ export const createCsv = async (
   ctx: Context
 ): Promise<string> => {
   const rows = await createRowsFromDb(datasetId, ctx);
-  const csv = await stringifyCsvAsync(rows, {
+  const csv = await stringifyCsv(rows, {
     header: true,
     columns: CSV_HEADER,
   });

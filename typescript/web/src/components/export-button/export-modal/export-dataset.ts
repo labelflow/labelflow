@@ -8,8 +8,7 @@ import {
   ExportFormat,
   ExportOptions,
 } from "../../../graphql-types/globalTypes";
-
-import { getDatasetExportName } from "./get-dataset-export-name";
+import { getDatasetExportName, triggerClientDownload } from "../../../utils";
 
 export const EXPORT_DATASET_URL_QUERY = gql`
   query ExportDatasetUrlQuery(
@@ -77,11 +76,7 @@ export const exportDataset = async ({
     }
   );
   const blobDataset = await (await fetch(exportDatasetUrl)).blob();
-  const url = window.URL.createObjectURL(blobDataset);
-  const element = document.createElement("a");
   const extension = getExtension(format, options);
-  element.href = url;
-  element.download = `${datasetName}.${extension}`;
+  triggerClientDownload(blobDataset, `${datasetName}.${extension}`);
   setIsExportRunning(false);
-  element.click();
 };
