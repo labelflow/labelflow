@@ -57,7 +57,7 @@ export const Banner = () => {
             open platform.
             <br />
             <br />
-            <b>March 3rd, 2022 at 4pm CET</b>
+            <b>March 24th, 2022 at 4pm CET</b>
           </Text>
 
           <Center>
