@@ -27,29 +27,20 @@ const drawPolygon = (geometry: [number, number][]): void => {
 };
 
 const drawFreehand = (): void => {
-  const additionalOptions = {
-    pointerId: 1,
-    pointerType: "touch",
-    isPrimary: true,
-    pressure: 1,
-    composed: true,
-    buttons: 1,
-    isTrusted: true,
-    width: 23,
-  };
+  // `trigger()` throws "Cannot read property toString of undefined" if no set
+  const pointerId = 1;
+  const [firsPoint, ...restPoints] = EXAMPLE_POLYGON;
   cy.get("main").trigger("pointerdown", {
-    ...getFreehandPoint(EXAMPLE_POLYGON[0]),
-    ...additionalOptions,
+    ...getFreehandPoint(firsPoint),
+    pointerId,
   });
-  for (let i = 1; i < EXAMPLE_POLYGON.length; i += 1) {
+  restPoints.forEach((point) =>
     cy.get("main").trigger("pointermove", {
-      ...getFreehandPoint(EXAMPLE_POLYGON[i]),
-      ...additionalOptions,
-    });
-  }
-  cy.get("main").trigger("pointerup", {
-    ...additionalOptions,
-  });
+      ...getFreehandPoint(point),
+      pointerId,
+    })
+  );
+  cy.get("main").trigger("pointerup", { pointerId });
 };
 
 describe("Polygon drawing (online)", () => {
@@ -72,14 +63,12 @@ describe("Polygon drawing (online)", () => {
         color: "#F87171",
         datasetId,
       });
+      cy.visit(`/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}`);
+      cy.get('[aria-label="loading indicator"]').should("not.exist");
     });
   });
+
   it("switches between drawing tools", () => {
-    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-    cy.visit(
-      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
-    );
-    cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing polygon tool"]').should("not.exist");
     cy.get('[aria-label="Drawing box tool"]').should("exist").click();
 
@@ -100,12 +89,7 @@ describe("Polygon drawing (online)", () => {
     cy.get('[aria-label="Drawing box tool"]').should("not.exist");
   });
 
-  it("draws a polygon", () => {
-    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-    cy.visit(
-      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
-    );
-    cy.get('[aria-label="loading indicator"]').should("not.exist");
+  it("draws a polygon with polygon tool", () => {
     cy.get('[aria-label="Change Drawing tool"]').should("be.visible").click();
     cy.get('[aria-label="Polygon tool"]').click();
 
@@ -128,12 +112,7 @@ describe("Polygon drawing (online)", () => {
       .should("have.attr", "aria-current", "true");
   });
 
-  it("draws a polygon freehand", () => {
-    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-    cy.visit(
-      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
-    );
-    cy.get('[aria-label="loading indicator"]').should("not.exist");
+  it("draws a polygon with freehand tool", () => {
     cy.get('[aria-label="Change Drawing tool"]').should("be.visible").click();
     cy.get('[aria-label="Freehand tool"]').click();
 
