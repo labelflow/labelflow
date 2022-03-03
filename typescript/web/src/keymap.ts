@@ -28,6 +28,16 @@ export const keymap: Keymap = {
     description: "Freehand tool",
     category: "Tools",
   },
+  toolAiAssistant: {
+    key: "i",
+    description: "AI Assistant tool",
+    category: "Tools",
+  },
+  runAiAssistant: {
+    key: "r",
+    description: "Run AI Assistant tool",
+    category: "Tools",
+  },
   openLabelClassSelectionPopover: {
     key: "c",
     description: "Change class of currently selected label",
@@ -80,18 +90,18 @@ export const keymap: Keymap = {
   },
   toolIog: {
     key: "a",
-    description: "Auto Polygon",
+    description: "Auto-Polygon",
     category: "Tools",
   },
   changeSelectionMode: {
     key: "e",
     description:
-      "Switch between default selection and Auto Polygon edition tool",
+      "Switch between default selection and Auto-Polygon edition tool",
     category: "Tools",
   },
   validateIogLabel: {
     key: "enter",
-    description: "Validate the edition of an Auto Polygon label",
+    description: "Validate the edition of an Auto-Polygon label",
     category: "Tools",
   },
   enterFullScreen: {

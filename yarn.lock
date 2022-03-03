@@ -8107,6 +8107,7 @@ __metadata:
     "@prisma/client": 2.30.3
     "@supabase/supabase-js": 1.30.6
     "@types/node": 16.4.1
+    ajv: 8.10.0
     apollo-server: 3.5.0
     dotenv-cli: 4.0.0
     fetch-blob: 3.1.3
@@ -8261,6 +8262,7 @@ __metadata:
     "@types/react": 17.0.3
     "@types/react-beautiful-dnd": 13.1.2
     "@types/react-dom": 17.0.1
+    "@types/string-similarity": 4.0.0
     "@types/uuid": 8.3.0
     "@types/valid-url": 1.0.3
     announcekit-react: 2.1.7
@@ -8323,6 +8325,7 @@ __metadata:
     remark-gfm: 1.0.0
     rimraf: 3.0.2
     slugify: 1.6.0
+    string-similarity: 4.0.4
     stripe: 8.181.0
     styled-jsx: 4.0.0
     terser-webpack-plugin: 5.2.4
@@ -13559,6 +13562,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/string-similarity@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@types/string-similarity@npm:4.0.0"
+  checksum: e530b8c1254ae3318662baaa71e5d42938c900dd6d3486a358f188dfe0d6f14c2342ad48f363db9851230ab51e17460de7a6569038c022815ade6d4bbe78f46f
+  languageName: node
+  linkType: hard
+
 "@types/tapable@npm:^1, @types/tapable@npm:^1.0.5":
   version: 1.0.7
   resolution: "@types/tapable@npm:1.0.7"
@@ -14483,6 +14493,18 @@ __metadata:
   peerDependencies:
     ajv: ^6.9.1
   checksum: 7dc5e5931677a680589050f79dcbe1fefbb8fea38a955af03724229139175b433c63c68f7ae5f86cf8f65d55eb7c25f75a046723e2e58296707617ca690feae9
+  languageName: node
+  linkType: hard
+
+"ajv@npm:8.10.0":
+  version: 8.10.0
+  resolution: "ajv@npm:8.10.0"
+  dependencies:
+    fast-deep-equal: ^3.1.1
+    json-schema-traverse: ^1.0.0
+    require-from-string: ^2.0.2
+    uri-js: ^4.2.2
+  checksum: 3594728ef1e31219ef97bfacb203d0d72db8ad5c35d6d0578e38ee453e4537c2bf927dad144bb84b0c893f661d71b58337d4643e8ee2f2a6e1d63b041c92fe82
   languageName: node
   linkType: hard
 
@@ -33146,6 +33168,13 @@ resolve@^2.0.0-next.3:
     char-regex: ^1.0.2
     strip-ansi: ^6.0.0
   checksum: ce85533ef5113fcb7e522bcf9e62cb33871aa99b3729cec5595f4447f660b0cefd542ca6df4150c97a677d58b0cb727a3fe09ac1de94071d05526c73579bf505
+  languageName: node
+  linkType: hard
+
+"string-similarity@npm:4.0.4":
+  version: 4.0.4
+  resolution: "string-similarity@npm:4.0.4"
+  checksum: 797b41b24e1eb6b3b0ab896950b58c295a19a82933479c75f7b5279ffb63e0b456a8c8d10329c02f607ca1a50370e961e83d552aa468ff3b0fa15809abc9eff7
   languageName: node
   linkType: hard
 

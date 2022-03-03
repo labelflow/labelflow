@@ -4,6 +4,7 @@ import membershipResolvers from "./membership";
 import userResolvers from "./user";
 import workspaceResolvers from "./workspace";
 import inviteMemberResolvers from "./invite-member";
+import aiAssistantResolvers from "./ai-assistant.resolver";
 
 export const resolvers = mergeResolvers([
   commonResolvers,
@@ -11,4 +12,5 @@ export const resolvers = mergeResolvers([
   userResolvers,
   workspaceResolvers,
   inviteMemberResolvers,
+  aiAssistantResolvers,
 ]);

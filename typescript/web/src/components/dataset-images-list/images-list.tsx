@@ -3,9 +3,7 @@ import { isEmpty } from "lodash/fp";
 import React from "react";
 import { EmptyStateNoImages } from "../empty-state";
 import { ImportButton } from "../import-button";
-import { PaginationProvider } from "../pagination";
-import { PaginationFooter } from "../pagination/pagination-footer";
-import { LayoutSpinner } from "../spinner";
+import { PaginationProvider, PaginationFooter, LayoutSpinner } from "../core";
 import { DeleteImageModal } from "./delete-image-modal";
 import { ImageCard } from "./image-card";
 import {

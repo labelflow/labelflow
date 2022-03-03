@@ -11,7 +11,7 @@ import NextLink from "next/link";
 import { createContext, MouseEvent, useCallback, useContext } from "react";
 import { HiTrash } from "react-icons/hi";
 import { EmptyStateImageNotFound } from "../empty-state";
-import { ImageWithFallback } from "../image";
+import { ImageWithFallback } from "../core";
 
 const TrashIcon = chakra(HiTrash);
 

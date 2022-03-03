@@ -13,7 +13,7 @@ import { Layout } from "../../../../components/layout";
 import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
 import { NavLogo } from "../../../../components/logo/nav-logo";
 import { Meta } from "../../../../components/meta";
-import { LayoutSpinner } from "../../../../components/spinner";
+import { LayoutSpinner } from "../../../../components";
 import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
 import { Error404Content } from "../../../404";
 

@@ -1,16 +1,20 @@
 import { VStack } from "@chakra-ui/react";
-import { Story } from "@storybook/react";
+import { ComponentStory } from "@storybook/react";
 import React from "react";
 import {
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
 } from "../../../utils/stories";
-import { DrawingToolbar, Props } from "./drawing-tool-bar";
+import { DrawingToolbar as DrawingToolbarComponent } from "./drawing-tool-bar";
 
 export default {
-  title: storybookTitle("Drawing toolbar", DrawingToolbar),
-  component: DrawingToolbar,
+  title: storybookTitle(
+    "Labeling tool",
+    "Drawing toolbar",
+    DrawingToolbarComponent
+  ),
+  component: DrawingToolbarComponent,
   parameters: {
     nextRouter: {
       path: "/images/[id]",
@@ -23,12 +27,11 @@ export default {
   decorators: [chakraDecorator, queryParamsDecorator],
 };
 
-const Template: Story<Props> = (args: Props) => (
+const Template: ComponentStory<typeof DrawingToolbarComponent> = () => (
   <VStack background="gray.100" padding={4} spacing={4} h="640px" w="72px">
-    <DrawingToolbar {...args} />
+    <DrawingToolbarComponent />
   </VStack>
 );
 
-// @ts-ignore
-export const Default = Template.bind({});
-Default.args = {};
+export const DrawingToolbar = Template.bind({});
+DrawingToolbar.args = {};

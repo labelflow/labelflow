@@ -27,7 +27,7 @@ const images = [
 ];
 
 export default {
-  title: storybookTitle(ImageNavigationTool),
+  title: storybookTitle("Labeling tool", ImageNavigationTool),
   component: ImageNavigationTool,
   // FIXME SW Images are not loaded anymore
   // loaders: [mockImagesLoader],

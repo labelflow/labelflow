@@ -8,7 +8,7 @@ import { WorkspaceTabBar } from "../../components/layout/tab-bar/workspace-tab-b
 import { NavLogo } from "../../components/logo/nav-logo";
 import { Members } from "../../components/members";
 import { Meta } from "../../components/meta";
-import { LayoutSpinner } from "../../components/spinner";
+import { LayoutSpinner } from "../../components";
 import { WorkspaceSwitcher } from "../../components/workspace-switcher";
 import {
   GetMembershipsMembersQuery,

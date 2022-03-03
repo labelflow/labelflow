@@ -163,7 +163,8 @@ export const SelectAndModifyFeature = (props: {
           />
         )}
       {imageId &&
-        selectedTool === Tools.SELECTION &&
+        (selectedTool === Tools.SELECTION ||
+          selectedTool === Tools.AI_ASSISTANT) &&
         selectionToolState === SelectionToolState.IOG &&
         labelData?.label?.type === LabelType.Polygon &&
         selectedFeature && (
@@ -173,7 +174,8 @@ export const SelectAndModifyFeature = (props: {
             iogSpinnerRef={iogSpinnerRef}
           />
         )}
-      {selectedTool === Tools.SELECTION &&
+      {(selectedTool === Tools.SELECTION ||
+        selectedTool === Tools.AI_ASSISTANT) &&
         selectionToolState === SelectionToolState.DEFAULT &&
         labelData?.label?.type === LabelType.Polygon &&
         selectedFeature && (

@@ -11,7 +11,7 @@ import { isNil } from "lodash/fp";
 import { FormEvent, useCallback } from "react";
 import { useOptionalWorkspaces, useWorkspaces } from "../../hooks";
 import NoWorkspacesGraphics from "../graphics/no-workspace";
-import { LayoutSpinner } from "../spinner";
+import { LayoutSpinner } from "../core";
 import {
   useWorkspaceNameInput,
   WorkspaceNameInput,

@@ -411,6 +411,7 @@ export const typeDefs = [
     importDataset(data: DatasetImportInput!, where: DatasetWhereUniqueInput!): ImportStatus
     inviteMember(where: InviteMemberInput!): InvitationResult
     reorderLabelClass(data: LabelClassReorderInput!, where: LabelClassWhereUniqueInput!): LabelClass
+    runAiAssistant(data: RunAiAssistantInput!): RunAiAssistantOutput!
     updateDataset(data: DatasetUpdateInput!, where: DatasetWhereUniqueInput!): Dataset
     updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
     updateIogLabel(data: UpdateIogInput!): Label
@@ -447,6 +448,17 @@ export const typeDefs = [
     workspace(where: WorkspaceWhereUniqueInput!): Workspace!
     workspaceExists(where: WorkspaceWhereUniqueInput!): Boolean!
     workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
+  }
+
+  input RunAiAssistantInput {
+    aiAssistantId: ID!
+    imageId: ID!
+    useAutoPolygon: Boolean
+  }
+
+  type RunAiAssistantOutput {
+    labelClasses: [ID!]!
+    labels: [ID!]!
   }
 
   input RunIogInput {

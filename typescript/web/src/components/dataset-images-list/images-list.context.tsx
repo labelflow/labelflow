@@ -6,7 +6,7 @@ import {
   PaginatedImagesQueryVariables,
   PaginatedImagesQuery_images,
 } from "../../graphql-types/PaginatedImagesQuery";
-import { usePagination } from "../pagination";
+import { usePagination } from "../core";
 import { PAGINATED_IMAGES_QUERY } from "./paginated-images-query";
 
 export type ImagesListProps = {

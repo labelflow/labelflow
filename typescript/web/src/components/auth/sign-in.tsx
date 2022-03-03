@@ -7,7 +7,7 @@ import {
 import NextLink from "next/link";
 import React from "react";
 import { Logo } from "../logo";
-import { TextLink } from "../text-link";
+import { TextLink } from "../core";
 import { DividerWithText } from "./divider-with-text";
 import { EmailSignIn } from "./email-sign-in";
 import { OAuthSignIn } from "./oauth-sign-in";

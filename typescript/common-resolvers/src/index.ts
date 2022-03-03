@@ -36,3 +36,6 @@ export * from "./types";
 export * from "./export/format-coco/coco-core/types";
 
 export * from "./utils";
+export * from "./ai-assistant";
+
+export { downloadUrlToDataUrl, fetchIogServer } from "./iog-inference";

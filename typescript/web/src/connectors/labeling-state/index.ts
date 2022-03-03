@@ -15,8 +15,9 @@ export enum Tools {
   CLASSIFICATION = "classification",
   BOX = "box",
   POLYGON = "polygon",
-  IOG = "iog",
   FREEHAND = "freehand",
+  IOG = "iog",
+  AI_ASSISTANT = "ai-assistant",
 }
 
 export enum DrawingToolState {

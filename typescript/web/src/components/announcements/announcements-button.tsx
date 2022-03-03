@@ -1,7 +1,6 @@
 import { Box, Circle } from "@chakra-ui/react";
 import { isNil } from "lodash/fp";
-import { BsMegaphone } from "react-icons/bs";
-import { IconButton } from "../icon-button";
+import { IconButton } from "../core";
 import { Announcements, AnnouncementsProps } from "./announcements";
 import { useAnnouncements } from "./announcements.context";
 
@@ -10,8 +9,8 @@ const AnnouncementsIconButton = () => {
   const newText = unread ? ` (${unread} new)` : "";
   return (
     <IconButton
-      aria-label={`Announcements${newText}`}
-      icon={BsMegaphone}
+      label={`Announcements${newText}`}
+      icon="announcements"
       onClick={openWidget}
       variant="ghost"
     />

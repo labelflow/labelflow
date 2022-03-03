@@ -7,7 +7,7 @@ import { CurrentUserCanAcceptInvitation } from "../../graphql-types/globalTypes"
 import { useUser } from "../../hooks";
 import { USER_QUERY } from "../../shared-queries/user.query";
 import { getDisplayName } from "../members/user";
-import { LayoutSpinner } from "../spinner";
+import { LayoutSpinner } from "../core";
 import { AcceptOrDeclineMembershipInvitation } from "./accept-or-decline-membership-invitation";
 import { InvalidInvitation } from "./invalid-invitation";
 

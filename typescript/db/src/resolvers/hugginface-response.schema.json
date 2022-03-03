@@ -1,0 +1,31 @@
+{
+  "title": "HugginFaceResult",
+  "type": "array",
+  "items": { "$ref": "#/$defs/HugginFaceLabel" },
+  "$defs": {
+    "HugginFaceLabel": {
+      "type": "object",
+      "required": ["label", "score"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "box": {
+          "type": "object",
+          "properties": {
+            "xmin": { "type": "number" },
+            "ymin": { "type": "number" },
+            "xmax": { "type": "number" },
+            "ymax": { "type": "number" }
+          }
+        }
+      }
+    }
+  }
+}

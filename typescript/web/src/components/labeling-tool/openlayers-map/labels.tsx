@@ -107,7 +107,8 @@ export const Labels = ({
             })}
           {selectedLabel?.smartToolInput &&
             (selectedTool === Tools.IOG ||
-              (selectedTool === Tools.SELECTION &&
+              ((selectedTool === Tools.SELECTION ||
+                selectedTool === Tools.AI_ASSISTANT) &&
                 selectionToolState === SelectionToolState.IOG)) && (
               <olFeature
                 key={getIogMaskIdFromLabelId(selectedLabel?.id)}

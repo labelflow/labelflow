@@ -11,10 +11,7 @@ import {
   Tools,
 } from "../../../../connectors/labeling-state";
 import { keymap } from "../../../../keymap";
-import {
-  ToggleButtonGroup,
-  ToggleIconButton,
-} from "../../../toggle-button-group";
+import { ToggleButtonGroup, ToggleIconButton } from "../../../core";
 
 import { LABEL_QUERY } from "../../openlayers-map/iog/queries";
 
@@ -57,7 +54,7 @@ export const EditSelectionMode = () => {
 
   if (
     !selectedLabelId ||
-    selectedTool !== Tools.SELECTION ||
+    (selectedTool !== Tools.SELECTION && selectedTool !== Tools.AI_ASSISTANT) ||
     !isIogModeAvailable
   ) {
     return null;

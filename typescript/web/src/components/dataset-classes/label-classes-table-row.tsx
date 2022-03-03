@@ -12,10 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { createContext, useCallback, useContext } from "react";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
-import {
-  ReorderableTableCell,
-  ReorderableTableRow,
-} from "../reorderable-table";
+import { ReorderableTableCell, ReorderableTableRow } from "../core";
 import { useDatasetClasses } from "./dataset-classes.context";
 import { LabelClassWithShortcut } from "./types";
 
