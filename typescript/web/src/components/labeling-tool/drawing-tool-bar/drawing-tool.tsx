@@ -379,20 +379,6 @@ export const DrawingTool = () => {
                 </Box>
               </ToolSelectionPopoverItem>
               <ToolSelectionPopoverItem
-                name="Auto Polygon"
-                shortcut={keymap.toolIog.key}
-                selected={selectedTool === Tools.IOG}
-                onClick={() => {
-                  setSelectedTool(Tools.IOG);
-                  setIsPopoverOpened(false);
-                }}
-                ariaLabel="Auto polygon Tool"
-              >
-                <Box ml="2">
-                  <ChakraIoColorWandOutline size="1.3em" />
-                </Box>
-              </ToolSelectionPopoverItem>
-              <ToolSelectionPopoverItem
                 name="Freehand"
                 shortcut={keymap.toolFreehand.key}
                 selected={selectedTool === Tools.FREEHAND}
@@ -404,6 +390,20 @@ export const DrawingTool = () => {
               >
                 <Box ml="2">
                   <ChakraBiPencil size="1.3em" />
+                </Box>
+              </ToolSelectionPopoverItem>
+              <ToolSelectionPopoverItem
+                name="Auto Polygon"
+                shortcut={keymap.toolIog.key}
+                selected={selectedTool === Tools.IOG}
+                onClick={() => {
+                  setSelectedTool(Tools.IOG);
+                  setIsPopoverOpened(false);
+                }}
+                ariaLabel="Auto polygon Tool"
+              >
+                <Box ml="2">
+                  <ChakraIoColorWandOutline size="1.3em" />
                 </Box>
               </ToolSelectionPopoverItem>
             </Box>
