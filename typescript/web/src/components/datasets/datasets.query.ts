@@ -16,14 +16,11 @@ export const GET_DATASET_BY_ID_QUERY = gql`
   }
 `;
 
-export const SEARCH_DATASET_BY_SLUG_QUERY = gql`
-  query SearchDatasetBySlugQuery($slug: String!, $workspaceSlug: String!) {
-    searchDataset(
+export const DATASET_EXISTS_QUERY = gql`
+  query DatasetExistsQuery($slug: String!, $workspaceSlug: String!) {
+    datasetExists(
       where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }
-    ) {
-      id
-      slug
-    }
+    )
   }
 `;
 

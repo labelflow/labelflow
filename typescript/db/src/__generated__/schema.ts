@@ -437,7 +437,7 @@ export const typeDefs = [
     labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
     dataset(where: DatasetWhereUniqueInput!): Dataset!
     datasets(where: DatasetWhereInput, first: Int, skip: Int): [Dataset!]!
-    searchDataset(where: DatasetWhereUniqueInput!): Dataset
+    datasetExists(where: DatasetWhereUniqueInput!): Boolean!
     workspace(where: WorkspaceWhereUniqueInput!): Workspace!
     workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
     workspaceExists(where: WorkspaceWhereUniqueInput!): Boolean!

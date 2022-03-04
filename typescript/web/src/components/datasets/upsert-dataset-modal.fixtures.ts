@@ -7,9 +7,9 @@ import {
   GetDatasetByIdQueryVariables,
 } from "../../graphql-types/GetDatasetByIdQuery";
 import {
-  SearchDatasetBySlugQuery,
-  SearchDatasetBySlugQueryVariables,
-} from "../../graphql-types/SearchDatasetBySlugQuery";
+  DatasetExistsQuery,
+  DatasetExistsQueryVariables,
+} from "../../graphql-types/DatasetExistsQuery";
 import {
   UpdateDatasetMutation,
   UpdateDatasetMutationVariables,
@@ -19,7 +19,7 @@ import { ApolloMockResponse, ApolloMockResponses } from "../../utils/tests";
 import { CREATE_DATASET_MUTATION } from "./create-dataset.mutation";
 import {
   GET_DATASET_BY_ID_QUERY,
-  SEARCH_DATASET_BY_SLUG_QUERY,
+  DATASET_EXISTS_QUERY,
 } from "./datasets.query";
 import { UPDATE_DATASET_MUTATION } from "./update-dataset.mutation";
 
@@ -45,45 +45,31 @@ export const GET_DATASET_BY_ID_MOCK: ApolloMockResponse<
 };
 
 export const GET_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
-  SearchDatasetBySlugQuery,
-  SearchDatasetBySlugQueryVariables
+  DatasetExistsQuery,
+  DatasetExistsQueryVariables
 > = {
   request: {
-    query: SEARCH_DATASET_BY_SLUG_QUERY,
+    query: DATASET_EXISTS_QUERY,
     variables: {
       slug: BASIC_DATASET_DATA.slug,
       workspaceSlug: BASIC_DATASET_DATA.workspace.slug,
     },
   },
-  result: {
-    data: {
-      searchDataset: {
-        id: BASIC_DATASET_DATA.id,
-        slug: BASIC_DATASET_DATA.slug,
-      },
-    },
-  },
+  result: { data: { datasetExists: true } },
 };
 
 export const GET_UPDATED_DATASET_BY_SLUG_MOCK: ApolloMockResponse<
-  SearchDatasetBySlugQuery,
-  SearchDatasetBySlugQueryVariables
+  DatasetExistsQuery,
+  DatasetExistsQueryVariables
 > = {
   request: {
-    query: SEARCH_DATASET_BY_SLUG_QUERY,
+    query: DATASET_EXISTS_QUERY,
     variables: {
       slug: UPDATED_DATASET_MOCK_SLUG,
       workspaceSlug: BASIC_DATASET_DATA.workspace.slug,
     },
   },
-  result: {
-    data: {
-      searchDataset: {
-        id: BASIC_DATASET_DATA.id,
-        slug: UPDATED_DATASET_MOCK_SLUG,
-      },
-    },
-  },
+  result: { data: { datasetExists: true } },
 };
 
 export const CREATE_DATASET_MOCK: ApolloMockResponse<

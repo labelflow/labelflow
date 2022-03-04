@@ -39,7 +39,7 @@ describe(UpsertDatasetModal, () => {
     const input = getByLabelText(/dataset name input/i) as HTMLInputElement;
     const button = getByLabelText(/create dataset/i);
     expect(input.value).toEqual("");
-    expect(button).toHaveAttribute("disabled");
+    expect(button).toBeDisabled();
   });
 
   it("enables start button when dataset name is not empty", async () => {
@@ -48,7 +48,7 @@ describe(UpsertDatasetModal, () => {
     fireEvent.change(input, { target: { value: "Good Day" } });
     expect(input.value).toBe("Good Day");
     const button = getByLabelText(/create dataset/i);
-    await waitFor(() => expect(button).not.toHaveAttribute("disabled"));
+    await waitFor(() => expect(button).not.toBeDisabled());
   });
 
   it("creates a dataset when the form is submitted", async () => {
@@ -89,7 +89,7 @@ describe(UpsertDatasetModal, () => {
     const input = getByLabelText(/dataset name input/i) as HTMLInputElement;
     await waitFor(() => expect(input.value).toBe(BASIC_DATASET_DATA.name));
     const button = getByLabelText(/update dataset/i);
-    await waitFor(() => expect(button).not.toHaveAttribute("disabled"));
+    await waitFor(() => expect(button).toBeDisabled());
   });
 
   it("updates a dataset when the form is submitted", async () => {

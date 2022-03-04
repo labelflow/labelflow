@@ -4,13 +4,33 @@ import {
   MutationDeleteDatasetArgs,
   MutationUpdateDatasetArgs,
   QueryDatasetArgs,
+  QueryDatasetExistsArgs,
   QueryDatasetsArgs,
   QueryImagesArgs,
 } from "@labelflow/graphql-types";
-import { trim } from "lodash/fp";
+import { ErrorOverride } from "@labelflow/utils";
+import { isNil, trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
 import { Context, DbDataset, Repository } from "./types";
-import { getSlug, addTypename, addTypenames } from "./utils";
+import { addTypename, addTypenames, getSlug } from "./utils";
+
+const overrideDatasetExistError: ErrorOverride = (error: any) => {
+  // Try to see if the query failed because another workspace with the same name or slug already exists
+  if (
+    !isNil(error) &&
+    typeof error === "object" &&
+    "code" in error &&
+    "meta" in error &&
+    // P2002: "Unique constraint failed on the {constraint}"
+    error.code === "P2002" &&
+    !isNil(error.meta)
+  ) {
+    const { target = [] } = error.meta as { target?: string[] };
+    if (target.includes("name") || target.includes("slug")) {
+      throw new Error("A dataset with the same name already exists");
+    }
+  }
+};
 
 const getLabelClassesByDatasetId = async (
   datasetId: string,
@@ -34,25 +54,20 @@ const getDataset = async (
   return addTypename(datasetFromRepository, "Dataset");
 };
 
-const searchDataset = async (
+const datasetExists = async (
   _: any,
-  args: QueryDatasetArgs,
+  args: QueryDatasetExistsArgs,
   { repository, user }: Context
-): Promise<(DbDataset & { __typename: string }) | undefined> => {
+): Promise<boolean> => {
   try {
-    const datasetFromRepository = await repository.dataset.get(
-      args.where,
-      user
-    );
-    return datasetFromRepository != null
-      ? addTypename(datasetFromRepository, "Dataset")
-      : undefined;
+    const data = await repository.dataset.get(args.where, user);
+    return !isNil(data);
   } catch (error) {
     if (
       error instanceof Error &&
       error.message.includes("User not authorized to access dataset")
     ) {
-      return undefined;
+      return false;
     }
     throw error;
   }
@@ -143,12 +158,13 @@ const createDataset = async (
     await repository.dataset.add(dbDataset, user);
 
     return await getDataset({ id: datasetId }, repository, user);
-  } catch (e) {
-    console.error(e);
+  } catch (error: any) {
+    overrideDatasetExistError(error);
+    console.error(error);
     throw new Error(
       `Could not create the dataset ${JSON.stringify(
         dbDataset
-      )} due to error "${e?.message ?? e}"`
+      )} due to error "${error?.message ?? error}"`
     );
   }
 };
@@ -205,7 +221,7 @@ export default {
   Query: {
     dataset,
     datasets,
-    searchDataset,
+    datasetExists,
   },
 
   Mutation: {
