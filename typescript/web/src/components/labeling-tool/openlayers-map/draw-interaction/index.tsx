@@ -17,7 +17,11 @@ export const DrawInteraction = ({
 
   const selectedTool = useLabelingStore((state) => state.selectedTool);
 
-  if (![Tools.BOX, Tools.POLYGON, Tools.IOG].includes(selectedTool)) {
+  if (
+    ![Tools.BOX, Tools.POLYGON, Tools.IOG, Tools.FREEHAND].includes(
+      selectedTool
+    )
+  ) {
     return null;
   }
   if (typeof imageId !== "string") {

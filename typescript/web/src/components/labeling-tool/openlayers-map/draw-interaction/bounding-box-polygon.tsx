@@ -77,7 +77,7 @@ export const DrawBoundingBoxAndPolygonInteraction = ({
   }, [selectedLabelClass?.color]);
 
   const interactionDrawArguments =
-    selectedTool === Tools.POLYGON
+    selectedTool === Tools.POLYGON || selectedTool === Tools.FREEHAND
       ? {
           type: GeometryType.MULTI_POLYGON,
           style, // Needed here to trigger the rerender of the component when the selected class changes
@@ -99,7 +99,9 @@ export const DrawBoundingBoxAndPolygonInteraction = ({
           selectedLabelClassId,
           geometry,
           labelType:
-            selectedTool === Tools.POLYGON ? LabelType.Polygon : LabelType.Box,
+            selectedTool === Tools.POLYGON || selectedTool === Tools.FREEHAND
+              ? LabelType.Polygon
+              : LabelType.Box,
         },
         {
           setSelectedLabelId,
@@ -126,6 +128,7 @@ export const DrawBoundingBoxAndPolygonInteraction = ({
     <olInteractionDraw
       ref={drawRef}
       args={interactionDrawArguments}
+      freehand={selectedTool === Tools.FREEHAND}
       condition={(e) => {
         // 0 is the main mouse button. See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
         // @ts-ignore

@@ -146,6 +146,8 @@ export const OpenlayersMap = () => {
         mapTargetViewport.style.cursor = "crosshair";
       } else if (selectedTool === Tools.POLYGON) {
         mapTargetViewport.style.cursor = "crosshair";
+      } else if (selectedTool === Tools.FREEHAND) {
+        mapTargetViewport.style.cursor = "crosshair";
       } else if (selectedTool === Tools.SELECTION) {
         const hit = e.map.hasFeatureAtPixel(e.pixel);
         mapTargetViewport.style.cursor = hit ? "pointer" : "grab";

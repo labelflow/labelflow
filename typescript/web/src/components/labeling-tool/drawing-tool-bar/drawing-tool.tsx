@@ -26,6 +26,7 @@ import {
   BiShapeSquare,
   BiPurchaseTagAlt,
   BiShapePolygon,
+  BiPencil,
 } from "react-icons/bi";
 import { IoColorWandOutline } from "react-icons/io5";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -42,6 +43,7 @@ const ChakraBiShapeSquare = chakra(BiShapeSquare);
 const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraRiArrowDownSLine = chakra(RiArrowDownSLine);
 const ChakraIoColorWandOutline = chakra(IoColorWandOutline);
+const ChakraBiPencil = chakra(BiPencil);
 
 export const ToolSelectionPopoverItem = (props: {
   name: string;
@@ -107,9 +109,13 @@ export const DrawingToolIcon = (props: {
   const [lastTool, setLastTool] = useState(Tools.BOX);
   useEffect(() => {
     if (
-      [Tools.CLASSIFICATION, Tools.BOX, Tools.POLYGON, Tools.IOG].includes(
-        selectedTool
-      )
+      [
+        Tools.CLASSIFICATION,
+        Tools.BOX,
+        Tools.POLYGON,
+        Tools.IOG,
+        Tools.FREEHAND,
+      ].includes(selectedTool)
     ) {
       setLastTool(selectedTool);
     }
@@ -119,6 +125,7 @@ export const DrawingToolIcon = (props: {
     Tools.BOX,
     Tools.POLYGON,
     Tools.IOG,
+    Tools.FREEHAND,
   ].includes(selectedTool);
 
   let toolTipLabel;
@@ -134,6 +141,9 @@ export const DrawingToolIcon = (props: {
       break;
     case Tools.IOG:
       toolTipLabel = `Auto Polygon tool [${keymap.toolIog.key}]`;
+      break;
+    case Tools.FREEHAND:
+      toolTipLabel = `Freehand tool [${keymap.toolFreehand.key}]`;
       break;
     default:
       toolTipLabel = `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
@@ -151,6 +161,7 @@ export const DrawingToolIcon = (props: {
           Tools.BOX,
           Tools.POLYGON,
           Tools.IOG,
+          Tools.FREEHAND,
         ].includes(selectedTool)}
         backgroundColor={mode("white", "gray.800")}
         aria-label={`Drawing ${lastTool} tool`}
@@ -170,6 +181,8 @@ export const DrawingToolIcon = (props: {
               return <ChakraBiShapePolygon size="1.3em" />;
             case Tools.IOG:
               return <ChakraIoColorWandOutline size="1.3em" />;
+            case Tools.FREEHAND:
+              return <ChakraBiPencil size="1.3em" />;
             default:
               return <ChakraBiShapeSquare size="1.3em" />;
           }
@@ -259,6 +272,14 @@ export const DrawingTool = () => {
     keymap.toolPolygon.key,
     () => {
       setSelectedTool(Tools.POLYGON);
+    },
+    {},
+    [setSelectedTool]
+  );
+  useHotkeys(
+    keymap.toolFreehand.key,
+    () => {
+      setSelectedTool(Tools.FREEHAND);
     },
     {},
     [setSelectedTool]
@@ -355,6 +376,20 @@ export const DrawingTool = () => {
               >
                 <Box ml="2">
                   <ChakraBiShapePolygon size="1.3em" />
+                </Box>
+              </ToolSelectionPopoverItem>
+              <ToolSelectionPopoverItem
+                name="Freehand"
+                shortcut={keymap.toolFreehand.key}
+                selected={selectedTool === Tools.FREEHAND}
+                onClick={() => {
+                  setSelectedTool(Tools.FREEHAND);
+                  setIsPopoverOpened(false);
+                }}
+                ariaLabel="Freehand tool"
+              >
+                <Box ml="2">
+                  <ChakraBiPencil size="1.3em" />
                 </Box>
               </ToolSelectionPopoverItem>
               <ToolSelectionPopoverItem

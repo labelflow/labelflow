@@ -232,7 +232,8 @@ export const SelectInteraction = ({
       )}
       {(selectedTool === Tools.POLYGON ||
         selectedTool === Tools.BOX ||
-        selectedTool === Tools.IOG) && (
+        selectedTool === Tools.IOG ||
+        selectedTool === Tools.FREEHAND) && (
         <olInteractionPointer
           // Key is a trick to force react open layers to take into account the change in image
           key={`${selectedTool}-${image.height}-${image.width}`}

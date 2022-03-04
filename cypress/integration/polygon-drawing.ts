@@ -6,11 +6,17 @@ const LABEL_CLASS_NAME = "Logo";
 
 const DRAW_X_OFFSET = 340;
 const DRAW_Y_OFFSET = 390;
+const FREEHAND_Y_OFFSET = 460;
 
 const getPoint = ([x, y]: [number, number]): [number, number] => [
   x + DRAW_X_OFFSET,
   y * -1 + DRAW_Y_OFFSET,
 ];
+
+const getFreehandPoint = ([x, y]: [number, number]) => ({
+  clientX: x + DRAW_X_OFFSET,
+  clientY: y * -1 + FREEHAND_Y_OFFSET,
+});
 
 const drawPolygon = (geometry: [number, number][]): void => {
   for (let i = 0; i < geometry.length - 1; i += 1) {
@@ -18,6 +24,23 @@ const drawPolygon = (geometry: [number, number][]): void => {
     cy.wait(100);
   }
   cy.get("main").dblclick(...getPoint(geometry[geometry.length - 1]));
+};
+
+const drawFreehand = (): void => {
+  // `trigger()` throws "Cannot read property toString of undefined" if no set
+  const pointerId = 1;
+  const [firsPoint, ...restPoints] = EXAMPLE_POLYGON;
+  cy.get("main").trigger("pointerdown", {
+    ...getFreehandPoint(firsPoint),
+    pointerId,
+  });
+  restPoints.forEach((point) =>
+    cy.get("main").trigger("pointermove", {
+      ...getFreehandPoint(point),
+      pointerId,
+    })
+  );
+  cy.get("main").trigger("pointerup", { pointerId });
 };
 
 describe("Polygon drawing (online)", () => {
@@ -40,15 +63,12 @@ describe("Polygon drawing (online)", () => {
         color: "#F87171",
         datasetId,
       });
+      cy.visit(`/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}`);
+      cy.get('[aria-label="loading indicator"]').should("not.exist");
     });
   });
 
   it("switches between drawing tools", () => {
-    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-    cy.visit(
-      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
-    );
-    cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Drawing polygon tool"]').should("not.exist");
     cy.get('[aria-label="Drawing box tool"]').should("exist").click();
 
@@ -69,17 +89,35 @@ describe("Polygon drawing (online)", () => {
     cy.get('[aria-label="Drawing box tool"]').should("not.exist");
   });
 
-  it("draws a polygon", () => {
-    // See https://docs.cypress.io/guides/core-concepts/conditional-testing#Welcome-wizard
-    cy.visit(
-      `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images/${imageId}?modal-welcome=closed`
-    );
-    cy.get('[aria-label="loading indicator"]').should("not.exist");
+  it("draws a polygon with polygon tool", () => {
     cy.get('[aria-label="Change Drawing tool"]').should("be.visible").click();
     cy.get('[aria-label="Polygon tool"]').click();
 
     cy.wait(420);
     drawPolygon(EXAMPLE_POLYGON);
+
+    cy.wait(420);
+    cy.get("main").rightclick(500, 330);
+    cy.get('[aria-label="Class selection popover"]')
+      .contains(LABEL_CLASS_NAME)
+      .closest('[role="option"]')
+      .should("have.attr", "aria-current", "false")
+      .click();
+
+    cy.wait(420);
+    cy.get("main").rightclick(500, 330);
+    cy.get('[aria-label="Class selection popover"]')
+      .contains(LABEL_CLASS_NAME)
+      .closest('[role="option"]')
+      .should("have.attr", "aria-current", "true");
+  });
+
+  it("draws a polygon with freehand tool", () => {
+    cy.get('[aria-label="Change Drawing tool"]').should("be.visible").click();
+    cy.get('[aria-label="Freehand tool"]').click();
+
+    cy.wait(420);
+    drawFreehand();
 
     cy.wait(420);
     cy.get("main").rightclick(500, 330);
