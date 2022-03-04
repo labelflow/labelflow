@@ -109,4 +109,9 @@ export const keymap: Keymap = {
     description: "Zoom out",
     category: "View",
   },
+  changeLabelsVisibility: {
+    key: "x",
+    description: "Change labels geometry and name visibility",
+    category: "View",
+  },
 };

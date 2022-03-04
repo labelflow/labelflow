@@ -63,6 +63,19 @@ export type LabelingState = {
   setSelectedLabelId: (labelId: string | null) => void;
   setSelectedLabelClassId: (selectedLabelClassId: string | null) => void;
   zoomByDelta: (ratio: number) => void;
+  showLabelsGeometry: boolean;
+  showLabelsName: boolean;
+  /**
+   * Change labels visibility (geometry and name).
+   *
+   * Three possible states:
+   * 1. geometry visible, name visible
+   * 2. geometry visible, name hidden
+   * 3. geometry hidden, name hidden
+   *
+   * Cycle is : 1 -> 2 -> 3 -> 1
+   */
+  changeLabelsVisibility: () => void;
 };
 
 export const useLabelingStore = create<LabelingState>(
@@ -145,6 +158,27 @@ export const useLabelingStore = create<LabelingState>(
       if (!view) return;
       /* eslint-disable-next-line consistent-return */
       return olZoomByDelta(view, ratio);
+    },
+    showLabelsGeometry: true,
+    showLabelsName: true,
+    changeLabelsVisibility: () => {
+      const { showLabelsGeometry, showLabelsName } = get();
+      if (showLabelsGeometry && showLabelsName) {
+        // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+        set({ showLabelsName: false });
+        return;
+      }
+      if (showLabelsGeometry && !showLabelsName) {
+        // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+        set({ showLabelsGeometry: false });
+        return;
+      }
+      if (!showLabelsGeometry && !showLabelsName) {
+        // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+        set({ showLabelsGeometry: true });
+        // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+        set({ showLabelsName: true });
+      }
     },
   }),
   {
