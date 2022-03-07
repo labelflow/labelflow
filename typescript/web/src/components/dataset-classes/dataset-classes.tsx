@@ -14,9 +14,10 @@ import { UpsertClassModal } from "./upsert-class-modal";
 const DatasetClassesBody = () => {
   const { loading, labelClasses, editClass, setEditClass } =
     useDatasetClasses();
-  const handleCloseEditModal = useCallback(() => {
-    setEditClass(undefined);
-  }, [setEditClass]);
+  const handleCloseEditModal = useCallback(
+    () => setEditClass(undefined),
+    [setEditClass]
+  );
   return (
     <>
       <DeleteLabelClassModal />
