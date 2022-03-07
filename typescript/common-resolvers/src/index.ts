@@ -35,4 +35,5 @@ export { importAndProcessImage } from "./image/import-and-process-image";
 export * from "./types";
 export * from "./export/format-coco/coco-core/types";
 
+export * from "./constants";
 export * from "./utils";
