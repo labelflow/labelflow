@@ -5,7 +5,11 @@ module.exports = {
   core: {
     builder: "webpack5",
   },
-  addons: ["storybook-addon-next-router"],
+  addons: [
+    "@storybook/addon-essentials",
+    "storybook-addon-next-router",
+    "@chakra-ui/storybook-addon",
+  ],
   typescript: { reactDocgen: "react-docgen" },
   webpackFinal: async (config = {}) => {
     // https://stackoverflow.com/a/61706308

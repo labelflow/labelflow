@@ -9,7 +9,7 @@
     "dotenv-cli": "4.0.0"
   },
   "dependencies": {
-    "@kubernetes/client-node": "0.15.1",
+    "@kubernetes/client-node": "0.16.3",
     "@pulumi/cloudflare": "4.0.0",
     "@pulumi/gcp": "5.21.0",
     "@pulumi/kubernetes": "3.7.2",
