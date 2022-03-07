@@ -1,19 +1,25 @@
-import { Story } from "@storybook/react";
+import { ComponentStory } from "@storybook/react";
 import { WORKSPACE_DATA } from "../../../utils/fixtures";
 import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 import { Billing } from "./billing";
 import { WorkspaceSettingsContext } from "./context";
 
 export default {
-  title: storybookTitle("Plan consumption"),
+  title: storybookTitle(Billing),
+  component: Billing,
   decorators: [chakraDecorator],
 };
 
-const TestComponent = ({ totalCount }: { totalCount: number }) => (
+type TemplateProps = { totalCount: number };
+
+const Template: ComponentStory<(props: TemplateProps) => JSX.Element> = ({
+  totalCount,
+}) => (
   <WorkspaceSettingsContext.Provider
     value={{
       ...WORKSPACE_DATA,
       imagesAggregates: { totalCount },
+      // Required by the Billing page
       stripeCustomerPortalUrl: "",
     }}
   >
@@ -21,10 +27,11 @@ const TestComponent = ({ totalCount }: { totalCount: number }) => (
   </WorkspaceSettingsContext.Provider>
 );
 
-export const ConsumptionOk: Story = () => <TestComponent totalCount={123} />;
-export const ConsumptionWarning: Story = () => (
-  <TestComponent totalCount={833} />
-);
-export const ConsumptionError: Story = () => (
-  <TestComponent totalCount={2198} />
-);
+export const ConsumptionOk = Template.bind({});
+ConsumptionOk.args = { totalCount: 123 };
+
+export const ConsumptionWarning = Template.bind({});
+ConsumptionWarning.args = { totalCount: 833 };
+
+export const ConsumptionError = Template.bind({});
+ConsumptionError.args = { totalCount: 2198 };
