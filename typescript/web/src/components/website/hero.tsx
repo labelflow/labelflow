@@ -7,7 +7,7 @@ import {
   Heading,
   Stack,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { RiGithubFill } from "react-icons/ri";
 import { APP_GITHUB_URL } from "../../constants";
@@ -18,7 +18,7 @@ const CatchPhrase = () => (
   <Heading
     as="h1"
     size="3xl"
-    color={mode("gray.600", "gray.300")}
+    color={useColorModeValue("gray.600", "gray.300")}
     py="6"
     fontWeight="extrabold"
     letterSpacing="tight"
@@ -32,7 +32,7 @@ const CatchPhrase = () => (
 
 const Description = () => (
   <Text
-    color={mode("gray.600", "gray.400")}
+    color={useColorModeValue("gray.600", "gray.400")}
     mt="4"
     fontSize="lg"
     fontWeight="medium"
@@ -81,7 +81,12 @@ const LeftSide = () => (
 );
 
 export const Video = () => (
-  <AspectRatio ratio={16 / 9}>
+  <AspectRatio
+    ratio={16 / 9}
+    borderWidth="1px"
+    borderStyle="solid"
+    borderColor={useColorModeValue("gray.200", "gray.600")}
+  >
     <video playsInline autoPlay muted loop>
       <source src={getImageUrl("hero-video.webm")} />
       <img src={getImageUrl("hero-image.jpg")} alt="LabelFlow screenshot" />
