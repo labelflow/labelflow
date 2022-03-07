@@ -252,7 +252,7 @@ export type ImportOptionsCoco = {
 export type ImportStatus = {
   __typename?: 'ImportStatus';
   error?: Maybe<Scalars['String']>;
-  skippedCrowdAnnotations: Scalars['Int'];
+  warnings: Array<Scalars['String']>;
 };
 
 export enum InvitationResult {
@@ -1180,7 +1180,7 @@ export type ImagesAggregatesResolvers<ContextType = any, ParentType extends Reso
 
 export type ImportStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportStatus'] = ResolversParentTypes['ImportStatus']> = {
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  skippedCrowdAnnotations?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  warnings?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

@@ -16,7 +16,7 @@ const IMPORT_DATASET_MUTATION = gql`
   ) {
     importDataset(where: $where, data: $data) {
       error
-      skippedCrowdAnnotations
+      warnings
     }
   }
 `;
@@ -31,7 +31,7 @@ const importDataset = async ({
   datasetId: string;
   workspaceId: string;
   file: Blob;
-}): Promise<{ skippedCrowdAnnotations: number }> => {
+}): Promise<{ warnings: string[] }> => {
   const id = uuidv4();
   const now = new Date().toISOString();
   const extension = mime.extension(file.type);
@@ -65,8 +65,7 @@ const importDataset = async ({
     throw new Error(dataImportDataset?.data?.importDataset?.error);
   }
   return {
-    skippedCrowdAnnotations:
-      dataImportDataset?.data?.importDataset?.skippedCrowdAnnotations ?? 0,
+    warnings: dataImportDataset?.data?.importDataset?.warnings ?? [],
   };
 };
 
@@ -86,7 +85,7 @@ export const importDatasets = async ({
   return await Bluebird.Promise.map(
     datasets,
     async ({ file }) => {
-      const { skippedCrowdAnnotations } = await importDataset({
+      const { warnings } = await importDataset({
         file,
         datasetId,
         workspaceId,
@@ -97,7 +96,7 @@ export const importDatasets = async ({
         ...infos,
         [file.name ?? file.path]: {
           status: true,
-          datasetSkippedCrowdAnnotations: skippedCrowdAnnotations,
+          warnings,
         },
       }));
     },

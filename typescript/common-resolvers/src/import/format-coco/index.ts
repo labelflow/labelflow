@@ -231,9 +231,6 @@ async function importCocoAnnotationsIntoLabels(
       }
       if (annotation.iscrowd === 1) {
         skippedCrowdAnnotations += 1;
-        console.log(
-          `Skipped annotation ${annotation.id}: crowd/RLE format no yet supported`
-        );
         return;
       }
       await labelResolvers.Mutation.createLabel(
@@ -290,5 +287,12 @@ export const importCoco: ImportFunction = async (
     cocoCategoryIdToLabelFlowLabelClassId,
     { repository, req, user }
   );
-  return { skippedCrowdAnnotations };
+  return {
+    warnings:
+      skippedCrowdAnnotations > 0
+        ? [
+            `${skippedCrowdAnnotations} RLE bitmap annotations were ignored.\nOnly polygon annotations are supported.`,
+          ]
+        : [],
+  };
 };

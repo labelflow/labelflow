@@ -26,7 +26,7 @@ export type UploadStatuses = Record<string, boolean | string>;
 
 export type UploadInfo = {
   status: boolean | string;
-  datasetSkippedCrowdAnnotations?: number;
+  warnings: string[];
 };
 export type UploadInfos = Record<string, UploadInfo>;
 

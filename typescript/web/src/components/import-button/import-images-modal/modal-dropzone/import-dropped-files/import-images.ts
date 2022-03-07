@@ -95,14 +95,20 @@ export const importImages = async ({
         setFileUploadInfos((oldInfos) => ({
           ...oldInfos,
           ...Object.fromEntries(
-            imagesToCreate.map((image) => [image.name, { status: true }])
+            imagesToCreate.map((image) => [
+              image.name,
+              { status: true, warnings: [] },
+            ])
           ),
         }));
       } catch (error) {
         setFileUploadInfos((oldInfos) => ({
           ...oldInfos,
           ...Object.fromEntries(
-            batch.map(({ file }) => [file.name, { status: error?.message }])
+            batch.map(({ file }) => [
+              file.name,
+              { status: error?.message, warnings: [] },
+            ])
           ),
         }));
       }

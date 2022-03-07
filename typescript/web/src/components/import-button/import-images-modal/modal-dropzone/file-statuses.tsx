@@ -41,8 +41,7 @@ const FileStatus = ({
   index: number;
   fileUploadInfo?: UploadInfo;
 }) => {
-  const datasetSkippedCrowdAnnotations =
-    fileUploadInfo?.datasetSkippedCrowdAnnotations;
+  const warnings = fileUploadInfo?.warnings;
   return (
     <>
       <Flex
@@ -82,18 +81,18 @@ const FileStatus = ({
           )}
         </Box>
       </Flex>
-      {datasetSkippedCrowdAnnotations && (
-        <Box
-          pr="2"
-          overflow="hidden"
-          textOverflow="ellipsis"
-          fontSize="xs"
-          color={mode("red.500", "red.300")}
-        >
-          {datasetSkippedCrowdAnnotations} RLE bitmap annotations were ignored.
-          Only polygon annotations are supported.
-        </Box>
-      )}
+      {warnings &&
+        warnings.map((warning) => (
+          <Box
+            pr="2"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            fontSize="xs"
+            color={mode("red.500", "red.300")}
+          >
+            {warning}
+          </Box>
+        ))}
     </>
   );
 };
