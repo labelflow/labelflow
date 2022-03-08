@@ -5,7 +5,7 @@
     "clone:bucket": "dotenv -e .env -- ts-node -r esm ./src/copy-supabase-bucket.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "1.21.0",
+    "@supabase/supabase-js": "1.30.6",
     "bluebird": "3.7.2",
     "prompt": "1.2.0"
   },

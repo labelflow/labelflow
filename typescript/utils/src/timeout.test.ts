@@ -1,6 +1,6 @@
 import { flushPromises, sleep, timeout } from ".";
 
-jest.useFakeTimers();
+jest.useFakeTimers("legacy");
 
 describe(timeout, () => {
   const resolve = jest.fn();
