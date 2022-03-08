@@ -50,17 +50,17 @@ export const addWorkspaceImpl: Repository["workspace"]["add"] = async (
   }
   const slug = getSlug(workspace.name);
   validWorkspaceName(workspace.name, slug);
-  const workspacePlan = workspace.plan ?? DEFAULT_WORKSPACE_PLAN;
+  const plan = workspace.plan ?? DEFAULT_WORKSPACE_PLAN;
   const stripeCustomerId = await stripe.tryCreateCustomer(
     workspace.name,
     slug,
-    workspacePlan
+    plan
   );
   const db = await getPrismaClient();
   const createdWorkspace = await db.workspace.create({
     data: castObjectNullsToUndefined({
-      plan: workspacePlan,
       ...workspace,
+      plan,
       slug,
       stripeCustomerId,
       memberships: {
