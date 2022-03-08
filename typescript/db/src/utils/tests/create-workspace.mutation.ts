@@ -25,9 +25,11 @@ export const CREATE_WORKSPACE_MUTATION = gql`
   }
 `;
 
-export const createWorkspace = (
-  data?: Partial<MutationCreateWorkspaceArgs["data"]>
-) =>
+export const createWorkspace = ({
+  name = "test",
+  plan = DEFAULT_WORKSPACE_PLAN,
+  ...data
+}: Partial<MutationCreateWorkspaceArgs["data"]> = {}) =>
   client.mutate<{
     createWorkspace: Pick<
       Workspace,
@@ -36,11 +38,7 @@ export const createWorkspace = (
   }>({
     mutation: CREATE_WORKSPACE_MUTATION,
     variables: {
-      data: {
-        ...data,
-        name: data?.name === undefined ? "test" : data.name,
-        plan: data?.plan === undefined ? DEFAULT_WORKSPACE_PLAN : data.plan,
-      },
+      data: { ...data, name, plan },
     },
     refetchQueries: [USER_WITH_WORKSPACES_QUERY],
   });
