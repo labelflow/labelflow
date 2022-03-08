@@ -518,10 +518,10 @@ export const typeDefs = [
     name: String!
     plan: WorkspacePlan!
     slug: String!
+    status: WorkspaceStatus!
     stripeCustomerPortalUrl: String
     type: WorkspaceType!
     updatedAt: DateTime!
-    status: WorkspaceStatus!
   }
 
   input WorkspaceCreateInput {
@@ -537,8 +537,8 @@ export const typeDefs = [
 
   enum WorkspacePlan {
     Community
-    Starter
     Pro
+    Starter
   }
 
   input WorkspaceSlugAndDatasetSlug {
@@ -548,12 +548,12 @@ export const typeDefs = [
 
   enum WorkspaceStatus {
     Active
-    Trialing
-    Incomplete
-    PastDue
-    Unpaid
     Canceled
+    Incomplete
     IncompleteExpired
+    PastDue
+    Trialing
+    Unpaid
   }
 
   enum WorkspaceType {
