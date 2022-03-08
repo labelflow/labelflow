@@ -1,12 +1,18 @@
 import { WorkspacePlan } from "@labelflow/graphql-types";
 import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers";
 import { getUnixTime, addDays } from "date-fns";
-import { isNil } from "lodash/fp";
+import { isEmpty, isNil } from "lodash/fp";
 import Stripe from "stripe";
 
 const DAYS_OF_TRIAL = 14;
 
-const planToStripePriceId: Record<WorkspacePlan, string> = {
+const STRIPE_ENV_VARIABLES_DEFINED =
+  process.env.STRIPE_SECRET_KEY &&
+  process.env.STRIPE_COMMUNITY_PLAN_PRICE_ID &&
+  process.env.STRIPE_STARTER_PLAN_PRICE_ID &&
+  process.env.STRIPE_PRO_PLAN_PRICE_ID;
+
+const WORKSPACE_PLAN_PRICE_ID: Record<WorkspacePlan, string> = {
   Community: process.env.STRIPE_COMMUNITY_PLAN_PRICE_ID ?? "",
   Starter: process.env.STRIPE_STARTER_PLAN_PRICE_ID ?? "",
   Pro: process.env.STRIPE_PRO_PLAN_PRICE_ID ?? "",
@@ -14,12 +20,13 @@ const planToStripePriceId: Record<WorkspacePlan, string> = {
 
 const getPriceId = (
   metadata: Stripe.Emptyable<Stripe.MetadataParam> | undefined
-): string => {
-  if (metadata && !isNil(metadata.plan) && metadata.plan in WorkspacePlan) {
-    return planToStripePriceId[metadata.plan as keyof typeof WorkspacePlan];
-  }
-  return planToStripePriceId[DEFAULT_WORKSPACE_PLAN];
-};
+): string =>
+  metadata &&
+  typeof metadata.plan === "string" &&
+  !isEmpty(metadata.plan) &&
+  Object.values(WorkspacePlan).some((value) => value === metadata.plan)
+    ? WORKSPACE_PLAN_PRICE_ID[metadata.plan as WorkspacePlan]
+    : WORKSPACE_PLAN_PRICE_ID[DEFAULT_WORKSPACE_PLAN];
 
 export function stripeIsDefined(
   stripeInstance: Stripe | undefined
@@ -28,12 +35,6 @@ export function stripeIsDefined(
     throw new Error("Stripe has not been configured");
   }
 }
-
-const STRIPE_ENV_VARIABLES_DEFINED =
-  process.env.STRIPE_SECRET_KEY &&
-  process.env.STRIPE_COMMUNITY_PLAN_PRICE_ID &&
-  process.env.STRIPE_STARTER_PLAN_PRICE_ID &&
-  process.env.STRIPE_PRO_PLAN_PRICE_ID;
 
 export class StripeService {
   private readonly stripe?: Stripe = STRIPE_ENV_VARIABLES_DEFINED
@@ -57,15 +58,11 @@ export class StripeService {
     metadata?: Stripe.Emptyable<Stripe.MetadataParam>
   ): Promise<Stripe.Subscription> => {
     stripeIsDefined(this.stripe);
-    const price = getPriceId(metadata);
-    const items: Stripe.SubscriptionCreateParams.Item[] = [
-      { price, quantity: 1 },
-    ];
     const trialEndDate = addDays(new Date(), DAYS_OF_TRIAL);
     return await this.stripe.subscriptions.create({
       customer,
       metadata,
-      items,
+      items: [{ price: getPriceId(metadata), quantity: 1 }],
       trial_end: getUnixTime(trialEndDate),
     });
   };
