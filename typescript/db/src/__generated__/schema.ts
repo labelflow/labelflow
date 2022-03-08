@@ -226,7 +226,7 @@ export const typeDefs = [
 
   type ImportStatus {
     error: String
-    warnings: [String!]!
+    warnings: [String!]
   }
 
   enum InvitationResult {

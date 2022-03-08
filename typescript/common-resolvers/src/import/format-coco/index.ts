@@ -211,27 +211,35 @@ async function importCocoCategoriesIntoLabelClasses(
   }
 }
 
+function getSkippedCrowdAnnotationsWarning(
+  skippedCrowdAnnotations: number
+): string | undefined {
+  return skippedCrowdAnnotations > 0
+    ? `${skippedCrowdAnnotations} RLE bitmap annotations were ignored. Only polygon annotations are supported.`
+    : undefined;
+}
+
 async function importCocoAnnotationsIntoLabels(
   annotationFile: CocoDataset,
   cocoImageIdToLabelFlowImageId: Map<number, string>,
   cocoCategoryIdToLabelFlowLabelClassId: Map<number, string>,
   { repository, req, user }: Context
-): Promise<{ skippedCrowdAnnotations: number }> {
+): Promise<{ warning: string | undefined }> {
   const indexedCocoImages = annotationFile.images.reduce(
     (imagesMap, image) => imagesMap.set(image.id, image),
     new Map<number, CocoImage>()
   );
-  let skippedCrowdAnnotations = 0;
+  const annotationsToImport = annotationFile.annotations.filter(
+    (annotation) => annotation.iscrowd !== 1
+  );
+  const skippedCrowdAnnotations =
+    annotationFile.annotations.length - annotationsToImport.length;
   await Promise.all(
-    annotationFile.annotations.map(async (annotation) => {
+    annotationsToImport.map(async (annotation) => {
       if (!cocoImageIdToLabelFlowImageId.has(annotation.image_id)) {
         throw new Error(
           `Image ${annotation.image_id} referenced in annotation does not exist.`
         );
-      }
-      if (annotation.iscrowd === 1) {
-        skippedCrowdAnnotations += 1;
-        return;
       }
       await labelResolvers.Mutation.createLabel(
         null,
@@ -255,7 +263,9 @@ async function importCocoAnnotationsIntoLabels(
       console.log(`Created annotation ${annotation.id}`);
     })
   );
-  return { skippedCrowdAnnotations };
+  return {
+    warning: getSkippedCrowdAnnotationsWarning(skippedCrowdAnnotations),
+  };
 }
 
 export const importCoco: ImportFunction = async (
@@ -281,18 +291,13 @@ export const importCoco: ImportFunction = async (
     cocoCategoryIdToLabelFlowLabelClassId,
     { repository, req, user }
   );
-  const { skippedCrowdAnnotations } = await importCocoAnnotationsIntoLabels(
+  const { warning } = await importCocoAnnotationsIntoLabels(
     annotationFile,
     cocoImageIdToLabelFlowImageId,
     cocoCategoryIdToLabelFlowLabelClassId,
     { repository, req, user }
   );
   return {
-    warnings:
-      skippedCrowdAnnotations > 0
-        ? [
-            `${skippedCrowdAnnotations} RLE bitmap annotations were ignored.\nOnly polygon annotations are supported.`,
-          ]
-        : [],
+    warnings: warning ? [warning] : [],
   };
 };

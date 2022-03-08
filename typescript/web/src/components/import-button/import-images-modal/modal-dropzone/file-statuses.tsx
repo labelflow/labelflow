@@ -12,36 +12,85 @@ import { DroppedFile, UploadInfos, UploadInfo } from "../types";
 import { ImportProgress } from "../import-progress";
 import { ImportError } from "../import-error";
 
-const FileStatusIcon = ({
-  file,
-  hasErrors,
-}: {
-  file: FileWithPath;
-  hasErrors: boolean;
-}) => {
+type FileStatusProps = {
+  droppedFile: DroppedFile;
+  index: number;
+  fileUploadInfo?: UploadInfo;
+};
+
+const fileStatusIcon = (file: FileWithPath, hasErrors: boolean) => {
   if (hasErrors) {
-    return <RiFile3Line />;
+    return RiFile3Line;
   }
   switch (file.type) {
     case "application/json":
-      return <RiBracesLine />;
+      return RiBracesLine;
     case "application/zip":
-      return <RiFolderZipLine />;
+      return RiFolderZipLine;
     default:
-      return <RiImageLine />;
+      return RiImageLine;
   }
 };
+
+const ImportStatus = ({
+  droppedFile,
+  fileUploadInfo,
+}: Omit<FileStatusProps, "index">) => (
+  <Box
+    whiteSpace="nowrap"
+    flex={0}
+    color={mode("gray.400", "gray.600")}
+    fontSize="md"
+    textAlign="right"
+  >
+    {isEmpty(droppedFile.errors) ? (
+      <ImportProgress status={fileUploadInfo?.status || false} />
+    ) : (
+      <ImportError errors={droppedFile.errors} />
+    )}
+  </Box>
+);
+
+const FilePath = ({ droppedFile }: Pick<FileStatusProps, "droppedFile">) => (
+  <Box
+    pr="2"
+    flexGrow={1}
+    flexShrink={1}
+    overflow="hidden"
+    textOverflow="ellipsis"
+    whiteSpace="nowrap"
+  >
+    {droppedFile.file.path}
+  </Box>
+);
+
+const Warnings = ({ warnings }: { warnings: string[] | undefined }) => (
+  <>
+    {warnings &&
+      warnings.map((warning) => (
+        <Box
+          pr="2"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          fontSize="xs"
+          color={mode("red.500", "red.300")}
+        >
+          {warning}
+        </Box>
+      ))}
+  </>
+);
 
 const FileStatus = ({
   droppedFile,
   index,
   fileUploadInfo,
-}: {
-  droppedFile: DroppedFile;
-  index: number;
-  fileUploadInfo?: UploadInfo;
-}) => {
+}: FileStatusProps) => {
   const warnings = fileUploadInfo?.warnings;
+  const FileStatusIcon = fileStatusIcon(
+    droppedFile.file,
+    !isEmpty(droppedFile.errors)
+  );
   return (
     <>
       <Flex
@@ -52,47 +101,15 @@ const FileStatus = ({
         bg={index % 2 === 0 ? mode("gray.50", "gray.700") : "inherit"}
       >
         <Box flex={0} pr="2">
-          <FileStatusIcon
-            file={droppedFile.file}
-            hasErrors={!isEmpty(droppedFile.errors)}
-          />
+          <FileStatusIcon />
         </Box>
-        <Box
-          pr="2"
-          flexGrow={1}
-          flexShrink={1}
-          overflow="hidden"
-          textOverflow="ellipsis"
-          whiteSpace="nowrap"
-        >
-          {droppedFile.file.path}
-        </Box>
-        <Box
-          whiteSpace="nowrap"
-          flex={0}
-          color={mode("gray.400", "gray.600")}
-          fontSize="md"
-          textAlign="right"
-        >
-          {isEmpty(droppedFile.errors) ? (
-            <ImportProgress status={fileUploadInfo?.status || false} />
-          ) : (
-            <ImportError errors={droppedFile.errors} />
-          )}
-        </Box>
+        <FilePath droppedFile={droppedFile} />
+        <ImportStatus
+          droppedFile={droppedFile}
+          fileUploadInfo={fileUploadInfo}
+        />
       </Flex>
-      {warnings &&
-        warnings.map((warning) => (
-          <Box
-            pr="2"
-            overflow="hidden"
-            textOverflow="ellipsis"
-            fontSize="xs"
-            color={mode("red.500", "red.300")}
-          >
-            {warning}
-          </Box>
-        ))}
+      <Warnings warnings={warnings} />
     </>
   );
 };
