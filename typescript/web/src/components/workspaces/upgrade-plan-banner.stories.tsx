@@ -1,5 +1,5 @@
+import { UNPAID_WORKSPACE_DATA } from "../../utils/fixtures";
 import { createCommonDecorator, storybookTitle } from "../../utils/stories";
-import { WORKSPACE_DATA } from "../../utils/fixtures";
 import { UpgradePlanBanner as UpgradePlanBannerComponent } from "./upgrade-plan-banner";
 
 export default {
@@ -9,8 +9,9 @@ export default {
     createCommonDecorator({
       auth: { withWorkspaces: true },
       apollo: true,
-      router: { query: { workspaceSlug: WORKSPACE_DATA.slug } },
+      router: { query: { workspaceSlug: UNPAID_WORKSPACE_DATA.slug } },
     }),
   ],
 };
+
 export const UpgradePlanBanner = () => <UpgradePlanBannerComponent />;
