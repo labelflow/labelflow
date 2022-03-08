@@ -1,4 +1,11 @@
-import { Button, chakra, Flex, Text } from "@chakra-ui/react";
+import {
+  Button,
+  chakra,
+  Flex,
+  Stack,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { isWorkspaceActive } from "@labelflow/common-resolvers";
 import { useRouter } from "next/router";
 import { RiErrorWarningFill } from "react-icons/ri";
@@ -31,19 +38,25 @@ const UpgradeButton = () => {
   );
 };
 
-const Body = () => (
-  <Flex
+const Content = () => (
+  <Stack
     direction={{ base: "column", md: "row" }}
     justify="center"
     align="center"
-    bg="orange.400"
-    color="white"
-    p="4"
-    gridGap="4"
+    color={useColorModeValue("white", "black")}
+    p=".5em"
+    maxW="5xl"
+    spacing={4}
   >
-    <InfoIcon h="24px" w="24px" />
+    <InfoIcon fontSize="xl" />
     <Message />
     <UpgradeButton />
+  </Stack>
+);
+
+const Body = () => (
+  <Flex justify="center" bg="orange.400">
+    <Content />
   </Flex>
 );
 
