@@ -1,11 +1,12 @@
 import {
   chakra,
-  Flex,
-  Heading,
   IconButton,
   Skeleton,
-  useColorModeValue as mode,
+  Text,
+  Box,
+  HStack,
   VStack,
+  Tooltip,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { createContext, MouseEvent, useCallback, useContext } from "react";
@@ -24,26 +25,10 @@ type ImageCardProps = {
   href: string;
   onAskImageDelete: (imageId: string) => void;
 };
-/* eslint-enable react/no-unused-prop-types */
 
 const ImageCardContext = createContext({} as ImageCardProps);
 
 const useImageCard = () => useContext(ImageCardContext);
-
-const NameHeading = () => {
-  const { name } = useImageCard();
-  return (
-    <Heading
-      as="h3"
-      size="sm"
-      overflow="hidden"
-      textOverflow="ellipsis"
-      whiteSpace="nowrap"
-    >
-      {name}
-    </Heading>
-  );
-};
 
 const DeleteButton = () => {
   const { id, onAskImageDelete } = useImageCard();
@@ -58,64 +43,108 @@ const DeleteButton = () => {
   );
   return (
     <IconButton
+      _hover={{ bgColor: "gray.700" }}
+      color="white"
       icon={<TrashIcon />}
       aria-label="delete image"
       isRound
       size="sm"
       onClick={handleClick}
+      variant="ghost"
     />
   );
 };
 
-const Header = () => (
-  <Flex justifyContent="space-between" w="100%" alignItems="center">
-    <NameHeading />
-    <DeleteButton />
-  </Flex>
-);
-
-const Thumbnail = () => {
+const ImageContent = () => {
   const { name, thumbnail } = useImageCard();
   return (
     <ImageWithFallback
-      background={mode("gray.100", "gray.800")}
+      borderRadius={8}
       alt={name}
       src={thumbnail ?? undefined}
       loadingFallback={<Skeleton height="100%" width="100%" />}
       errorFallback={<EmptyStateImageNotFound />}
-      objectFit="contain"
+      objectFit="cover"
       h="208px"
       w="full"
-      flexGrow={0}
-      flexShrink={0}
     />
   );
 };
 
-const Body = () => (
-  <VStack
-    maxW="486px"
-    p={4}
-    background={mode("white", "gray.700")}
-    rounded={8}
-    height="270px"
-    justifyContent="space-between"
+const OverlayTopRow = () => (
+  <HStack
+    visibility="hidden"
+    justifyContent="flex-end"
+    w="100%"
+    sx={{
+      ".imageCard:hover &": {
+        visibility: "visible",
+      },
+    }}
   >
-    <Header />
-    <Thumbnail />
-  </VStack>
+    <DeleteButton />
+  </HStack>
 );
 
-export const ImageCardContent = () => {
+const OverlayBottomRow = () => {
+  const { name } = useImageCard();
+  return (
+    <HStack justifyContent="flex-start" w="full" maxW="full">
+      <Tooltip label={name}>
+        <Text isTruncated fontWeight={700}>
+          {name}
+        </Text>
+      </Tooltip>
+    </HStack>
+  );
+};
+
+const ImageOverlay = () => (
+  <Box
+    className="imageOverlay"
+    borderRadius={8}
+    p={2}
+    display="flex"
+    position="absolute"
+    w="full"
+    h="full"
+    background="linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0) 33%);"
+  >
+    <VStack color="white" flexGrow={1} justify="space-between" maxW="full">
+      <OverlayTopRow />
+      <OverlayBottomRow />
+    </VStack>
+  </Box>
+);
+
+const ClickableOverlay = () => {
   const { href } = useImageCard();
   return (
     <NextLink href={href}>
       <a title="Open image" href={href}>
-        <Body />
+        <ImageOverlay />
       </a>
     </NextLink>
   );
 };
+
+const ImageCardContent = () => (
+  <Box
+    className="imageCard"
+    position="relative"
+    cursor="pointer"
+    sx={{
+      ".imageCard:hover .imageOverlay, .imageOverlay:hover": {
+        display: "flex",
+        background: "none",
+        backgroundColor: "rgba(0, 0, 0, 0.4)",
+      },
+    }}
+  >
+    <ClickableOverlay />
+    <ImageContent />
+  </Box>
+);
 
 export const ImageCard = (props: ImageCardProps) => (
   <ImageCardContext.Provider value={props}>
