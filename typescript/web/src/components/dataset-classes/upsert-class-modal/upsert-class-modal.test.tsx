@@ -73,14 +73,14 @@ describe(UpsertClassModal, () => {
     await renderTest({});
   });
 
-  it("renders a modal with a prefilled input and an enabled button", async () => {
+  it("renders a modal with a prefilled input and a disabled button", async () => {
     const { getByLabelText } = await renderTest({
       editClass: BASIC_LABEL_CLASS_DATA,
     });
     const input = getByLabelText(/Class name input/i) as HTMLInputElement;
     const button = getByLabelText(/Update/i);
     expect(input.value).toEqual(BASIC_LABEL_CLASS_DATA.name);
-    expect(button).not.toHaveAttribute("disabled");
+    expect(button).toHaveAttribute("disabled");
   });
 
   it("enables update button when class name is not empty", async () => {
