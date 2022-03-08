@@ -1,4 +1,7 @@
-import { WorkspacePlan } from "../../graphql-types/globalTypes";
+import {
+  WorkspacePlan,
+  WorkspaceStatus,
+} from "../../graphql-types/globalTypes";
 import { WorkspaceData } from "./data-types";
 
 export const WORKSPACE_DATA: WorkspaceData = {
@@ -7,4 +10,5 @@ export const WORKSPACE_DATA: WorkspaceData = {
   name: "Full user workspace",
   plan: WorkspacePlan.Community,
   image: "https://labelflow.ai/static/icon-512x512.png",
+  status: WorkspaceStatus.Active,
 };
