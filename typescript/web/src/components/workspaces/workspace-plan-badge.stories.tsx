@@ -4,7 +4,7 @@ import { WorkspacePlanBadge as WorkspacePlanBadgeComponent } from ".";
 import { chakraDecorator, storybookTitle } from "../../utils/stories";
 
 export default {
-  title: storybookTitle(WorkspacePlanBadgeComponent),
+  title: storybookTitle("Workspaces", WorkspacePlanBadgeComponent),
   component: WorkspacePlanBadgeComponent,
   decorators: [chakraDecorator],
 } as ComponentMeta<typeof WorkspacePlanBadgeComponent>;
