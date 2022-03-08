@@ -6,19 +6,19 @@ import partition from "lodash/fp/partition";
 
 import { importImages } from "./import-images";
 import { importDatasets } from "./import-datasets";
-import { DroppedFile, SetUploadInfos } from "../../types";
+import { DroppedFile, SetUploadInfoRecord } from "../../types";
 
 export const importDroppedFiles = async ({
   files,
   workspaceId,
   datasetId,
-  setFileUploadInfos,
+  setFileUploadInfoRecord,
   apolloClient,
 }: {
   files: DroppedFile[];
   workspaceId: string;
   datasetId: string;
-  setFileUploadInfos: SetUploadInfos;
+  setFileUploadInfoRecord: SetUploadInfoRecord;
   apolloClient: ApolloClient<object>;
 }) => {
   const acceptedFiles = files.filter((file) => isEmpty(file.errors));
@@ -35,7 +35,7 @@ export const importDroppedFiles = async ({
     workspaceId,
     datasetId,
     apolloClient,
-    setFileUploadInfos,
+    setFileUploadInfoRecord,
   });
 
   await importDatasets({
@@ -43,6 +43,6 @@ export const importDroppedFiles = async ({
     datasetId,
     workspaceId,
     apolloClient,
-    setFileUploadInfos,
+    setFileUploadInfoRecord,
   });
 };

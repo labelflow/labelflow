@@ -4,7 +4,7 @@ import mime from "mime-types";
 
 import Bluebird from "bluebird";
 import { uploadFile } from "../../../../../utils/upload-file";
-import { DroppedFile, SetUploadInfos } from "../../types";
+import { DroppedFile, SetUploadInfoRecord } from "../../types";
 
 import { CONCURRENCY } from "../../constants";
 import { ExportFormat } from "../../../../../graphql-types/globalTypes";
@@ -74,13 +74,13 @@ export const importDatasets = async ({
   datasetId,
   workspaceId,
   apolloClient,
-  setFileUploadInfos,
+  setFileUploadInfoRecord,
 }: {
   datasets: DroppedFile[];
   datasetId: string;
   workspaceId: string;
   apolloClient: ApolloClient<object>;
-  setFileUploadInfos: SetUploadInfos;
+  setFileUploadInfoRecord: SetUploadInfoRecord;
 }) => {
   return await Bluebird.Promise.map(
     datasets,
@@ -92,8 +92,8 @@ export const importDatasets = async ({
         apolloClient,
       });
 
-      setFileUploadInfos((infos) => ({
-        ...infos,
+      setFileUploadInfoRecord((info) => ({
+        ...info,
         [file.name ?? file.path]: {
           status: true,
           warnings,

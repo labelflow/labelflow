@@ -28,10 +28,10 @@ export type UploadInfo = {
   status: boolean | string;
   warnings: string[];
 };
-export type UploadInfos = Record<string, UploadInfo>;
+export type UploadInfoRecord = Record<string, UploadInfo>;
 
 /**
  * Setter function for the upload statuses
  */
 export type SetUploadStatuses = SetState<UploadStatuses>;
-export type SetUploadInfos = SetState<UploadInfos>;
+export type SetUploadInfoRecord = SetState<UploadInfoRecord>;

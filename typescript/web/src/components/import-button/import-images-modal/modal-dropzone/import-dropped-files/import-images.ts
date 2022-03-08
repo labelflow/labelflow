@@ -6,7 +6,7 @@ import mime from "mime-types";
 import chunk from "lodash/fp/chunk";
 
 import { uploadFile } from "../../../../../utils/upload-file";
-import { DroppedFile, SetUploadInfos } from "../../types";
+import { DroppedFile, SetUploadInfoRecord } from "../../types";
 
 import { BATCH_SIZE, CONCURRENCY } from "../../constants";
 
@@ -63,13 +63,13 @@ export const importImages = async ({
   workspaceId,
   datasetId,
   apolloClient,
-  setFileUploadInfos,
+  setFileUploadInfoRecord,
 }: {
   images: DroppedFile[];
   workspaceId: string;
   datasetId: string;
   apolloClient: ApolloClient<object>;
-  setFileUploadInfos: SetUploadInfos;
+  setFileUploadInfoRecord: SetUploadInfoRecord;
 }) => {
   const firstUploadDate = new Date();
   const batches = chunk(BATCH_SIZE, images);
@@ -92,8 +92,8 @@ export const importImages = async ({
           variables: { images: imagesToCreate, datasetId },
         });
 
-        setFileUploadInfos((oldInfos) => ({
-          ...oldInfos,
+        setFileUploadInfoRecord((oldInfo) => ({
+          ...oldInfo,
           ...Object.fromEntries(
             imagesToCreate.map((image) => [
               image.name,
@@ -102,8 +102,8 @@ export const importImages = async ({
           ),
         }));
       } catch (error) {
-        setFileUploadInfos((oldInfos) => ({
-          ...oldInfos,
+        setFileUploadInfoRecord((oldInfo) => ({
+          ...oldInfo,
           ...Object.fromEntries(
             batch.map(({ file }) => [
               file.name,

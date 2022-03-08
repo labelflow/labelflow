@@ -29,7 +29,7 @@ const makeImport = async (
       throw new Error("YOLO format not supported, but will be soon!");
     }
     case ExportFormat.Coco: {
-      return importCoco(
+      return await importCoco(
         datasetBlob,
         args.where?.id,
         {

@@ -8,7 +8,7 @@ import {
 import { isEmpty } from "lodash/fp";
 import { Box, Text, Flex, useColorModeValue as mode } from "@chakra-ui/react";
 
-import { DroppedFile, UploadInfos, UploadInfo } from "../types";
+import { DroppedFile, UploadInfoRecord, UploadInfo } from "../types";
 import { ImportProgress } from "../import-progress";
 import { ImportError } from "../import-error";
 
@@ -116,17 +116,17 @@ const FileStatus = ({
 
 export const FilesStatuses = ({
   files,
-  fileUploadInfos,
+  fileUploadInfoRecord,
 }: {
   files: Array<DroppedFile>;
-  fileUploadInfos: UploadInfos;
+  fileUploadInfoRecord: UploadInfoRecord;
 }) => (
   <Flex direction="column" height="100%">
     <Box p="2" bg={mode("gray.200", "gray.600")} borderTopRadius="md" w="100%">
       <Text>
         Completed{" "}
         {
-          Object.entries(fileUploadInfos).filter(
+          Object.entries(fileUploadInfoRecord).filter(
             (entry) => entry[1].status === true
           ).length
         }{" "}
@@ -139,7 +139,7 @@ export const FilesStatuses = ({
           droppedFile={droppedFile}
           index={index}
           fileUploadInfo={
-            fileUploadInfos[droppedFile.file.path ?? droppedFile.file.name]
+            fileUploadInfoRecord[droppedFile.file.path ?? droppedFile.file.name]
           }
         />
       ))}
