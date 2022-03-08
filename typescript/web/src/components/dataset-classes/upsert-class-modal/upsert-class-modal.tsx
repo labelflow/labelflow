@@ -75,7 +75,12 @@ const useCheckName = (
   className: string,
   setErrorMessage: (msg: string) => void
 ) => {
-  const { data, variables } = useLabelClassExists(datasetId, className);
+  const { editClass } = useDatasetClasses();
+  const { data, variables } = useLabelClassExists(
+    datasetId,
+    className,
+    editClass?.name === className
+  );
   const exists =
     !isNil(data) && data.labelClassExists && variables?.name === className;
   useEffect(
