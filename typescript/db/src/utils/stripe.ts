@@ -1,7 +1,8 @@
-import { WorkspacePlan } from "@labelflow/graphql-types";
 import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers";
-import { getUnixTime, addDays } from "date-fns";
-import { isEmpty, isNil } from "lodash/fp";
+import { WorkspacePlan } from "@labelflow/graphql-types";
+import { toEnumValue } from "@labelflow/utils";
+import { addDays, getUnixTime } from "date-fns";
+import { isNil } from "lodash/fp";
 import Stripe from "stripe";
 
 const DAYS_OF_TRIAL = 14;
@@ -20,13 +21,13 @@ const WORKSPACE_PLAN_PRICE_ID: Record<WorkspacePlan, string> = {
 
 const getPriceId = (
   metadata: Stripe.Emptyable<Stripe.MetadataParam> | undefined
-): string =>
-  metadata &&
-  typeof metadata.plan === "string" &&
-  !isEmpty(metadata.plan) &&
-  Object.values(WorkspacePlan).some((value) => value === metadata.plan)
-    ? WORKSPACE_PLAN_PRICE_ID[metadata.plan as WorkspacePlan]
-    : WORKSPACE_PLAN_PRICE_ID[DEFAULT_WORKSPACE_PLAN];
+): string => {
+  const workspacePlan =
+    metadata && typeof metadata.plan === "string"
+      ? toEnumValue(WorkspacePlan, metadata.plan, DEFAULT_WORKSPACE_PLAN)
+      : DEFAULT_WORKSPACE_PLAN;
+  return WORKSPACE_PLAN_PRICE_ID[workspacePlan];
+};
 
 export function stripeIsDefined(
   stripeInstance: Stripe | undefined

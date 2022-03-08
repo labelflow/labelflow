@@ -1,8 +1,9 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import Stripe from "stripe";
 import { getPrismaClient } from "@labelflow/db";
 import { WorkspaceStatus } from "@labelflow/graphql-types";
+import { toEnumValue } from "@labelflow/utils";
 import { pascalCase } from "change-case";
+import { NextApiRequest, NextApiResponse } from "next";
+import Stripe from "stripe";
 import { WorkspacePlan } from "../../../graphql-types/globalTypes";
 
 const {
@@ -47,7 +48,7 @@ const updateWorkspacePlan = async ({
   status,
 }: {
   workspaceSlug: string;
-  workspacePlan: keyof typeof WorkspacePlan;
+  workspacePlan: WorkspacePlan;
   status: WorkspaceStatus;
 }) => {
   const prisma = await getPrismaClient();
@@ -76,8 +77,11 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (relevantEvents.has(event.type)) {
       try {
-        const { customer, status, items } = event.data
-          .object as Stripe.Subscription;
+        const {
+          customer,
+          status: statusStr,
+          items,
+        } = event.data.object as Stripe.Subscription;
 
         const prisma = await getPrismaClient();
         const workspaceSlug = (
@@ -91,65 +95,45 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           throw new Error("No workspace found for this subscription");
         }
 
-        if (!(status in WorkspaceStatus)) {
-          throw new Error(`Unknown status ${status}`);
-        }
-
-        if (
-          !Object.values(WorkspaceStatus).includes(
-            pascalCase(status) as WorkspaceStatus
-          )
-        ) {
-          throw new Error(`Unknown status ${status}`);
-        }
-
-        const workspaceStatus = pascalCase(status) as WorkspaceStatus;
+        const status = toEnumValue(WorkspaceStatus, pascalCase(statusStr));
         switch (event.type) {
           case "customer.subscription.created":
           case "customer.subscription.updated":
             switch (status) {
-              case "active":
-              case "incomplete":
-              case "trialing": {
-                const newProductId = items.data[0].price.product;
+              case "Active":
+              case "Incomplete":
+              case "Trialing": {
+                const { product } = items.data[0].price;
                 const { name: productName } = await stripe.products.retrieve(
-                  newProductId as string
+                  typeof product === "string" ? product : product.id
                 );
-
-                if (!(productName in WorkspacePlan)) {
-                  throw new Error(`Unknown plan ${productName}`);
-                }
-
-                const workspacePlan =
-                  WorkspacePlan[productName as keyof typeof WorkspacePlan];
-
                 await updateWorkspacePlan({
-                  workspacePlan,
+                  workspacePlan: toEnumValue(WorkspacePlan, productName),
                   workspaceSlug,
-                  status: workspaceStatus,
+                  status,
                 });
                 break;
               }
-              case "canceled":
-              case "incomplete_expired":
-              case "unpaid":
-              case "past_due": {
+              case "Canceled":
+              case "IncompleteExpired":
+              case "Unpaid":
+              case "PastDue": {
                 await updateWorkspacePlan({
                   workspacePlan: WorkspacePlan.Community,
                   workspaceSlug,
-                  status: workspaceStatus,
+                  status,
                 });
                 break;
               }
               default:
-                throw new Error(`Unknown status ${status}`);
+                throw new Error(`Unknown status ${statusStr}`);
             }
             break;
           case "customer.subscription.deleted": {
             await updateWorkspacePlan({
               workspaceSlug,
               workspacePlan: WorkspacePlan.Community,
-              status: workspaceStatus,
+              status,
             });
             break;
           }

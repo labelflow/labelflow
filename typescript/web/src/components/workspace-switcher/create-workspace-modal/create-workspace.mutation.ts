@@ -6,7 +6,6 @@ import {
   MutationTuple,
   useMutation,
 } from "@apollo/client";
-import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers";
 import { isNil } from "lodash/fp";
 import { useRouter } from "next/router";
 import {
@@ -97,7 +96,7 @@ const useCreateWorkspaceMutationCompleted = () => {
 
 export function useCreateWorkspaceMutation(
   workspaceName: string,
-  plan: string
+  plan?: WorkspacePlan
 ): MutationTuple<
   CreateWorkspaceMutation,
   CreateWorkspaceMutationVariables,
@@ -106,16 +105,11 @@ export function useCreateWorkspaceMutation(
 > {
   const [onError, isUpToDate] = useCreateWorkspaceMutationError(workspaceName);
   const onCompleted = useCreateWorkspaceMutationCompleted();
-  const capitalizePlan = plan[0].toUpperCase() + plan.slice(1);
-  const workspacePlan =
-    capitalizePlan in WorkspacePlan
-      ? WorkspacePlan[capitalizePlan as keyof typeof WorkspacePlan]
-      : DEFAULT_WORKSPACE_PLAN;
   const [createWorkspace, result] = useMutation<
     CreateWorkspaceMutation,
     CreateWorkspaceMutationVariables
   >(CREATE_WORKSPACE_MUTATION, {
-    variables: { name: workspaceName, plan: workspacePlan },
+    variables: { name: workspaceName, plan },
     refetchQueries: [USER_WITH_WORKSPACES_QUERY],
     awaitRefetchQueries: true,
     onCompleted,
