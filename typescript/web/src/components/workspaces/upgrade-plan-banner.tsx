@@ -1,5 +1,5 @@
 import { Button, chakra, Flex, Text } from "@chakra-ui/react";
-import { isWorkspaceActive } from "@labelflow/common-resolvers/src/utils/is-workspace-active";
+import { isWorkspaceActive } from "@labelflow/common-resolvers";
 import { useRouter } from "next/router";
 import { RiInformationFill } from "react-icons/ri";
 import { useWorkspace } from "../../hooks/use-user";

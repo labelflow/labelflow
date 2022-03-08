@@ -11,7 +11,7 @@ import {
   Text,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers/src/constants";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers";
 import { WorkspacePlan } from "@labelflow/graphql-types";
 import { isEmpty, isNil } from "lodash/fp";
 import React, {

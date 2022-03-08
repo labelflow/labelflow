@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers/src/constants";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers";
 import {
   MutationCreateWorkspaceArgs,
   Workspace,

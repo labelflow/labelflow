@@ -6,8 +6,9 @@ import {
   PartialWithNullAllowed,
   Repository,
   validWorkspaceName,
+  DEFAULT_WORKSPACE_PLAN,
 } from "@labelflow/common-resolvers";
-import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers/src/constants";
+
 import { WorkspaceType } from "@labelflow/graphql-types";
 import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
 import { Prisma, UserRole } from "@prisma/client";

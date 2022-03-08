@@ -1,5 +1,5 @@
 import { WorkspacePlan } from "@labelflow/graphql-types";
-import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers/src/constants";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers";
 import { getUnixTime, addDays } from "date-fns";
 import { isNil } from "lodash/fp";
 import Stripe from "stripe";
