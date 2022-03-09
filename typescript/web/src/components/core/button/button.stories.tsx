@@ -20,3 +20,9 @@ WithHref.args = {
   href: APP_GITHUB_URL,
   target: "_blank",
 };
+
+export const WithLeftIcon = Template.bind({});
+WithLeftIcon.args = { children: "I have a left icon", leftIcon: "search" };
+
+export const WithRightIcon = Template.bind({});
+WithRightIcon.args = { children: "I have a right icon", rightIcon: "search" };
