@@ -10,4 +10,4 @@ import { isEmpty as lodashIsEmpty } from "lodash/fp";
  */
 export const isEmpty = <TValue>(
   value: TValue | null | undefined
-): value is NonNullable<TValue> => lodashIsEmpty(value);
+): value is null | undefined => lodashIsEmpty(value);
