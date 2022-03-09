@@ -15,7 +15,7 @@ import {
 import { useDataset, useWorkspace } from "../../../../hooks";
 import { flushPaginatedImagesCache } from "../../../dataset-images-list";
 import { GET_DATASET_BY_SLUG_QUERY } from "../../../datasets/datasets.query";
-import { DroppedFile, UploadInfoRecord } from "../types";
+import { DroppedFile, FileUploadInfoRecord } from "../types";
 import { Dropzone } from "./dropzone";
 import { FilesStatuses } from "./file-statuses";
 import { importDroppedFiles } from "./import-dropped-files";
@@ -39,7 +39,7 @@ export const ImportImagesModalDropzone = ({
    */
   const [files, setFiles] = useState<Array<DroppedFile>>([]);
   const [fileUploadInfoRecord, setFileUploadInfoRecord] =
-    useState<UploadInfoRecord>({});
+    useState<FileUploadInfoRecord>({});
 
   const { data: datasetResult } = useQuery<
     GetDatasetBySlugQuery,

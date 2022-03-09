@@ -1,56 +1,76 @@
-import { Tooltip, chakra } from "@chakra-ui/react";
-
+import { chakra, ChakraComponent, Tooltip } from "@chakra-ui/react";
+import { IconType } from "react-icons/lib";
 import {
   RiCheckboxCircleFill,
-  RiErrorWarningFill,
   RiContrastFill,
+  RiErrorWarningFill,
 } from "react-icons/ri";
+import { FileUploadInfo } from "./types";
 
 export const SucceedIcon = chakra(RiCheckboxCircleFill);
 export const LoadingIcon = chakra(RiContrastFill);
 export const ErrorIcon = chakra(RiErrorWarningFill);
 
-export const ImportProgress = ({ status }: { status: boolean | string }) => {
-  if (typeof status === "string") {
-    return (
-      <Tooltip label={status} placement="left">
-        <span>
-          <ErrorIcon
-            display="inline-block"
-            fontSize="xl"
-            color="red.500"
-            aria-label="Error indicator"
-          />
-        </span>
-      </Tooltip>
-    );
-  }
+export type ImportProgressTooltipProps = {
+  label: string;
+  icon: ChakraComponent<IconType, {}>;
+  color: string;
+  "aria-label": string;
+};
 
-  if (status) {
-    return (
-      <Tooltip label="Upload succeed" placement="left">
-        <span>
-          <SucceedIcon
-            display="inline-block"
-            fontSize="xl"
-            color="green.500"
-            aria-label="Upload succeed"
-          />
-        </span>
-      </Tooltip>
-    );
-  }
-
+export const ImportProgressTooltip = ({
+  label,
+  icon,
+  color,
+  "aria-label": ariaLabel,
+}: ImportProgressTooltipProps) => {
+  const IconComponent = icon;
   return (
-    <Tooltip label="Upload in progress" placement="left">
+    <Tooltip label={label} placement="left">
       <span>
-        <LoadingIcon
+        <IconComponent
           display="inline-block"
           fontSize="xl"
-          color="gray.800"
-          aria-label="Loading indicator"
+          color={color}
+          aria-label={ariaLabel}
         />
       </span>
     </Tooltip>
   );
+};
+
+export const ImportProgress = ({
+  fileUploadInfo,
+}: {
+  fileUploadInfo: FileUploadInfo;
+}) => {
+  switch (fileUploadInfo.status) {
+    case "error":
+      return (
+        <ImportProgressTooltip
+          label={fileUploadInfo.error!}
+          icon={ErrorIcon}
+          color="red.500"
+          aria-label="Error indicator"
+        />
+      );
+    case "uploaded":
+      return (
+        <ImportProgressTooltip
+          label="Upload succeed"
+          icon={SucceedIcon}
+          color="green.500"
+          aria-label="Upload succeed"
+        />
+      );
+    default:
+      return (
+        <ImportProgressTooltip
+          label="Upload in progress"
+          icon={LoadingIcon}
+          color="gray.800"
+          aria-label="Loading indicator"
+        />
+      );
+  }
 };

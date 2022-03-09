@@ -8,14 +8,14 @@ import {
 import { isEmpty } from "lodash/fp";
 import { Box, Text, Flex, useColorModeValue as mode } from "@chakra-ui/react";
 
-import { DroppedFile, UploadInfoRecord, UploadInfo } from "../types";
+import { DroppedFile, FileUploadInfoRecord, FileUploadInfo } from "../types";
 import { ImportProgress } from "../import-progress";
 import { ImportError } from "../import-error";
 
 type FileStatusProps = {
   droppedFile: DroppedFile;
   index: number;
-  fileUploadInfo?: UploadInfo;
+  fileUploadInfo: FileUploadInfo;
 };
 
 const fileStatusIcon = (file: FileWithPath, hasErrors: boolean) => {
@@ -44,7 +44,7 @@ const ImportStatus = ({
     textAlign="right"
   >
     {isEmpty(droppedFile.errors) ? (
-      <ImportProgress status={fileUploadInfo?.status || false} />
+      <ImportProgress fileUploadInfo={fileUploadInfo} />
     ) : (
       <ImportError errors={droppedFile.errors} />
     )}
@@ -74,6 +74,7 @@ const Warnings = ({ warnings }: { warnings: string[] | undefined }) => (
           textOverflow="ellipsis"
           fontSize="xs"
           color={mode("red.500", "red.300")}
+          key={warning}
         >
           {warning}
         </Box>
@@ -119,7 +120,7 @@ export const FilesStatuses = ({
   fileUploadInfoRecord,
 }: {
   files: Array<DroppedFile>;
-  fileUploadInfoRecord: UploadInfoRecord;
+  fileUploadInfoRecord: FileUploadInfoRecord;
 }) => (
   <Flex direction="column" height="100%">
     <Box p="2" bg={mode("gray.200", "gray.600")} borderTopRadius="md" w="100%">
@@ -127,7 +128,7 @@ export const FilesStatuses = ({
         Completed{" "}
         {
           Object.entries(fileUploadInfoRecord).filter(
-            (entry) => entry[1].status === true
+            (entry) => entry[1].status === "uploaded"
           ).length
         }{" "}
         of {files.filter((file) => isEmpty(file.errors)).length} items
@@ -137,9 +138,12 @@ export const FilesStatuses = ({
       {files.map((droppedFile, index) => (
         <FileStatus
           droppedFile={droppedFile}
+          key={droppedFile.file.name}
           index={index}
           fileUploadInfo={
-            fileUploadInfoRecord[droppedFile.file.path ?? droppedFile.file.name]
+            fileUploadInfoRecord[
+              droppedFile.file.path ?? droppedFile.file.name
+            ] ?? { status: "pending" }
           }
         />
       ))}

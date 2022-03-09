@@ -2,7 +2,7 @@ import isEmpty from "lodash/fp/isEmpty";
 import chunk from "lodash/fp/chunk";
 import { ApolloClient, gql } from "@apollo/client";
 import Bluebird from "bluebird";
-import { DroppedUrl, SetUploadStatuses } from "../types";
+import { DroppedUrl, SetUploadInfoRecord } from "../types";
 
 import { BATCH_SIZE, CONCURRENCY } from "../constants";
 
@@ -26,7 +26,7 @@ export const importUrls = async ({
   urls: DroppedUrl[];
   apolloClient: ApolloClient<object>;
   datasetId: any;
-  setUploadStatuses: SetUploadStatuses;
+  setUploadStatuses: SetUploadInfoRecord;
 }) => {
   const now = new Date();
 
@@ -56,7 +56,10 @@ export const importUrls = async ({
         setUploadStatuses((oldStatuses) => ({
           ...oldStatuses,
           ...Object.fromEntries(
-            imagesToCreate.map(({ externalUrl }) => [externalUrl, true])
+            imagesToCreate.map(({ externalUrl }) => [
+              externalUrl,
+              { status: "uploaded" },
+            ])
           ),
         }));
       } catch (error) {
@@ -65,7 +68,7 @@ export const importUrls = async ({
           ...Object.fromEntries(
             imagesToCreate.map(({ externalUrl }) => [
               externalUrl,
-              error?.message,
+              { status: "error", error: error?.message },
             ])
           ),
         }));

@@ -95,7 +95,7 @@ export const importDatasets = async ({
       setFileUploadInfoRecord((info) => ({
         ...info,
         [file.name ?? file.path]: {
-          status: true,
+          status: "uploaded",
           warnings,
         },
       }));

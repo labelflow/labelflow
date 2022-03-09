@@ -2,24 +2,25 @@ import { RiImageLine, RiFile3Line } from "react-icons/ri";
 import { isEmpty } from "lodash/fp";
 import { Box, Text, Flex, useColorModeValue as mode } from "@chakra-ui/react";
 
-import { DroppedUrl, UploadStatuses } from "../types";
+import { DroppedUrl, FileUploadInfoRecord } from "../types";
 import { ImportProgress } from "../import-progress";
 import { ImportError } from "../import-error";
 
 export const UrlStatuses = ({
   urls,
-  uploadStatuses,
+  fileUploadInfoRecord,
 }: {
   urls: Array<DroppedUrl>;
-  uploadStatuses: UploadStatuses;
+  fileUploadInfoRecord: FileUploadInfoRecord;
 }) => (
   <Flex direction="column" height="100%">
     <Box p="2" bg={mode("gray.200", "gray.600")} borderTopRadius="md" w="100%">
       <Text>
         Completed{" "}
         {
-          Object.entries(uploadStatuses).filter((entry) => entry[1] === true)
-            .length
+          Object.entries(fileUploadInfoRecord).filter(
+            (entry) => entry[1].status === "uploaded"
+          ).length
         }{" "}
         of {urls.filter((url) => isEmpty(url.errors)).length} items
       </Text>
@@ -54,7 +55,11 @@ export const UrlStatuses = ({
             textAlign="right"
           >
             {isEmpty(errors) ? (
-              <ImportProgress status={uploadStatuses[url]} />
+              <ImportProgress
+                fileUploadInfo={
+                  fileUploadInfoRecord[url] ?? { status: "pending" }
+                }
+              />
             ) : (
               <ImportError errors={errors} />
             )}
