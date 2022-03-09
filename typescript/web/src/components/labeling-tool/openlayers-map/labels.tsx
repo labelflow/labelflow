@@ -7,7 +7,6 @@ import { Vector as OlSourceVector } from "ol/source";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { MutableRefObject } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
 import {
   extractIogMaskFromLabel,
   getIogMaskIdFromLabelId,
@@ -24,7 +23,6 @@ import {
 } from "../../../graphql-types/GetImageLabelsQuery";
 import { LabelType } from "../../../graphql-types/globalTypes";
 import { useDatasetImage } from "../../../hooks";
-import { keymap } from "../../../keymap";
 import { noneClassColor } from "../../../theme";
 import { GET_IMAGE_LABELS_QUERY } from "./queries";
 
@@ -53,9 +51,6 @@ export const Labels = ({
     (state) => state.showLabelsGeometry
   );
   const showLabelsName = useLabelingStore((state) => state.showLabelsName);
-  const changeLabelsVisibility = useLabelingStore(
-    (state) => state.changeLabelsVisibility
-  );
   const labels = data?.image?.labels ?? previousData?.image?.labels ?? [];
   const selectedLabel = labels.find(({ id }) => id === selectedLabelId);
   const getText = (text: string, color: string) =>
@@ -71,12 +66,6 @@ export const Labels = ({
         width: 3,
       }),
     });
-  useHotkeys(
-    keymap.changeLabelsVisibility.key,
-    () => changeLabelsVisibility(),
-    {},
-    []
-  );
 
   return (
     <>
