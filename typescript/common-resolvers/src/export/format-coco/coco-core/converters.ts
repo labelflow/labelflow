@@ -1,17 +1,17 @@
-import mime from "mime-types";
+import { ExportOptionsCoco } from "@labelflow/graphql-types";
 import { Geometry } from "@turf/helpers";
 import { coordReduce } from "@turf/meta";
-import { ExportOptionsCoco } from "@labelflow/graphql-types";
+import mime from "mime-types";
 import { Context, DbImage, DbLabelClass } from "../../../types";
-
+import { getSignedImageUrl } from "../../../utils";
+import { getImageName } from "../../common";
 import {
-  CocoCategory,
   CocoAnnotation,
-  CocoImage,
+  CocoCategory,
   CocoDataset,
+  CocoImage,
   DbLabelWithImageDimensions,
 } from "./types";
-import { getImageName, getImageSignedUrl } from "../../common";
 
 export {
   initialCocoDataset,
@@ -170,7 +170,7 @@ const convertImageToCocoImage = async (
     coco_url: externalUrl ?? "",
     labelflow_url: options?.exportImages
       ? undefined
-      : await getImageSignedUrl(image.url, ctx),
+      : await getSignedImageUrl(image.url, ctx),
     date_captured: createdAt,
     height,
     width,

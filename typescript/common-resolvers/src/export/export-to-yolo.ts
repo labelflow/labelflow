@@ -1,10 +1,10 @@
 import { ExportOptionsYolo, LabelType } from "@labelflow/graphql-types";
-import { isEmpty, groupBy } from "lodash/fp";
 import JSZip from "jszip";
+import { groupBy, isEmpty } from "lodash/fp";
 import mime from "mime-types";
-import { DbImage, DbLabel, DbLabelClass } from "../types";
+import { Context, DbImage, DbLabel, DbLabelClass } from "../types";
+import { getSignedImageUrl } from "../utils";
 import { getImageName } from "./common";
-
 import { ExportFunction } from "./types";
 
 const groupLabelsByImage = (labelsArray: DbLabel[]) => {
@@ -24,21 +24,26 @@ export const generateDataFile = (
   return `classes = ${numberLabelClasses}\ntrain = ${datasetName}/train.txt\ndata = ${datasetName}/obj.names`;
 };
 
-export const generateImagesListFile = (
+export const generateImagesListFile = async (
   images: DbImage[],
   datasetName: string,
-  options: ExportOptionsYolo
-): string => {
-  return images
-    .reduce(
-      (imagesList, image) =>
-        `${imagesList}${datasetName}/obj_train_data/${getImageName(
+  options: ExportOptionsYolo,
+  includeSignedUrl: boolean,
+  ctx: Context
+): Promise<string> => {
+  return (
+    await Promise.all(
+      images.map(async (image) => {
+        const imagePath = `${datasetName}/obj_train_data/${getImageName(
           image,
           options?.avoidImageNameCollisions ?? false
-        )}.${mime.extension(image.mimetype)}\n`,
-      ""
+        )}.${mime.extension(image.mimetype)}`;
+        return includeSignedUrl
+          ? [await getSignedImageUrl(image.url, ctx), imagePath].join(" ")
+          : imagePath;
+      })
     )
-    .trim();
+  ).join("\n");
 };
 
 export const generateLabelsOfImageFile = (
@@ -70,9 +75,11 @@ export const exportToYolo: ExportFunction<ExportOptionsYolo> = async (
   options = {},
   { repository, req, user }
 ) => {
-  const images = await repository.image.list({ datasetId, user });
-  const labelClasses = await repository.labelClass.list({ datasetId, user });
-  const labels = await repository.label.list({ datasetId, user });
+  const [images, labelClasses, labels] = await Promise.all([
+    repository.image.list({ datasetId, user }),
+    repository.labelClass.list({ datasetId, user }),
+    repository.label.list({ datasetId, user }),
+  ]);
   const labelsByImage = groupLabelsByImage(labels);
   const datasetName = options?.name ?? "dataset-yolo";
   const zip = new JSZip();
@@ -83,8 +90,22 @@ export const exportToYolo: ExportFunction<ExportOptionsYolo> = async (
   zip.file(`${datasetName}/obj.names`, generateNamesFile(labelClasses));
   zip.file(
     `${datasetName}/train.txt`,
-    generateImagesListFile(images, datasetName, options)
+    await generateImagesListFile(images, datasetName, options, false, {
+      repository,
+      req,
+      user,
+    })
   );
+  if (!options?.exportImages) {
+    zip.file(
+      `${datasetName}/train_url.txt`,
+      await generateImagesListFile(images, datasetName, options, true, {
+        repository,
+        req,
+        user,
+      })
+    );
+  }
   await Promise.all(
     images.map(async (image) => {
       const imageName = getImageName(

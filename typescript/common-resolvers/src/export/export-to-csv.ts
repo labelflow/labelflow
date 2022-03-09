@@ -1,8 +1,7 @@
 import { ExportOptionsCsv } from "@labelflow/graphql-types";
 import { isNil } from "lodash";
 import { Context, DbDataset, DbImage, DbLabel, DbLabelClass } from "../types";
-import { stringifyCsv } from "../utils";
-import { getImageSignedUrl } from "./common";
+import { getSignedImageUrl, stringifyCsv } from "../utils";
 import { ExportFunction } from "./types";
 
 // https://github.com/labelflow/labelflow/issues/879
@@ -55,7 +54,7 @@ const createRow = async (
   const labelClassName = labelClassId
     ? getLabelClass(labelClasses, labelClassId).name
     : undefined;
-  const url = await getImageSignedUrl(image.url, ctx);
+  const url = await getSignedImageUrl(image.url, ctx);
   const row = [
     image.id,
     image.name,

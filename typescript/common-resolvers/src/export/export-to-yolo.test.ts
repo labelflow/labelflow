@@ -1,5 +1,5 @@
 import { LabelType } from "@labelflow/graphql-types";
-import { DbLabelClass, DbLabel, DbImageCreateInput } from "../types";
+import { DbLabelClass, DbLabel, DbImageCreateInput, Context } from "../types";
 import {
   generateNamesFile,
   generateDataFile,
@@ -60,7 +60,7 @@ const createImage = (
   updatedAt: date,
   height,
   width,
-  url: "",
+  url: `https://${name}`,
   externalUrl: `https://${name}`,
   path: "/path",
   mimetype: "image/png",
@@ -85,26 +85,45 @@ data = my-dataset-name/obj.names`
     );
   });
 
-  it("generates the train.txt file string content with each image information", () => {
+  it("generates the train.txt file string content with each image information", async () => {
     expect(
-      generateImagesListFile(
+      await generateImagesListFile(
         [createImage("titi"), createImage("toto")],
         "my-dataset-name",
-        { avoidImageNameCollisions: false }
+        { avoidImageNameCollisions: false },
+        false,
+        {} as Context
       )
     ).toEqual(
       `my-dataset-name/obj_train_data/titi.png
 my-dataset-name/obj_train_data/toto.png`
     );
     expect(
-      generateImagesListFile(
+      await generateImagesListFile(
         [createImage("titi"), createImage("toto")],
         "my-dataset-name",
-        { avoidImageNameCollisions: true }
+        { avoidImageNameCollisions: true },
+        false,
+        {} as Context
       )
     ).toEqual(
       `my-dataset-name/obj_train_data/titi_id-titi.png
 my-dataset-name/obj_train_data/toto_id-toto.png`
+    );
+  });
+
+  it("generates the train_url.txt file string content with each image information", async () => {
+    expect(
+      await generateImagesListFile(
+        [createImage("titi"), createImage("toto")],
+        "my-dataset-name",
+        { avoidImageNameCollisions: false },
+        true,
+        {} as Context
+      )
+    ).toEqual(
+      `https://titi my-dataset-name/obj_train_data/titi.png
+https://toto my-dataset-name/obj_train_data/toto.png`
     );
   });
 
