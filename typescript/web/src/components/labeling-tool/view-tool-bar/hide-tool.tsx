@@ -8,9 +8,9 @@ import { FC, SVGAttributes, useCallback } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useLabelingStore } from "../../../connectors/labeling-state";
 import { keymap } from "../../../keymap";
-import HideGeometryLabelsSvg from "../../graphics/hide-geometry-labels.svg";
-import ShowGeometryLabelsSvg from "../../graphics/show-geometry-labels.svg";
-import ShowGeometrySvg from "../../graphics/show-geometry.svg";
+import HideGeometryLabelsSvg from "../../graphics/hide-geometry-labels";
+import ShowGeometryLabelsSvg from "../../graphics/show-geometry-labels";
+import ShowGeometrySvg from "../../graphics/show-geometry";
 
 const ShowGeometryLabels = chakra<FC<SVGAttributes<SVGElement>>>(
   ShowGeometryLabelsSvg
@@ -51,7 +51,7 @@ export const HideTool = () => {
       openDelay={300}
     >
       <IconButton
-        icon={<Icon w={{ base: "24px" }} />}
+        icon={<Icon />}
         backgroundColor={mode("white", "gray.800")}
         aria-label="Change elements visibility"
         pointerEvents="initial"

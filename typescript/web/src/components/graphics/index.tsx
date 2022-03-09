@@ -34,6 +34,7 @@ export { default as error } from "./error";
 export { default as Error404 } from "./error-404";
 export { default as folder } from "./folder";
 export { default as gift } from "./gift";
+export { default as HideGeometryLabels } from "./hide-geometry-labels";
 export { default as image } from "./image";
 export { default as map } from "./map";
 export { default as MapGps } from "./map-gps";
@@ -47,6 +48,8 @@ export { default as search } from "./search";
 export { default as SearchGlobe } from "./search-globe";
 export { default as SearchKey } from "./search-key";
 export { default as SearchQuestion } from "./search-question";
+export { default as ShowGeometryLabels } from "./show-geometry-labels";
+export { default as ShowGeometry } from "./show-geometry";
 export { default as team } from "./team";
 
 export const ShopLaptop = chakra<FC<SVGAttributes<SVGElement>>>(ShopLaptopSvg);
