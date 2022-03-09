@@ -100,7 +100,7 @@
     "string-similarity": "4.0.4",
     "stripe": "8.181.0",
     "styled-jsx": "4.0.0",
-    "type-fest": "2.9.0",
+    "type-fest": "2.12.0",
     "use-debounce": "7.0.1",
     "use-query-params": "1.2.2",
     "uuid": "8.3.2",

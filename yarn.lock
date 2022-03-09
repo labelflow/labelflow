@@ -8121,7 +8121,7 @@ __metadata:
     slugify: 1.6.0
     stripe: 8.184.0
     ts-node: 10.1.0
-    type-fest: 2.11.1
+    type-fest: 2.12.0
     typescript: 4.3.5
     uuid: 8.3.2
   languageName: unknown
@@ -8203,7 +8203,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@labelflow/utils@workspace:typescript/utils"
   dependencies:
+    change-case: 4.1.2
     lodash: 4.17.21
+    type-fest: 2.12.0
   languageName: unknown
   linkType: soft
 
@@ -8330,7 +8332,7 @@ __metadata:
     styled-jsx: 4.0.0
     terser-webpack-plugin: 5.2.4
     ts-node: 10.5.0
-    type-fest: 2.9.0
+    type-fest: 2.12.0
     typescript: 4.3.5
     use-debounce: 7.0.1
     use-query-params: 1.2.2
@@ -34738,24 +34740,10 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"type-fest@npm:2.11.1":
-  version: 2.11.1
-  resolution: "type-fest@npm:2.11.1"
-  checksum: fcbf57ab65eafa517432ba4ec60e83e283ab88e21e3ac60d6081be515a6488de322660a86048f13ec5f0ba655092d680ced780e0cb86dd6fec59e04b4b6061b5
-  languageName: node
-  linkType: hard
-
 "type-fest@npm:2.12.0":
   version: 2.12.0
   resolution: "type-fest@npm:2.12.0"
   checksum: 3ebe6529db84c7ceb579a0c693b92c4bf83fa5a78b5d6a1d3c2138696ad69e0a1ebc7e1b707ee0a2a6bd5aef71bf2bf4fc6fc81a6c752330e10faf0deea80f05
-  languageName: node
-  linkType: hard
-
-"type-fest@npm:2.9.0":
-  version: 2.9.0
-  resolution: "type-fest@npm:2.9.0"
-  checksum: 497b9b367536fe69a9d4258fb5afda04755de34278d2d949fa04325e6cd586b31643dd94ab3085f22088f054f39f44f4bbabfcaf789a00f508b1aed8ec43cd73
   languageName: node
   linkType: hard
 

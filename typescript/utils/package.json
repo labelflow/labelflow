@@ -6,6 +6,8 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "dependencies": {
-    "lodash": "4.17.21"
+    "change-case": "4.1.2",
+    "lodash": "4.17.21",
+    "type-fest": "2.12.0"
   }
 }

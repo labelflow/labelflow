@@ -22,8 +22,8 @@ export const getEntityIcon = <TEntity extends string, TProperty extends string>(
   entity: TEntity,
   label: TProperty
 ): EntityIcon<TEntity, TProperty> => {
-  const propertyName = camelCase(label) as CamelCase<TProperty>;
-  const entityName = pascalCase(entity) as PascalCase<TEntity>;
+  const propertyName = camelCase(label);
+  const entityName = pascalCase(entity);
   return `${propertyName}${entityName}`;
 };
 
