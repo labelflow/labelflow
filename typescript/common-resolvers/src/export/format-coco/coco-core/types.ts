@@ -39,6 +39,7 @@ export type CocoImage = {
   file_name: string;
   license: number;
   coco_url: string;
+  labelflow_url?: string;
   date_captured: string;
 };
 

@@ -2,7 +2,7 @@ import { ExportOptionsCsv } from "@labelflow/graphql-types";
 import { isNil } from "lodash";
 import { Context, DbDataset, DbImage, DbLabel, DbLabelClass } from "../types";
 import { stringifyCsv } from "../utils";
-import { getOrigin } from "../utils/get-origin";
+import { getImageSignedUrl } from "./common";
 import { ExportFunction } from "./types";
 
 // https://github.com/labelflow/labelflow/issues/879
@@ -34,20 +34,6 @@ const getImage = (images: DbImage[], imageId: string): DbImage => {
   const image = images.find(({ id }) => id === imageId);
   if (!isNil(image)) return image;
   throw new Error(`Could not find image with ID ${imageId}`);
-};
-
-const getImageSignedUrl = async (
-  imageUrl: string,
-  { req, repository }: Context
-) => {
-  const origin = getOrigin(req);
-  const urlPrefix = `${origin}/api/downloads/`;
-  if (!imageUrl.startsWith(urlPrefix)) return imageUrl;
-  const key = imageUrl.substring(urlPrefix.length);
-  const isKey = /^[^/]+\/[^/]+\/[^/]+$/.test(key);
-  if (!isKey) return imageUrl;
-  // Expires in 7 days
-  return await repository.upload.getSignedDownloadUrl(key, 7 * 24 * 60 * 60);
 };
 
 const getLabelClass = (
