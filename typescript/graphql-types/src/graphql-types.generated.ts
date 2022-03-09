@@ -824,6 +824,7 @@ export type Workspace = {
   datasets: Array<Dataset>;
   id: Scalars['ID'];
   image?: Maybe<Scalars['String']>;
+  imagesAggregates: ImagesAggregates;
   memberships: Array<Membership>;
   name: Scalars['String'];
   plan: WorkspacePlan;
@@ -831,7 +832,6 @@ export type Workspace = {
   stripeCustomerPortalUrl?: Maybe<Scalars['String']>;
   type: WorkspaceType;
   updatedAt: Scalars['DateTime'];
-  imagesAggregates: ImagesAggregates;
 };
 
 export type WorkspaceCreateInput = {
@@ -846,8 +846,8 @@ export type WorkspaceCreateOptions = {
 
 export enum WorkspacePlan {
   Community = 'Community',
-  Starter = 'Starter',
-  Pro = 'Pro'
+  Pro = 'Pro',
+  Starter = 'Starter'
 }
 
 export type WorkspaceSlugAndDatasetSlug = {
@@ -1335,17 +1335,14 @@ export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversPa
   datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   stripeCustomerPortalUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-<<<<<<< HEAD
   type?: Resolver<ResolversTypes['WorkspaceType'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-=======
-  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
->>>>>>> 14c43f61 (Add images workspace consumption based on plan)
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

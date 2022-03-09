@@ -513,6 +513,7 @@ export const typeDefs = [
     datasets: [Dataset!]!
     id: ID!
     image: String
+    imagesAggregates: ImagesAggregates!
     memberships: [Membership!]!
     name: String!
     plan: WorkspacePlan!
@@ -520,7 +521,6 @@ export const typeDefs = [
     stripeCustomerPortalUrl: String
     type: WorkspaceType!
     updatedAt: DateTime!
-    imagesAggregates: ImagesAggregates!
   }
 
   input WorkspaceCreateInput {
@@ -535,8 +535,8 @@ export const typeDefs = [
 
   enum WorkspacePlan {
     Community
-    Starter
     Pro
+    Starter
   }
 
   input WorkspaceSlugAndDatasetSlug {
