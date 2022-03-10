@@ -77,10 +77,8 @@ const OverlayTopRow = () => (
     visibility="hidden"
     justifyContent="flex-end"
     w="100%"
-    sx={{
-      ".imageCard:hover &": {
-        visibility: "visible",
-      },
+    _groupHover={{
+      visibility: "visible",
     }}
   >
     <DeleteButton />
@@ -103,6 +101,11 @@ const OverlayBottomRow = () => {
 const ImageOverlay = () => (
   <Box
     className="imageOverlay"
+    _groupHover={{
+      display: "flex",
+      backgroundColor: "rgba(0, 0, 0, 0.65)",
+      transition: "background-color .1s",
+    }}
     borderRadius={8}
     p={2}
     display="flex"
@@ -130,18 +133,7 @@ const ClickableOverlay = () => {
 };
 
 const ImageCardContent = () => (
-  <Box
-    className="imageCard"
-    position="relative"
-    cursor="pointer"
-    sx={{
-      ".imageCard:hover .imageOverlay, .imageOverlay:hover": {
-        display: "flex",
-        backgroundColor: "rgba(0, 0, 0, 0.65)",
-        transition: "background-color .1s",
-      },
-    }}
-  >
+  <Box className="imageCard" position="relative" cursor="pointer" role="group">
     <ClickableOverlay />
     <ImageContent />
   </Box>
