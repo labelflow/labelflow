@@ -23,22 +23,20 @@ const getIcon = (showLabelsGeometry: boolean, showLabelsName: boolean) => {
 };
 
 export const ViewModeButton = () => {
-  const changeLabelsVisibility = useLabelingStore(
-    (state) => state.changeLabelsVisibility
-  );
+  const toggleViewMode = useLabelingStore((state) => state.toggleViewMode);
   const showLabelsGeometry = useLabelingStore(
     (state) => state.showLabelsGeometry
   );
   const showLabelsName = useLabelingStore((state) => state.showLabelsName);
   const IconSvg = getIcon(showLabelsGeometry, showLabelsName);
   const changeVisibility = useCallback(
-    () => changeLabelsVisibility(),
-    [changeLabelsVisibility]
+    () => toggleViewMode(),
+    [toggleViewMode]
   );
-  useHotkeys(keymap.changeLabelsVisibility.key, changeVisibility, {}, []);
+  useHotkeys(keymap.toggleViewMode.key, changeVisibility, {}, []);
   return (
     <Tooltip
-      label={`${keymap.changeLabelsVisibility.description} [${keymap.changeLabelsVisibility.key}]`}
+      label={`${keymap.toggleViewMode.description} [${keymap.toggleViewMode.key}]`}
       placement="left"
       openDelay={300}
     >

@@ -75,7 +75,7 @@ export type LabelingState = {
    *
    * Cycle is : 1 -> 2 -> 3 -> 1
    */
-  changeLabelsVisibility: () => void;
+  toggleViewMode: () => void;
 };
 
 export const useLabelingStore = create<LabelingState>(
@@ -161,7 +161,7 @@ export const useLabelingStore = create<LabelingState>(
     },
     showLabelsGeometry: true,
     showLabelsName: true,
-    changeLabelsVisibility: () => {
+    toggleViewMode: () => {
       const { showLabelsGeometry, showLabelsName } = get();
       if (showLabelsGeometry && showLabelsName) {
         // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
