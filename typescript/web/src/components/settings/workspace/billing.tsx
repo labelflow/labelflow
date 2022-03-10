@@ -13,7 +13,7 @@ import { isNil } from "lodash/fp";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { trackEvent } from "../../../utils/google-analytics";
-import { WorkspacePlanBadge } from "../../workspaces/workspace-badge";
+import { WorkspacePlanBadge } from "../../workspaces/workspace-plan-badge";
 import { Card } from "../card";
 import { FieldGroup } from "../field-group";
 import { HeadingGroup } from "../heading-group";
