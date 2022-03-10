@@ -24,7 +24,7 @@ const useViewModeIcon = () => {
 const ViewModeIcon = () => {
   const IconSvg = useViewModeIcon();
   return (
-    <Icon fill={mode("black", "white")} boxSize={6}>
+    <Icon fill={mode("black", "white")} boxSize={5}>
       <IconSvg />
     </Icon>
   );
