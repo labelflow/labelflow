@@ -8,49 +8,47 @@ import { useCallback } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useLabelingStore } from "../../../connectors/labeling-state";
 import { keymap } from "../../../keymap";
-import HideGeometryLabelsSvg from "../../graphics/hide-geometry-labels.svg";
-import ShowGeometryLabelsSvg from "../../graphics/show-geometry-labels.svg";
-import ShowGeometrySvg from "../../graphics/show-geometry.svg";
+import HideAllSvg from "./view-mode-hide-all.svg";
+import ShowGeometrySvg from "./view-mode-show-geometry.svg";
+import ShowAllSvg from "./view-mode-show-all.svg";
 
-const getIcon = (showLabelsGeometry: boolean, showLabelsName: boolean) => {
-  if (showLabelsGeometry && showLabelsName) {
-    return ShowGeometryLabelsSvg;
-  }
-  if (showLabelsGeometry && !showLabelsName) {
-    return ShowGeometrySvg;
-  }
-  return HideGeometryLabelsSvg;
-};
-
-export const ViewModeButton = () => {
-  const toggleViewMode = useLabelingStore((state) => state.toggleViewMode);
+const useViewModeIcon = () => {
   const showLabelsGeometry = useLabelingStore(
     (state) => state.showLabelsGeometry
   );
   const showLabelsName = useLabelingStore((state) => state.showLabelsName);
-  const IconSvg = getIcon(showLabelsGeometry, showLabelsName);
-  const changeVisibility = useCallback(
-    () => toggleViewMode(),
-    [toggleViewMode]
-  );
-  useHotkeys(keymap.toggleViewMode.key, changeVisibility, {}, []);
+  if (!showLabelsGeometry) return HideAllSvg;
+  return showLabelsName ? ShowAllSvg : ShowGeometrySvg;
+};
+
+const ViewModeIcon = () => {
+  const IconSvg = useViewModeIcon();
   return (
-    <Tooltip
-      label={`${keymap.toggleViewMode.description} [${keymap.toggleViewMode.key}]`}
-      placement="left"
-      openDelay={300}
-    >
-      <IconButton
-        icon={
-          <Icon fill={mode("black", "white")} boxSize={6}>
-            <IconSvg />
-          </Icon>
-        }
-        backgroundColor={mode("white", "gray.800")}
-        aria-label="Change elements visibility"
-        pointerEvents="initial"
-        onClick={changeVisibility}
-      />
-    </Tooltip>
+    <Icon fill={mode("black", "white")} boxSize={6}>
+      <IconSvg />
+    </Icon>
   );
 };
+
+const useToggleViewMode = () => {
+  const toggleViewMode = useLabelingStore((state) => state.toggleViewMode);
+  const handleToggleViewMode = useCallback(toggleViewMode, [toggleViewMode]);
+  useHotkeys(keymap.toggleViewMode.key, handleToggleViewMode, {}, []);
+  return handleToggleViewMode;
+};
+
+export const ViewModeButton = () => (
+  <Tooltip
+    label={`${keymap.toggleViewMode.description} [${keymap.toggleViewMode.key}]`}
+    placement="left"
+    openDelay={300}
+  >
+    <IconButton
+      icon={<ViewModeIcon />}
+      backgroundColor={mode("white", "gray.800")}
+      aria-label="Change elements visibility"
+      pointerEvents="initial"
+      onClick={useToggleViewMode()}
+    />
+  </Tooltip>
+);
