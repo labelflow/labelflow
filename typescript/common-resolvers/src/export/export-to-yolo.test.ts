@@ -3,8 +3,9 @@ import { DbLabelClass, DbLabel, DbImageCreateInput, Context } from "../types";
 import {
   generateNamesFile,
   generateDataFile,
-  generateImagesListFile,
+  getImageUrlList,
   generateLabelsOfImageFile,
+  GetImageUrlListOptions,
 } from "./export-to-yolo";
 
 const date = new Date("1995-12-17T03:24:00").toISOString();
@@ -67,6 +68,15 @@ const createImage = (
   datasetId: testDatasetId,
 });
 
+const COMMON_GET_IMAGE_URL_LIST_OPTIONS: Pick<
+  GetImageUrlListOptions,
+  "images" | "datasetName" | "ctx"
+> = {
+  images: [createImage("titi"), createImage("toto")],
+  datasetName: "my-dataset-name",
+  ctx: {} as Context,
+};
+
 describe("Yolo converters", () => {
   it("generates the obj.names file string content", () => {
     expect(
@@ -87,25 +97,21 @@ data = my-dataset-name/obj.names`
 
   it("generates the train.txt file string content with each image information", async () => {
     expect(
-      await generateImagesListFile(
-        [createImage("titi"), createImage("toto")],
-        "my-dataset-name",
-        { avoidImageNameCollisions: false },
-        false,
-        {} as Context
-      )
+      await getImageUrlList({
+        ...COMMON_GET_IMAGE_URL_LIST_OPTIONS,
+        options: { avoidImageNameCollisions: false },
+        includeSignedUrl: false,
+      })
     ).toEqual(
       `my-dataset-name/obj_train_data/titi.png
 my-dataset-name/obj_train_data/toto.png`
     );
     expect(
-      await generateImagesListFile(
-        [createImage("titi"), createImage("toto")],
-        "my-dataset-name",
-        { avoidImageNameCollisions: true },
-        false,
-        {} as Context
-      )
+      await getImageUrlList({
+        ...COMMON_GET_IMAGE_URL_LIST_OPTIONS,
+        options: { avoidImageNameCollisions: true },
+        includeSignedUrl: false,
+      })
     ).toEqual(
       `my-dataset-name/obj_train_data/titi_id-titi.png
 my-dataset-name/obj_train_data/toto_id-toto.png`
@@ -114,13 +120,11 @@ my-dataset-name/obj_train_data/toto_id-toto.png`
 
   it("generates the train_url.txt file string content with each image information", async () => {
     expect(
-      await generateImagesListFile(
-        [createImage("titi"), createImage("toto")],
-        "my-dataset-name",
-        { avoidImageNameCollisions: false },
-        true,
-        {} as Context
-      )
+      await getImageUrlList({
+        ...COMMON_GET_IMAGE_URL_LIST_OPTIONS,
+        options: { avoidImageNameCollisions: false },
+        includeSignedUrl: true,
+      })
     ).toEqual(
       `https://titi my-dataset-name/obj_train_data/titi.png
 https://toto my-dataset-name/obj_train_data/toto.png`

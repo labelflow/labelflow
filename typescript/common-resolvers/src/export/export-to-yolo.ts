@@ -24,26 +24,58 @@ export const generateDataFile = (
   return `classes = ${numberLabelClasses}\ntrain = ${datasetName}/train.txt\ndata = ${datasetName}/obj.names`;
 };
 
-export const generateImagesListFile = async (
-  images: DbImage[],
-  datasetName: string,
-  options: ExportOptionsYolo,
-  includeSignedUrl: boolean,
-  ctx: Context
-): Promise<string> => {
-  return (
-    await Promise.all(
-      images.map(async (image) => {
-        const imagePath = `${datasetName}/obj_train_data/${getImageName(
-          image,
-          options?.avoidImageNameCollisions ?? false
-        )}.${mime.extension(image.mimetype)}`;
-        return includeSignedUrl
-          ? [await getSignedImageUrl(image.url, ctx), imagePath].join(" ")
-          : imagePath;
-      })
-    )
-  ).join("\n");
+type GetImageUrlLineOptions = {
+  datasetName: string;
+  options: ExportOptionsYolo;
+  includeSignedUrl: boolean;
+  ctx: Context;
+};
+
+const getImageUrlLine = async (
+  image: DbImage,
+  {
+    datasetName,
+    options: { avoidImageNameCollisions },
+    includeSignedUrl,
+    ctx,
+  }: GetImageUrlLineOptions
+) => {
+  const imageName = getImageName(image, avoidImageNameCollisions ?? false);
+  const extension = mime.extension(image.mimetype);
+  const imagePath = `${datasetName}/obj_train_data/${imageName}.${extension}`;
+  if (!includeSignedUrl) return imagePath;
+  const signedUrl = await getSignedImageUrl(image.url, ctx);
+  return [signedUrl, imagePath].join(" ");
+};
+
+export type GetImageUrlListOptions = GetImageUrlLineOptions & {
+  images: DbImage[];
+};
+
+export const getImageUrlList = async ({
+  images,
+  ...options
+}: GetImageUrlListOptions): Promise<string> => {
+  const lines = await Promise.all(
+    images.map(async (image) => await getImageUrlLine(image, options))
+  );
+  return lines.join("\n");
+};
+
+type GenerateUrlListOptions = GetImageUrlListOptions & {
+  exportImages?: boolean;
+  zip: JSZip;
+};
+
+const generateUrlList = async ({
+  exportImages,
+  zip,
+  ...options
+}: GenerateUrlListOptions) => {
+  if (exportImages) return;
+  const { datasetName } = options;
+  const listFile = await getImageUrlList(options);
+  zip.file(`${datasetName}/train_url.txt`, listFile);
 };
 
 export const generateLabelsOfImageFile = (
@@ -73,8 +105,9 @@ export const generateLabelsOfImageFile = (
 export const exportToYolo: ExportFunction<ExportOptionsYolo> = async (
   datasetId,
   options = {},
-  { repository, req, user }
+  ctx
 ) => {
+  const { repository, req, user } = ctx;
   const [images, labelClasses, labels] = await Promise.all([
     repository.image.list({ datasetId, user }),
     repository.labelClass.list({ datasetId, user }),
@@ -90,22 +123,22 @@ export const exportToYolo: ExportFunction<ExportOptionsYolo> = async (
   zip.file(`${datasetName}/obj.names`, generateNamesFile(labelClasses));
   zip.file(
     `${datasetName}/train.txt`,
-    await generateImagesListFile(images, datasetName, options, false, {
-      repository,
-      req,
-      user,
+    await getImageUrlList({
+      images,
+      datasetName,
+      options,
+      includeSignedUrl: false,
+      ctx,
     })
   );
-  if (!options?.exportImages) {
-    zip.file(
-      `${datasetName}/train_url.txt`,
-      await generateImagesListFile(images, datasetName, options, true, {
-        repository,
-        req,
-        user,
-      })
-    );
-  }
+  await generateUrlList({
+    zip,
+    images,
+    datasetName,
+    options,
+    includeSignedUrl: true,
+    ctx,
+  });
   await Promise.all(
     images.map(async (image) => {
       const imageName = getImageName(
