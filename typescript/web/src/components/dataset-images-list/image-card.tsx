@@ -43,9 +43,10 @@ const DeleteButton = () => {
   );
   return (
     <IconButton
-      _hover={{ bgColor: "gray.700" }}
+      _hover={{ bgColor: "rgba(0, 0, 0, .2)" }}
+      _active={{ bgColor: "gray.600" }}
       color="white"
-      icon={<TrashIcon />}
+      icon={<TrashIcon boxSize={4} />}
       aria-label="delete image"
       isRound
       size="sm"
@@ -108,7 +109,7 @@ const ImageOverlay = () => (
     position="absolute"
     w="full"
     h="full"
-    background="linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0) 33%);"
+    background="linear-gradient(to top, rgba(0, 0, 0, .65), rgba(26, 32, 44, 0) 33%);"
   >
     <VStack color="white" flexGrow={1} justify="space-between" maxW="full">
       <OverlayTopRow />
@@ -136,8 +137,8 @@ const ImageCardContent = () => (
     sx={{
       ".imageCard:hover .imageOverlay, .imageOverlay:hover": {
         display: "flex",
-        background: "none",
-        backgroundColor: "rgba(0, 0, 0, 0.4)",
+        backgroundColor: "rgba(0, 0, 0, 0.65)",
+        transition: "background-color .1s",
       },
     }}
   >
