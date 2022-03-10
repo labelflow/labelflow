@@ -22,7 +22,7 @@ const getIcon = (showLabelsGeometry: boolean, showLabelsName: boolean) => {
   return HideGeometryLabelsSvg;
 };
 
-export const HideTool = () => {
+export const ViewModeButton = () => {
   const changeLabelsVisibility = useLabelingStore(
     (state) => state.changeLabelsVisibility
   );
