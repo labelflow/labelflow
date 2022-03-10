@@ -11,9 +11,9 @@ export const ViewToolbar = ({
 }) => {
   return (
     <>
+      <HideTool />
       <FullScreenTool containerRef={containerRef} />
       <ZoomTool />
-      <HideTool />
     </>
   );
 };

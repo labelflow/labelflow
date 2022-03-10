@@ -111,7 +111,7 @@ export const keymap: Keymap = {
   },
   changeLabelsVisibility: {
     key: "x",
-    description: "Change labels geometry and name visibility",
+    description: "Toggle the visibility of labels' name and geometry",
     category: "View",
   },
 };
