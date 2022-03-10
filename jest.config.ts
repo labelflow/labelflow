@@ -25,6 +25,10 @@ export default {
       testMatch: [
         "<rootDir>/typescript/(react-openlayers-fiber|web)/src/**/(*.)+test.{ts,tsx}",
       ],
+      moduleNameMapper: {
+        "\\.svg$":
+          "<rootDir>/typescript/web/src/utils/tests/react-svgr-mock.ts",
+      },
     },
     {
       displayName: "nodejs",
