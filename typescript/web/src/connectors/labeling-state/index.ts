@@ -175,9 +175,7 @@ export const useLabelingStore = create<LabelingState>(
       }
       if (!showLabelsGeometry && !showLabelsName) {
         // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
-        set({ showLabelsGeometry: true });
-        // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
-        set({ showLabelsName: true });
+        set({ showLabelsGeometry: true, showLabelsName: true });
       }
     },
   }),
