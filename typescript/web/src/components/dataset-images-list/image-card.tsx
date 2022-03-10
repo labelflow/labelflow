@@ -1,24 +1,26 @@
 import {
-  chakra,
+  Flex,
+  HStack,
   IconButton,
   Skeleton,
   Text,
-  Box,
-  HStack,
-  VStack,
   Tooltip,
+  useColorModeValue,
+  VStack,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { createContext, MouseEvent, useCallback, useContext } from "react";
+import {
+  createContext,
+  MouseEvent,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+} from "react";
 import { HiTrash } from "react-icons/hi";
 import { EmptyStateImageNotFound } from "../empty-state";
 import { ImageWithFallback } from "../image";
 
-const TrashIcon = chakra(HiTrash);
-
-// Props are actually used with the context
-/* eslint-disable react/no-unused-prop-types */
-type ImageCardProps = {
+export type ImageCardProps = {
   id: string;
   name: string;
   thumbnail?: string | null;
@@ -27,6 +29,15 @@ type ImageCardProps = {
 };
 
 const ImageCardContext = createContext({} as ImageCardProps);
+
+const ImageCardProvider = ({
+  children,
+  ...props
+}: PropsWithChildren<ImageCardProps>) => (
+  <ImageCardContext.Provider value={props}>
+    {children}
+  </ImageCardContext.Provider>
+);
 
 const useImageCard = () => useContext(ImageCardContext);
 
@@ -43,43 +54,55 @@ const DeleteButton = () => {
   );
   return (
     <IconButton
+      data-testid="delete-image-button"
       _hover={{ bgColor: "rgba(0, 0, 0, .2)" }}
       _active={{ bgColor: "gray.600" }}
       color="white"
-      icon={<TrashIcon boxSize={4} />}
       aria-label="delete image"
       isRound
-      size="sm"
+      size="md"
       onClick={handleClick}
       variant="ghost"
-    />
+    >
+      <HiTrash />
+    </IconButton>
   );
 };
+
+const ImageErrorFallback = () => (
+  <Flex
+    align="center"
+    justify="center"
+    h="208px"
+    bg={useColorModeValue("gray.400", "gray.600")}
+    borderRadius="md"
+  >
+    <EmptyStateImageNotFound h="150px" />
+  </Flex>
+);
 
 const ImageContent = () => {
   const { name, thumbnail } = useImageCard();
   return (
     <ImageWithFallback
-      borderRadius={8}
+      borderRadius="md"
       alt={name}
       src={thumbnail ?? undefined}
-      loadingFallback={<Skeleton height="100%" width="100%" />}
-      errorFallback={<EmptyStateImageNotFound />}
+      loadingFallback={<Skeleton h="208px" borderRadius="md" />}
+      errorFallback={<ImageErrorFallback />}
       objectFit="cover"
       h="208px"
-      w="full"
     />
   );
 };
 
 const OverlayTopRow = () => (
   <HStack
+    alignSelf="stretch"
+    justify="flex-end"
     visibility="hidden"
-    justifyContent="flex-end"
-    w="100%"
-    _groupHover={{
-      visibility: "visible",
-    }}
+    _groupHover={{ visibility: "visible" }}
+    p={1}
   >
     <DeleteButton />
   </HStack>
@@ -88,9 +111,9 @@ const OverlayTopRow = () => (
 const OverlayBottomRow = () => {
   const { name } = useImageCard();
   return (
-    <HStack justifyContent="flex-start" w="full" maxW="full">
-      <Tooltip label={name}>
-        <Text isTruncated fontWeight={700}>
+    <HStack justify="flex-start" p={2}>
+      <Tooltip label={name} openDelay={500}>
+        <Text isTruncated fontWeight="semibold">
           {name}
         </Text>
       </Tooltip>
@@ -99,26 +122,30 @@ const OverlayBottomRow = () => {
 };
 
 const ImageOverlay = () => (
-  <Box
-    className="imageOverlay"
-    _groupHover={{
-      display: "flex",
-      backgroundColor: "rgba(0, 0, 0, 0.65)",
-      transition: "background-color .1s",
-    }}
-    borderRadius={8}
-    p={2}
-    display="flex"
+  <Flex
     position="absolute"
-    w="full"
-    h="full"
+    borderRadius="md"
+    top={0}
+    bottom={0}
+    left={0}
+    right={0}
     background="linear-gradient(to top, rgba(0, 0, 0, .65), rgba(26, 32, 44, 0) 33%);"
+    _groupHover={{
+      backgroundColor: "rgba(0, 0, 0, 0.65)",
+      transition: "background-color .125s",
+    }}
   >
-    <VStack color="white" flexGrow={1} justify="space-between" maxW="full">
+    <VStack
+      minW={0}
+      color="white"
+      flexGrow={1}
+      justify="space-between"
+      align="stretch"
+    >
       <OverlayTopRow />
       <OverlayBottomRow />
     </VStack>
-  </Box>
+  </Flex>
 );
 
 const ClickableOverlay = () => {
@@ -133,21 +160,24 @@ const ClickableOverlay = () => {
 };
 
 const ImageCardContent = () => (
-  <Box
-    className="imageCard"
+  <Flex
+    direction="column"
+    align="stretch"
+    data-testid="image-card"
     position="relative"
-    cursor="pointer"
     role="group"
+    borderRadius="md"
+    borderWidth={1}
+    borderColor={useColorModeValue("gray.200", "gray.800")}
     maxW="350px"
-    height="208px"
   >
     <ClickableOverlay />
     <ImageContent />
-  </Box>
+  </Flex>
 );
 
 export const ImageCard = (props: ImageCardProps) => (
-  <ImageCardContext.Provider value={props}>
+  <ImageCardProvider {...props}>
     <ImageCardContent />
-  </ImageCardContext.Provider>
+  </ImageCardProvider>
 );
