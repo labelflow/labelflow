@@ -26,6 +26,17 @@ import { useDatasetImage } from "../../../hooks";
 import { noneClassColor } from "../../../theme";
 import { GET_IMAGE_LABELS_QUERY } from "./queries";
 
+const getLabelText = (text: string, color: string) =>
+  new Text({
+    text,
+    scale: 1.5,
+    textBaseline: "middle",
+    overflow: true,
+    placement: "point",
+    fill: new Fill({ color: "white" }),
+    stroke: new Stroke({ color, width: 3 }),
+  });
+
 export const Labels = ({
   sourceVectorLabelsRef,
 }: {
@@ -53,19 +64,6 @@ export const Labels = ({
   const showLabelsName = useLabelingStore((state) => state.showLabelsName);
   const labels = data?.image?.labels ?? previousData?.image?.labels ?? [];
   const selectedLabel = labels.find(({ id }) => id === selectedLabelId);
-  const getText = (text: string, color: string) =>
-    new Text({
-      text,
-      scale: 1.5,
-      textBaseline: "middle",
-      overflow: true,
-      placement: "point",
-      fill: new Fill({ color: "white" }),
-      stroke: new Stroke({
-        color,
-        width: 3,
-      }),
-    });
 
   return (
     <>
@@ -81,7 +79,7 @@ export const Labels = ({
                 const labelClassColor = labelClass?.color ?? noneClassColor;
                 const labelStyle = new Style({
                   text: showLabelsName
-                    ? getText(labelClass?.name ?? "", labelClassColor)
+                    ? getLabelText(labelClass?.name ?? "", labelClassColor)
                     : undefined,
                   fill: new Fill({
                     color: `${labelClassColor}${isSelected ? "40" : "10"}`,
