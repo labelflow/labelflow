@@ -18,10 +18,10 @@ export type DroppedUrl = {
   errors: Array<Error>;
 };
 
-export type FileUploadStatus = "pending" | "uploaded" | "error";
+export type UploadStatus = "loading" | "uploaded" | "error";
 
-export type FileUploadInfo = {
-  status: FileUploadStatus;
+export type UploadInfo = {
+  status: UploadStatus;
   error?: string;
   warnings?: string[];
 };
@@ -30,9 +30,9 @@ export type FileUploadInfo = {
  * A lookup table containing only the status of
  * the file being uploaded
  */
-export type FileUploadInfoRecord = Record<string, FileUploadInfo>;
+export type UploadInfoRecord = Record<string, UploadInfo>;
 
 /**
  * Setter function for the upload statuses
  */
-export type SetUploadInfoRecord = SetState<FileUploadInfoRecord>;
+export type SetUploadInfo = SetState<UploadInfoRecord>;

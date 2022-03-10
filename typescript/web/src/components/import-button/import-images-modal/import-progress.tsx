@@ -5,7 +5,7 @@ import {
   RiContrastFill,
   RiErrorWarningFill,
 } from "react-icons/ri";
-import { FileUploadInfo } from "./types";
+import { UploadInfo } from "./types";
 
 export const SucceedIcon = chakra(RiCheckboxCircleFill);
 export const LoadingIcon = chakra(RiContrastFill);
@@ -39,16 +39,14 @@ export const ImportProgressTooltip = ({
   );
 };
 
-export const ImportProgress = ({
-  fileUploadInfo,
-}: {
-  fileUploadInfo: FileUploadInfo;
-}) => {
-  switch (fileUploadInfo.status) {
+export type ImportProgressProps = Pick<UploadInfo, "status" | "error">;
+
+export const ImportProgress = ({ status, error }: ImportProgressProps) => {
+  switch (status) {
     case "error":
       return (
         <ImportProgressTooltip
-          label={fileUploadInfo.error!}
+          label={error ?? "Unknown error"}
           icon={ErrorIcon}
           color="red.500"
           aria-label="Error indicator"

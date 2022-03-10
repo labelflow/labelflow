@@ -8,14 +8,14 @@ import {
 import { isEmpty } from "lodash/fp";
 import { Box, Text, Flex, useColorModeValue as mode } from "@chakra-ui/react";
 
-import { DroppedFile, FileUploadInfoRecord, FileUploadInfo } from "../types";
+import { DroppedFile, UploadInfoRecord, UploadInfo } from "../types";
 import { ImportProgress } from "../import-progress";
 import { ImportError } from "../import-error";
 
 type FileStatusProps = {
   droppedFile: DroppedFile;
   index: number;
-  fileUploadInfo: FileUploadInfo;
+  uploadInfo: UploadInfo;
 };
 
 const fileStatusIcon = (file: FileWithPath, hasErrors: boolean) => {
@@ -34,7 +34,7 @@ const fileStatusIcon = (file: FileWithPath, hasErrors: boolean) => {
 
 const ImportStatus = ({
   droppedFile,
-  fileUploadInfo,
+  uploadInfo,
 }: Omit<FileStatusProps, "index">) => (
   <Box
     whiteSpace="nowrap"
@@ -44,7 +44,7 @@ const ImportStatus = ({
     textAlign="right"
   >
     {isEmpty(droppedFile.errors) ? (
-      <ImportProgress fileUploadInfo={fileUploadInfo} />
+      <ImportProgress {...uploadInfo} />
     ) : (
       <ImportError errors={droppedFile.errors} />
     )}
@@ -64,7 +64,9 @@ const FilePath = ({ droppedFile }: Pick<FileStatusProps, "droppedFile">) => (
   </Box>
 );
 
-const Warnings = ({ warnings }: { warnings: string[] | undefined }) => (
+type WarningProps = { warnings: string[] | undefined };
+
+const Warnings = ({ warnings }: WarningProps) => (
   <>
     {warnings &&
       warnings.map((warning) => (
@@ -82,12 +84,8 @@ const Warnings = ({ warnings }: { warnings: string[] | undefined }) => (
   </>
 );
 
-const FileStatus = ({
-  droppedFile,
-  index,
-  fileUploadInfo,
-}: FileStatusProps) => {
-  const warnings = fileUploadInfo?.warnings;
+const FileStatus = ({ droppedFile, index, uploadInfo }: FileStatusProps) => {
+  const warnings = uploadInfo?.warnings;
   const FileStatusIcon = fileStatusIcon(
     droppedFile.file,
     !isEmpty(droppedFile.errors)
@@ -105,30 +103,26 @@ const FileStatus = ({
           <FileStatusIcon />
         </Box>
         <FilePath droppedFile={droppedFile} />
-        <ImportStatus
-          droppedFile={droppedFile}
-          fileUploadInfo={fileUploadInfo}
-        />
+        <ImportStatus droppedFile={droppedFile} uploadInfo={uploadInfo} />
       </Flex>
       <Warnings warnings={warnings} />
     </>
   );
 };
 
-export const FilesStatuses = ({
-  files,
-  fileUploadInfoRecord,
-}: {
+export type UploadInfoProps = {
   files: Array<DroppedFile>;
-  fileUploadInfoRecord: FileUploadInfoRecord;
-}) => (
+  uploadInfo: UploadInfoRecord;
+};
+
+export const FilesStatuses = ({ files, uploadInfo }: UploadInfoProps) => (
   <Flex direction="column" height="100%">
     <Box p="2" bg={mode("gray.200", "gray.600")} borderTopRadius="md" w="100%">
       <Text>
         Completed{" "}
         {
-          Object.entries(fileUploadInfoRecord).filter(
-            (entry) => entry[1].status === "uploaded"
+          Object.values(uploadInfo).filter(
+            ({ status }) => status === "uploaded"
           ).length
         }{" "}
         of {files.filter((file) => isEmpty(file.errors)).length} items
@@ -140,10 +134,10 @@ export const FilesStatuses = ({
           droppedFile={droppedFile}
           key={droppedFile.file.name}
           index={index}
-          fileUploadInfo={
-            fileUploadInfoRecord[
-              droppedFile.file.path ?? droppedFile.file.name
-            ] ?? { status: "pending" }
+          uploadInfo={
+            uploadInfo[droppedFile.file.path ?? droppedFile.file.name] ?? {
+              status: "loading",
+            }
           }
         />
       ))}

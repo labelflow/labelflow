@@ -1,14 +1,11 @@
-/* eslint-disable no-underscore-dangle */
 import { ApolloClient, gql } from "@apollo/client";
-import { v4 as uuidv4 } from "uuid";
 import Bluebird from "bluebird";
-import mime from "mime-types";
 import chunk from "lodash/fp/chunk";
-
+import mime from "mime-types";
+import { v4 as uuidv4 } from "uuid";
 import { uploadFile } from "../../../../../utils/upload-file";
-import { DroppedFile, SetUploadInfoRecord } from "../../types";
-
 import { BATCH_SIZE, CONCURRENCY } from "../../constants";
+import { DroppedFile, SetUploadInfo } from "../../types";
 
 export const CREATE_MANY_IMAGES_MUTATION = gql`
   mutation CreateManyImagesInModalMutation(
@@ -58,19 +55,21 @@ const uploadBatchOfImages = async ({
   );
 };
 
+export type ImportImagesOptions = {
+  images: DroppedFile[];
+  workspaceId: string;
+  datasetId: string;
+  apolloClient: ApolloClient<object>;
+  setUploadInfo: SetUploadInfo;
+};
+
 export const importImages = async ({
   images,
   workspaceId,
   datasetId,
   apolloClient,
-  setFileUploadInfoRecord,
-}: {
-  images: DroppedFile[];
-  workspaceId: string;
-  datasetId: string;
-  apolloClient: ApolloClient<object>;
-  setFileUploadInfoRecord: SetUploadInfoRecord;
-}) => {
+  setUploadInfo,
+}: ImportImagesOptions) => {
   const firstUploadDate = new Date();
   const batches = chunk(BATCH_SIZE, images);
 
@@ -92,14 +91,14 @@ export const importImages = async ({
           variables: { images: imagesToCreate, datasetId },
         });
 
-        setFileUploadInfoRecord((oldInfo) => ({
+        setUploadInfo((oldInfo) => ({
           ...oldInfo,
           ...Object.fromEntries(
             imagesToCreate.map((image) => [image.name, { status: "uploaded" }])
           ),
         }));
       } catch (error) {
-        setFileUploadInfoRecord((oldInfo) => ({
+        setUploadInfo((oldInfo) => ({
           ...oldInfo,
           ...Object.fromEntries(
             batch.map(({ file }) => [

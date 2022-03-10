@@ -56,7 +56,7 @@ const importDataset = async (
   } catch (e) {
     return {
       error: `${e.message}\n${e.stack}`,
-      warnings: [],
+      warnings: undefined,
     };
   }
 };

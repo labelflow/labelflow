@@ -297,7 +297,5 @@ export const importCoco: ImportFunction = async (
     cocoCategoryIdToLabelFlowLabelClassId,
     { repository, req, user }
   );
-  return {
-    warnings: warning ? [warning] : [],
-  };
+  return { warnings: warning ? [warning] : undefined };
 };

@@ -2,7 +2,7 @@ import isEmpty from "lodash/fp/isEmpty";
 import chunk from "lodash/fp/chunk";
 import { ApolloClient, gql } from "@apollo/client";
 import Bluebird from "bluebird";
-import { DroppedUrl, SetUploadInfoRecord } from "../types";
+import { DroppedUrl, SetUploadInfo } from "../types";
 
 import { BATCH_SIZE, CONCURRENCY } from "../constants";
 
@@ -17,17 +17,19 @@ export const CREATE_MANY_IMAGES_MUTATION = gql`
   }
 `;
 
+export type ImportUrlsOptions = {
+  urls: DroppedUrl[];
+  apolloClient: ApolloClient<object>;
+  datasetId: any;
+  setUploadInfo: SetUploadInfo;
+};
+
 export const importUrls = async ({
   urls,
   apolloClient,
   datasetId,
-  setUploadStatuses,
-}: {
-  urls: DroppedUrl[];
-  apolloClient: ApolloClient<object>;
-  datasetId: any;
-  setUploadStatuses: SetUploadInfoRecord;
-}) => {
+  setUploadInfo,
+}: ImportUrlsOptions) => {
   const now = new Date();
 
   const validUrls = urls.filter((url) => isEmpty(url.errors));
@@ -53,7 +55,7 @@ export const importUrls = async ({
           variables: { images: imagesToCreate, datasetId },
         });
 
-        setUploadStatuses((oldStatuses) => ({
+        setUploadInfo((oldStatuses) => ({
           ...oldStatuses,
           ...Object.fromEntries(
             imagesToCreate.map(({ externalUrl }) => [
@@ -63,7 +65,7 @@ export const importUrls = async ({
           ),
         }));
       } catch (error) {
-        setUploadStatuses((oldStatuses) => ({
+        setUploadInfo((oldStatuses) => ({
           ...oldStatuses,
           ...Object.fromEntries(
             imagesToCreate.map(({ externalUrl }) => [
