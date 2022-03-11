@@ -63,6 +63,7 @@ const DeleteButton = () => {
       size="md"
       onClick={handleClick}
       variant="ghost"
+      h="208px"
     >
       <HiTrash />
     </IconButton>
@@ -82,7 +83,7 @@ const ImageContent = () => {
       borderRadius="md"
       alt={name}
       src={thumbnail ?? undefined}
-      loadingFallback={<Skeleton />}
+      loadingFallback={<Skeleton h="208px" />}
       errorFallback={<ImageErrorFallback />}
       objectFit="cover"
       h="208px"
