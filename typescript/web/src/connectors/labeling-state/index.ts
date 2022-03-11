@@ -63,6 +63,9 @@ export type LabelingState = {
   setSelectedLabelId: (labelId: string | null) => void;
   setSelectedLabelClassId: (selectedLabelClassId: string | null) => void;
   zoomByDelta: (ratio: number) => void;
+  showLabelsGeometry: boolean;
+  showLabelsName: boolean;
+  toggleViewMode: () => void;
 };
 
 export const useLabelingStore = create<LabelingState>(
@@ -145,6 +148,30 @@ export const useLabelingStore = create<LabelingState>(
       if (!view) return;
       /* eslint-disable-next-line consistent-return */
       return olZoomByDelta(view, ratio);
+    },
+    showLabelsGeometry: true,
+    showLabelsName: true,
+    toggleViewMode: () => {
+      // Change labels visibility (geometry and name).
+      // Cycles between three possible states:
+      //   1. geometry visible, name visible
+      //   2. geometry visible, name hidden
+      //   3. geometry and name hidden
+      const { showLabelsGeometry, showLabelsName } = get();
+      if (showLabelsGeometry && showLabelsName) {
+        // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+        set({ showLabelsName: false });
+      } else if (showLabelsGeometry && !showLabelsName) {
+        // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+        set({ showLabelsGeometry: false });
+      } else if (!showLabelsGeometry && !showLabelsName) {
+        // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
+        set({ showLabelsGeometry: true, showLabelsName: true });
+      } else {
+        // If you change the code above, take care to respect the cycle described
+        // in the previous comment block or this error will throw
+        throw new Error("toggleViewMode() should loop between the states");
+      }
     },
   }),
   {

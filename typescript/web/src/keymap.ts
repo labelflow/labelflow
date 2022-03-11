@@ -109,4 +109,9 @@ export const keymap: Keymap = {
     description: "Zoom out",
     category: "View",
   },
+  toggleViewMode: {
+    key: "x",
+    description: "Toggle view mode",
+    category: "View",
+  },
 };
