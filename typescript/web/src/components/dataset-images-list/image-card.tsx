@@ -1,5 +1,4 @@
 import {
-  chakra,
   Flex,
   HStack,
   IconButton,
@@ -70,6 +69,12 @@ const DeleteButton = () => {
   );
 };
 
+const ImageErrorFallback = () => (
+  <Flex align="center" justify="center">
+    <EmptyStateImageNotFound />
+  </Flex>
+);
+
 const ImageContent = () => {
   const { name, thumbnail } = useImageCard();
   return (
@@ -78,7 +83,7 @@ const ImageContent = () => {
       alt={name}
       src={thumbnail ?? undefined}
       loadingFallback={<Skeleton />}
-      errorFallback={<EmptyStateImageNotFound />}
+      errorFallback={<ImageErrorFallback />}
       objectFit="cover"
       h="208px"
     />
