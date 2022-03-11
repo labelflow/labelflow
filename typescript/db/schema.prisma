@@ -53,7 +53,7 @@ model Label {
   labelClassId   String?     @db.Uuid
   type           LabelType
   image          Image       @relation(fields: [imageId], references: [id], onDelete: Cascade)
-  labelClass     LabelClass? @relation(fields: [labelClassId], references: [id])
+  labelClass     LabelClass? @relation(fields: [labelClassId], references: [id], onDelete: Cascade)
   smartToolInput Json?
 
   @@index([labelClassId])

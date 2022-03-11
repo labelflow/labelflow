@@ -130,8 +130,8 @@ export const DeleteLabelClassModal = () => {
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            Are you sure? Labels linked to this class will be set to the class
-            None. This action can not be undone.
+            Are you sure? Labels linked to this class will be deleted. This
+            action cannot be undone.
           </AlertDialogBody>
 
           <AlertDialogFooter>
