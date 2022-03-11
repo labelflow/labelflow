@@ -1,6 +1,7 @@
 import {
   DatasetWhereUniqueInput,
   MutationCreateDatasetArgs,
+  MutationCreateTutorialDatasetArgs,
   MutationDeleteDatasetArgs,
   MutationUpdateDatasetArgs,
   QueryDatasetArgs,
@@ -10,7 +11,12 @@ import {
 import { trim } from "lodash/fp";
 import { v4 as uuidv4 } from "uuid";
 import { Context, DbDataset, Repository } from "./types";
-import { getSlug, addTypename, addTypenames } from "./utils";
+import {
+  getSlug,
+  addTypename,
+  addTypenames,
+  createTutorialDataset as createTutorialDatasetUtil,
+} from "./utils";
 
 const getLabelClassesByDatasetId = async (
   datasetId: string,
@@ -153,6 +159,34 @@ const createDataset = async (
   }
 };
 
+const createTutorialDataset = async (
+  _: any,
+  args: MutationCreateTutorialDatasetArgs,
+  { repository, user, req }: Context
+): Promise<DbDataset & { __typename: string }> => {
+  const existingWorkspace = await repository.workspace.get({
+    slug: args.data.workspaceSlug,
+  });
+  if (!existingWorkspace) {
+    throw new Error(
+      `Could not find or access workspace with slug ${args.data.workspaceSlug}`
+    );
+  }
+  try {
+    const datasetId = await createTutorialDatasetUtil(
+      existingWorkspace.id,
+      existingWorkspace.slug,
+      { repository, user, req }
+    );
+    return await getDataset({ id: datasetId }, repository, user);
+  } catch (e) {
+    console.error(e);
+    throw new Error(
+      `Could not create tutorial dataset due to error "${e?.message ?? e}"`
+    );
+  }
+};
+
 const updateDataset = async (
   _: any,
   args: MutationUpdateDatasetArgs,
@@ -210,6 +244,7 @@ export default {
 
   Mutation: {
     createDataset,
+    createTutorialDataset,
     updateDataset,
     deleteDataset,
   },

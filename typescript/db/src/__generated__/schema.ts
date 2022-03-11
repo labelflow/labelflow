@@ -41,6 +41,10 @@ export const typeDefs = [
     workspaceSlug: String!
   }
 
+  input DatasetCreateTutorialInput {
+    workspaceSlug: String!
+  }
+
   input DatasetImportInput {
     format: ExportFormat!
     options: ImportOptions
@@ -399,7 +403,8 @@ export const typeDefs = [
     createManyImages(data: ImageCreateManyInput!): [Image!]!
     createManyLabelClasses(data: LabelClassCreateManyInput!): [LabelClass!]!
     createMembership(data: MembershipCreateInput!): Membership
-    createWorkspace(data: WorkspaceCreateInput!, options: WorkspaceCreateOptions): Workspace
+    createTutorialDataset(data: DatasetCreateTutorialInput!): Dataset
+    createWorkspace(data: WorkspaceCreateInput!): Workspace
     declineInvitation(where: MembershipWhereUniqueInput!): Membership
     deleteDataset(where: DatasetWhereUniqueInput!): Dataset
     deleteImage(where: ImageWhereUniqueInput!): Image
@@ -526,10 +531,6 @@ export const typeDefs = [
     id: ID
     image: String
     name: String!
-  }
-
-  input WorkspaceCreateOptions {
-    createTutorial: Boolean
   }
 
   enum WorkspacePlan {

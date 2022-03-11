@@ -64,6 +64,10 @@ export type DatasetCreateInput = {
   workspaceSlug: Scalars['String'];
 };
 
+export type DatasetCreateTutorialInput = {
+  workspaceSlug: Scalars['String'];
+};
+
 export type DatasetImportInput = {
   format: ExportFormat;
   options?: InputMaybe<ImportOptions>;
@@ -429,6 +433,7 @@ export type Mutation = {
   createManyImages: Array<Image>;
   createManyLabelClasses: Array<LabelClass>;
   createMembership?: Maybe<Membership>;
+  createTutorialDataset?: Maybe<Dataset>;
   createWorkspace?: Maybe<Workspace>;
   declineInvitation?: Maybe<Membership>;
   deleteDataset?: Maybe<Dataset>;
@@ -502,9 +507,13 @@ export type MutationCreateMembershipArgs = {
 };
 
 
+export type MutationCreateTutorialDatasetArgs = {
+  data: DatasetCreateTutorialInput;
+};
+
+
 export type MutationCreateWorkspaceArgs = {
   data: WorkspaceCreateInput;
-  options?: InputMaybe<WorkspaceCreateOptions>;
 };
 
 
@@ -839,10 +848,6 @@ export type WorkspaceCreateInput = {
   name: Scalars['String'];
 };
 
-export type WorkspaceCreateOptions = {
-  createTutorial?: InputMaybe<Scalars['Boolean']>;
-};
-
 export enum WorkspacePlan {
   Community = 'Community',
   Enterprise = 'Enterprise',
@@ -949,6 +954,7 @@ export type ResolversTypes = {
   CurrentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation;
   Dataset: ResolverTypeWrapper<Dataset>;
   DatasetCreateInput: DatasetCreateInput;
+  DatasetCreateTutorialInput: DatasetCreateTutorialInput;
   DatasetImportInput: DatasetImportInput;
   DatasetUpdateInput: DatasetUpdateInput;
   DatasetWhereInput: DatasetWhereInput;
@@ -1022,7 +1028,6 @@ export type ResolversTypes = {
   UserWhereUniqueInput: UserWhereUniqueInput;
   Workspace: ResolverTypeWrapper<Workspace>;
   WorkspaceCreateInput: WorkspaceCreateInput;
-  WorkspaceCreateOptions: WorkspaceCreateOptions;
   WorkspacePlan: WorkspacePlan;
   WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
   WorkspaceType: WorkspaceType;
@@ -1038,6 +1043,7 @@ export type ResolversParentTypes = {
   CreateIogLabelInput: CreateIogLabelInput;
   Dataset: Dataset;
   DatasetCreateInput: DatasetCreateInput;
+  DatasetCreateTutorialInput: DatasetCreateTutorialInput;
   DatasetImportInput: DatasetImportInput;
   DatasetUpdateInput: DatasetUpdateInput;
   DatasetWhereInput: DatasetWhereInput;
@@ -1105,7 +1111,6 @@ export type ResolversParentTypes = {
   UserWhereUniqueInput: UserWhereUniqueInput;
   Workspace: Workspace;
   WorkspaceCreateInput: WorkspaceCreateInput;
-  WorkspaceCreateOptions: WorkspaceCreateOptions;
   WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
   WorkspaceWhereInput: WorkspaceWhereInput;
@@ -1250,6 +1255,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createManyImages?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateManyImagesArgs, 'data'>>;
   createManyLabelClasses?: Resolver<Array<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationCreateManyLabelClassesArgs, 'data'>>;
   createMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationCreateMembershipArgs, 'data'>>;
+  createTutorialDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationCreateTutorialDatasetArgs, 'data'>>;
   createWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationCreateWorkspaceArgs, 'data'>>;
   declineInvitation?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeclineInvitationArgs, 'where'>>;
   deleteDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationDeleteDatasetArgs, 'where'>>;

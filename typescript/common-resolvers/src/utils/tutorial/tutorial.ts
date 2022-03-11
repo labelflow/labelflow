@@ -1,10 +1,7 @@
-import { importAndProcessImage } from "@labelflow/common-resolvers/src/image/import-and-process-image";
-import {
-  Context,
-  DbImageCreateInput,
-} from "@labelflow/common-resolvers/src/types";
-import { getOrigin } from "@labelflow/common-resolvers/src/utils/get-origin";
 import { v4 as uuidv4 } from "uuid";
+import { importAndProcessImage } from "../../image/import-and-process-image";
+import { Context, DbImageCreateInput } from "../../types";
+import { getOrigin } from "../get-origin";
 import {
   getTutorialImages,
   getTutorialLabels,
@@ -80,11 +77,12 @@ export const createTutorialDataset = async (
   workspaceId: string,
   workspaceSlug: string,
   ctx: Context
-): Promise<void> => {
+): Promise<string> => {
   const datasetId = await createDataset(workspaceSlug, ctx);
   const images = await createImages(workspaceId, datasetId, ctx);
   const labelClassId = await createLabelClass(datasetId, ctx);
   // TODO Extract this logic from the generic tutorial creation function
   const image4Id = images.find((image) => image.name === "Image 4")?.id ?? "";
   await createLabels(labelClassId, image4Id, ctx);
+  return datasetId;
 };

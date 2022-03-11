@@ -4,6 +4,10 @@ input DatasetCreateInput {
   workspaceSlug: String!
 }
 
+input DatasetCreateTutorialInput {
+  workspaceSlug: String!
+}
+
 input WorkspaceSlugAndDatasetSlug {
   slug: String!
   workspaceSlug: String!
