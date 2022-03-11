@@ -37,7 +37,7 @@ const useToggleViewMode = () => {
   return handleToggleViewMode;
 };
 
-export const ViewModeButton = () => (
+export const ViewModeTool = () => (
   <Tooltip
     label={`${keymap.toggleViewMode.description} [${keymap.toggleViewMode.key}]`}
     placement="left"

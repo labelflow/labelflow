@@ -1,7 +1,7 @@
 import React, { RefObject } from "react";
 
 import { FullScreenTool } from "./full-screen-tool";
-import { ViewModeButton } from "./view-mode-button";
+import { ViewModeTool } from "./view-mode-tool";
 import { ZoomTool } from "./zoom-tool";
 
 export const ViewToolbar = ({
@@ -11,7 +11,7 @@ export const ViewToolbar = ({
 }) => {
   return (
     <>
-      <ViewModeButton />
+      <ViewModeTool />
       <FullScreenTool containerRef={containerRef} />
       <ZoomTool />
     </>
