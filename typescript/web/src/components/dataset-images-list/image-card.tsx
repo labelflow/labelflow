@@ -133,7 +133,14 @@ const ClickableOverlay = () => {
 };
 
 const ImageCardContent = () => (
-  <Box className="imageCard" position="relative" cursor="pointer" role="group">
+  <Box
+    className="imageCard"
+    position="relative"
+    cursor="pointer"
+    role="group"
+    maxW="350px"
+    height="208px"
+  >
     <ClickableOverlay />
     <ImageContent />
   </Box>
