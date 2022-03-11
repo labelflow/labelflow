@@ -56,3 +56,13 @@ Loading.args = {
   href: "",
   name: "Image with a very long name to test the ellipsis",
 };
+
+export const Error = Template.bind({});
+Error.args = {
+  ...(() => {
+    const { thumbnail, ...props } = COMMON_PROPS;
+    return props;
+  })(),
+  href: "unsupported://url" as unknown as string,
+  name: "Image with a very long name to test the ellipsis",
+};
