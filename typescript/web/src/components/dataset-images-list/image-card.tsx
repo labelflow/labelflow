@@ -55,6 +55,7 @@ const DeleteButton = () => {
   );
   return (
     <IconButton
+      data-testid="delete-image-button"
       _hover={{ bgColor: "rgba(0, 0, 0, .2)" }}
       _active={{ bgColor: "gray.600" }}
       color="white"
@@ -151,6 +152,7 @@ const ImageCardContent = () => (
   <Flex
     direction="column"
     align="stretch"
+    data-testid="image-card"
     position="relative"
     role="group"
     borderRadius="md"
