@@ -90,6 +90,7 @@ const OverlayTopRow = () => (
     justify="flex-end"
     visibility="hidden"
     _groupHover={{ visibility: "visible" }}
+    p={1}
   >
     <DeleteButton />
   </HStack>
@@ -98,7 +99,7 @@ const OverlayTopRow = () => (
 const OverlayBottomRow = () => {
   const { name } = useImageCard();
   return (
-    <HStack justify="flex-start">
+    <HStack justify="flex-start" p={3}>
       <Tooltip label={name} openDelay={500}>
         <Text isTruncated fontWeight="semibold">
           {name}
@@ -116,7 +117,6 @@ const ImageOverlay = () => (
     bottom={0}
     left={0}
     right={0}
-    p={3}
     background="linear-gradient(to top, rgba(0, 0, 0, .65), rgba(26, 32, 44, 0) 33%);"
     _groupHover={{
       backgroundColor: "rgba(0, 0, 0, 0.65)",
