@@ -1,5 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { ClientProxy } from "@nestjs/microservices";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getSlug } from "labelflow-utils";
 import { isEmpty, isNil } from "lodash/fp";
@@ -7,6 +8,7 @@ import { Repository } from "typeorm";
 import { MembershipRole, Workspace, WorkspacePlan } from "../../model";
 import { StripeService } from "../../stripe";
 import { EntityService } from "../common";
+import { DB_EVENTS_CHANNEL_KEY } from "../constants";
 import { WorkspaceCreateInput, WorkspaceCreateOptions } from "../input";
 import { MembershipService } from "./membership.service";
 
@@ -16,9 +18,10 @@ export class WorkspaceService extends EntityService<Workspace> {
     @InjectRepository(Workspace) repository: Repository<Workspace>,
     private readonly stripe: StripeService,
     private readonly memberships: MembershipService,
-    private readonly config: ConfigService
+    private readonly config: ConfigService,
+    @Inject(DB_EVENTS_CHANNEL_KEY) events: ClientProxy
   ) {
-    super(Workspace, repository);
+    super(Workspace, repository, events);
   }
 
   async create(

@@ -1,4 +1,5 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { ClientProxy } from "@nestjs/microservices";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getNextClassColor } from "labelflow-utils";
 import { isNil } from "lodash/fp";
@@ -6,6 +7,7 @@ import { Repository } from "typeorm";
 import { v4 as uuid } from "uuid";
 import { LabelClass } from "../../model";
 import { EntityService } from "../common";
+import { DB_EVENTS_CHANNEL_KEY } from "../constants";
 import { LabelClassCreateInput, LabelClassUpdateInput } from "../input";
 
 const getReorderedIndex = (
@@ -29,9 +31,10 @@ export class LabelClassService extends EntityService<
 > {
   constructor(
     @InjectRepository(LabelClass)
-    readonly repository: Repository<LabelClass>
+    readonly repository: Repository<LabelClass>,
+    @Inject(DB_EVENTS_CHANNEL_KEY) events: ClientProxy
   ) {
-    super(LabelClass, repository);
+    super(LabelClass, repository, events);
   }
 
   async create({

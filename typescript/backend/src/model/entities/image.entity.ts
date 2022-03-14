@@ -27,63 +27,63 @@ export class Image {
   id!: string;
 
   @Field()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp without time zone" })
   createdAt!: Date;
 
   @Field()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: "timestamp without time zone" })
   updatedAt?: Date;
 
   // @DeleteDateColumn()
   // deletedAt?: Date;
 
   @Field()
-  @Column()
+  @Column({ type: "text" })
   url!: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   externalUrl?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   thumbnail20Url?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   thumbnail50Url?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   thumbnail100Url?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   thumbnail200Url?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   thumbnail500Url?: string;
 
   @Field()
-  @Column()
+  @Column({ type: "text" })
   name!: string;
 
   @Field()
-  @Column()
+  @Column({ type: "text" })
   path!: string;
 
   @Field()
-  @Column()
+  @Column({ type: "text" })
   mimetype!: string;
 
   @Field(() => Int)
-  @Column("int")
+  @Column("float")
   @IsPositive()
   width!: number;
 
   @Field(() => Int)
-  @Column("int")
+  @Column("float")
   @IsPositive()
   height!: number;
 
@@ -100,6 +100,6 @@ export class Image {
   datasetId!: string;
 
   @Field(() => GqlJSON, { nullable: true })
-  @Column("json", { nullable: true })
+  @Column("jsonb", { nullable: true })
   metadata?: unknown;
 }

@@ -32,18 +32,18 @@ export class Membership {
   id!: string;
 
   @Field()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp without time zone" })
   createdAt!: Date;
 
   @Field()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: "timestamp without time zone" })
   updatedAt!: Date;
 
   // @DeleteDateColumn()
   // deletedAt?: Date;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: "timestamp without time zone", nullable: true })
   declinedAt?: Date;
 
   @Field(() => MembershipRole)
@@ -55,7 +55,7 @@ export class Membership {
   @JoinColumn({ name: "workspaceSlug", referencedColumnName: "slug" })
   workspace!: Workspace;
 
-  @Column()
+  @Column({ type: "text" })
   // @RelationId((data: Membership) => data.workspace)
   workspaceSlug!: string;
 
@@ -73,7 +73,7 @@ export class Membership {
   userId?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   invitationEmailSentTo?: string;
 
   @Field(() => MembershipStatus, { nullable: true })

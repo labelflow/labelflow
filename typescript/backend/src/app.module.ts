@@ -46,7 +46,7 @@ const TYPEORM_MODULE = TypeOrmModule.forRootAsync({
         ? config.get("POSTGRES_DB_TEST")
         : config.get("POSTGRES_DB"),
     entities: [],
-    // synchronize: !PRODUCTION,
+    synchronize: !PRODUCTION,
     autoLoadEntities: true,
     logging: !PRODUCTION,
   }),

@@ -1,11 +1,12 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { ClientProxy } from "@nestjs/microservices";
 import { InjectRepository } from "@nestjs/typeorm";
 import { isEmpty, isNil } from "lodash/fp";
 import { DeepPartial, Repository } from "typeorm";
 import { CurrentUserCanAcceptInvitation, Membership } from "../../model";
 import { EntityService } from "../common";
+import { DB_EVENTS_CHANNEL_KEY } from "../constants";
 import { MembershipCreateInput } from "../input";
-import { UserService } from "./user.service";
 
 @Injectable()
 export class MembershipService extends EntityService<
@@ -15,9 +16,9 @@ export class MembershipService extends EntityService<
 > {
   constructor(
     @InjectRepository(Membership) repository: Repository<Membership>,
-    private readonly users: UserService
+    @Inject(DB_EVENTS_CHANNEL_KEY) events: ClientProxy
   ) {
-    super(Membership, repository);
+    super(Membership, repository, events);
   }
 
   async isMember(userId: string, workspaceSlug: string): Promise<boolean> {

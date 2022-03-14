@@ -29,23 +29,24 @@ export class LabelClass {
   id!: string;
 
   @Field()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp without time zone" })
   createdAt!: Date;
 
   @Field()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: "timestamp without time zone" })
   updatedAt!: Date;
 
   // @DeleteDateColumn()
   // deletedAt?: Date;
 
   @Field()
-  @Column()
+  @Column({ type: "text" })
   name!: string;
 
   @Field(() => ColorHex, { nullable: true })
   @Column()
   @IsHexColor()
+  @Column({ type: "text" })
   color!: string;
 
   @Field(() => Int)

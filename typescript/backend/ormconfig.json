@@ -1,0 +1,16 @@
+[
+  {
+    "name": "local-development",
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5433,
+    "username": "admin",
+    "password": "admin",
+    "database": "labelflow",
+    "entities": ["dist/**/*.entity.{js,ts}"],
+    "synchronize": false,
+    "migrations": ["dist/backend/src/migrations/*.{js,ts}"],
+    "migrationsTableName": "migrations_typeorm",
+    "migrationsRun": true
+  }
+]

@@ -24,31 +24,31 @@ export class User {
   id!: string;
 
   @Field()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp without time zone" })
   createdAt!: Date;
 
   @Field()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: "timestamp without time zone" })
   updatedAt!: Date;
 
   // @DeleteDateColumn()
   // deletedAt?: Date;
 
   @Field({ nullable: true })
-  @Column()
+  @Column({ type: "text", nullable: true })
   name!: string;
 
   @Field({ nullable: true })
-  @Column()
+  @Column({ type: "text", nullable: true })
   @IsEmail()
   @IsOptional()
   email!: string;
 
-  @Column()
+  @Column({ nullable: true })
   emailVerified!: Date;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   image?: string;
 
   @Field(() => [Membership])

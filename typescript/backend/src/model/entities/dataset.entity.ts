@@ -32,22 +32,22 @@ export class Dataset {
   id!: string;
 
   @Field()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp without time zone" })
   createdAt!: Date;
 
   @Field()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: "timestamp without time zone" })
   updatedAt!: Date;
 
   // @DeleteDateColumn()
   // deletedAt?: Date;
 
   @Field()
-  @Column()
+  @Column({ type: "text" })
   name!: string;
 
   @Field()
-  @Column()
+  @Column({ type: "text" })
   slug!: string;
 
   @Field(() => Workspace)
@@ -55,7 +55,7 @@ export class Dataset {
   @JoinColumn({ name: "workspaceSlug", referencedColumnName: "slug" })
   workspace!: Workspace;
 
-  @Column()
+  @Column({ type: "text" })
   @RelationId((data: Dataset) => data.workspace)
   workspaceSlug!: string;
 

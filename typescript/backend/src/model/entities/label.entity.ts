@@ -19,7 +19,7 @@ import { LabelClass } from "./label-class.entity";
 @ObjectType()
 @Entity("Label")
 @Index(["labelClassId"])
-@Index(["imageId", "createdAt"], { unique: true })
+@Index(["imageId", "createdAt"])
 export class Label {
   @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
@@ -32,11 +32,11 @@ export class Label {
   type!: LabelType;
 
   @Field()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp without time zone" })
   createdAt!: Date;
 
   @Field({ nullable: true })
-  @UpdateDateColumn({ nullable: true })
+  @UpdateDateColumn({ type: "timestamp without time zone", nullable: true })
   updatedAt?: Date;
 
   // @DeleteDateColumn()
@@ -85,10 +85,10 @@ export class Label {
   height?: number;
 
   @Field(() => Geometry, { nullable: true })
-  @Column("json")
+  @Column("jsonb")
   geometry?: Geometry;
 
   @Field(() => GqlJSON, { nullable: true })
-  @Column("json", { nullable: true })
+  @Column("jsonb", { nullable: true })
   smartToolInput?: unknown;
 }

@@ -1,4 +1,5 @@
-import { Logger } from "@nestjs/common";
+import { Inject, Logger } from "@nestjs/common";
+import { ClientProxy } from "@nestjs/microservices";
 import { Class } from "type-fest";
 import {
   DeepPartial,
@@ -9,6 +10,7 @@ import {
   UpdateResult,
 } from "typeorm";
 import { v4 as uuid } from "uuid";
+import { DB_EVENTS_CHANNEL_KEY } from "../constants";
 
 export type FindByIdOptions<TEntity> = Pick<
   RepoFindOneOptions<TEntity>,
@@ -34,7 +36,8 @@ export class EntityService<
 
   constructor(
     private readonly entityType: Class<TEntity>,
-    private readonly entityRepository: Repository<TEntity>
+    private readonly entityRepository: Repository<TEntity>,
+    @Inject(DB_EVENTS_CHANNEL_KEY) protected readonly events: ClientProxy
   ) {
     this.logger = new Logger(entityType.name);
   }
@@ -50,11 +53,15 @@ export class EntityService<
     };
     const inserted = await this.entityRepository.insert(withId as any);
     const [{ id }] = inserted.identifiers;
-    const entities = await this.findAll();
     const output = await this.findById(id);
+    this.events.emit(DB_EVENTS_CHANNEL_KEY, {
+      type: this.entityType.name,
+      id,
+      data: output,
+    });
     this.logger.verbose(
       `Created new entity of type ${this.entityType.name} with ID ${id}`,
-      { input, output, entities }
+      { input, output }
     );
     return output;
   }

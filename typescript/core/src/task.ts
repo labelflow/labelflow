@@ -3,24 +3,24 @@ import { Logger } from "./logger";
 export type DefinitionDocumentation = {
   name: string;
   summary?: string;
-  remarks?: string | string[];
+  description?: string;
 };
 
 export type TypeDefinitionType =
-  | "unknown"
   | "string"
   | "number"
   | "integer"
   | "boolean"
   | "enum"
   | "array"
-  | "object"
   | "tuple"
   | "set"
-  | "record"
+  | "anyOf"
+  | "oneOf"
+  | "object"
   | "promise"
   | "task"
-  | "oneOf";
+  | "unknown";
 
 export type BaseTypeDefinition<TType extends TypeDefinitionType> =
   DefinitionDocumentation & {
@@ -40,8 +40,6 @@ export type NumberTypeDefinition<
 export type IntegerTypeDefinition = NumberTypeDefinition<"integer">;
 
 export type BooleanTypeDefinition = BaseTypeDefinition<"boolean">;
-
-export type UnknownTypeDefinition = BaseTypeDefinition<"unknown">;
 
 export type EnumTypeDefinition = BaseTypeDefinition<"enum"> & {
   enum: string[];
@@ -63,16 +61,19 @@ export type OneOfTypeDefinition = BaseTypeDefinition<"oneOf"> & {
   of: TypeDefinition[];
 };
 
-export type ObjectTypeDefinition = BaseTypeDefinition<"record"> & {
-  of: [
-    EnumTypeDefinition | StringTypeDefinition | NumberTypeDefinition,
-    TypeDefinition
-  ];
+export type AnyOfTypeDefinition = BaseTypeDefinition<"anyOf"> & {
+  of: TypeDefinition[];
+};
+
+export type ObjectTypeDefinition = BaseTypeDefinition<"object"> & {
+  of: TypeDefinition[];
 };
 
 export type PromiseTypeDefinition = BaseTypeDefinition<"promise"> & {
   of: TypeDefinition;
 };
+
+export type UnknownTypeDefinition = BaseTypeDefinition<"unknown">;
 
 export interface TaskTypeDefinition
   extends BaseTypeDefinition<"task">,
@@ -88,8 +89,9 @@ export type TypeDefinition =
   | ArrayTypeDefinition
   | TupleTypeDefinition
   | SetTypeDefinition
-  | ObjectTypeDefinition
+  | AnyOfTypeDefinition
   | OneOfTypeDefinition
+  | ObjectTypeDefinition
   | PromiseTypeDefinition
   | TaskTypeDefinition;
 

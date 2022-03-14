@@ -11,6 +11,7 @@ export * from "./label.create.input";
 export * from "./label.update.input";
 export * from "./membership.create.input";
 export * from "./membership.update.input";
+export * from "./task.create.input";
 export * from "./user.update.input";
 export * from "./workspace.create.input";
 export * from "./workspace.update.input";

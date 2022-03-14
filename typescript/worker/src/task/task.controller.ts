@@ -11,7 +11,7 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @EventPattern({ cmd: RedisEvent.ExecuteTask })
-  async executeTask(@Payload() task: Task) {
+  async executeTask(@Payload() task: Task): Promise<void> {
     const { id, name } = task;
     const nameText = isEmpty(name) ? "" : ` (${name})`;
     this.logger.log(`Executing task ${id}${nameText}...`);

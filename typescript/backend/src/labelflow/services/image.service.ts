@@ -1,8 +1,10 @@
-import { Injectable, NotImplementedException } from "@nestjs/common";
+import { Inject, Injectable, NotImplementedException } from "@nestjs/common";
+import { ClientProxy } from "@nestjs/microservices";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DeepPartial, Repository } from "typeorm";
 import { Image } from "../../model";
 import { EntityService } from "../common";
+import { DB_EVENTS_CHANNEL_KEY } from "../constants";
 import { ImageCreateInput, ImageCreateManyInput } from "../input";
 import { ImageProcessingService } from "./image-processing.service";
 
@@ -10,9 +12,10 @@ import { ImageProcessingService } from "./image-processing.service";
 export class ImageService extends EntityService<Image> {
   constructor(
     @InjectRepository(Image) repository: Repository<Image>,
-    private readonly imageProcessing: ImageProcessingService
+    private readonly imageProcessing: ImageProcessingService,
+    @Inject(DB_EVENTS_CHANNEL_KEY) events: ClientProxy
   ) {
-    super(Image, repository);
+    super(Image, repository, events);
   }
 
   async importAndCreate(

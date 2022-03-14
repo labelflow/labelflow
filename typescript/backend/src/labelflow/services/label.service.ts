@@ -1,4 +1,5 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
+import { ClientProxy } from "@nestjs/microservices";
 import { InjectRepository } from "@nestjs/typeorm";
 import { isEmpty, isNil } from "lodash/fp";
 import { Repository } from "typeorm";
@@ -6,6 +7,7 @@ import { v4 as uuid } from "uuid";
 import { Geometry, Label, LabelType } from "../../model";
 import { computeLabelBounds, LabelBounds } from "../../utils";
 import { EntityService } from "../common";
+import { DB_EVENTS_CHANNEL_KEY } from "../constants";
 import { LabelCreateInput, LabelUpdateInput } from "../input";
 import { ImageService } from "./image.service";
 
@@ -17,9 +19,10 @@ export class LabelService extends EntityService<
 > {
   constructor(
     @InjectRepository(Label) repository: Repository<Label>,
-    private readonly images: ImageService
+    private readonly images: ImageService,
+    @Inject(DB_EVENTS_CHANNEL_KEY) events: ClientProxy
   ) {
-    super(Label, repository);
+    super(Label, repository, events);
   }
 
   async create(input: LabelCreateInput): Promise<Label> {

@@ -29,26 +29,26 @@ export class Workspace {
   id!: string;
 
   @Field()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp without time zone" })
   createdAt!: Date;
 
   @Field()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: "timestamp without time zone" })
   updatedAt!: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: "timestamp without time zone" })
   deletedAt?: Date;
 
   @Field()
-  @Column()
+  @Column({ type: "text" })
   name!: string;
 
   @Field()
-  @Column()
+  @Column({ type: "text" })
   slug!: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   image?: string;
 
   @Field(() => WorkspacePlan)
@@ -63,7 +63,7 @@ export class Workspace {
   @OneToMany(() => Membership, (data) => data.workspace, { lazy: true })
   memberships!: Promisable<Membership[]>;
 
-  @Column({ nullable: true })
+  @Column({ type: "text", nullable: true })
   stripeCustomerId?: string;
 
   @Field({ nullable: true })
