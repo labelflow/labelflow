@@ -13,8 +13,8 @@ export default {
 
 const Template: ComponentStory<typeof Tooltip> = (args) => (
   <HStack align="flex-start">
-    <Tooltip data-testid="tooltip" shouldWrapChildren {...args}>
-      <Text>Hover me</Text>
+    <Tooltip shouldWrapChildren {...args}>
+      <Text data-testid="tooltip-child">Hover me</Text>
     </Tooltip>
   </HStack>
 );
@@ -26,8 +26,8 @@ export const Hovered = Template.bind({});
 Hovered.args = { label: "Hovered" };
 Hovered.play = async ({ canvasElement }) => {
   const { getByTestId } = within(canvasElement);
-  const card = getByTestId("tooltip");
-  userEvent.hover(card);
+  const child = getByTestId("tooltip-child");
+  userEvent.hover(child);
   // Wait for the tooltip to show before taking a snapshot
   await sleep(500);
 };
