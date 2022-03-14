@@ -1,10 +1,10 @@
 import {
+  Box,
   Flex,
   HStack,
   IconButton,
   Skeleton,
   Text,
-  Tooltip,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
@@ -19,6 +19,7 @@ import {
 import { HiTrash } from "react-icons/hi";
 import { EmptyStateImageNotFound } from "../empty-state";
 import { ImageWithFallback } from "../image";
+import { Tooltip } from "../tooltip";
 
 export type ImageCardProps = {
   id: string;
@@ -53,19 +54,21 @@ const DeleteButton = () => {
     [onAskImageDelete, id]
   );
   return (
-    <IconButton
-      data-testid="delete-image-button"
-      _hover={{ bgColor: "rgba(0, 0, 0, .2)" }}
-      _active={{ bgColor: "gray.600" }}
-      color="white"
-      aria-label="delete image"
-      isRound
-      size="md"
-      onClick={handleClick}
-      variant="ghost"
-    >
-      <HiTrash />
-    </IconButton>
+    <Tooltip label="Delete image">
+      <IconButton
+        data-testid="delete-image-button"
+        _hover={{ bgColor: "rgba(0, 0, 0, .2)" }}
+        _active={{ bgColor: "gray.600" }}
+        color="white"
+        aria-label="delete image"
+        isRound
+        size="md"
+        onClick={handleClick}
+        variant="ghost"
+      >
+        <HiTrash />
+      </IconButton>
+    </Tooltip>
   );
 };
 
@@ -112,7 +115,7 @@ const OverlayBottomRow = () => {
   const { name } = useImageCard();
   return (
     <HStack justify="flex-start" p={2}>
-      <Tooltip label={name} openDelay={500}>
+      <Tooltip label={name}>
         <Text isTruncated fontWeight="semibold">
           {name}
         </Text>
@@ -134,13 +137,14 @@ const ImageOverlay = () => (
       backgroundColor: "rgba(0, 0, 0, 0.65)",
       transition: "background-color .125s",
     }}
+    minW={0}
   >
     <VStack
-      minW={0}
-      color="white"
       flexGrow={1}
+      minW={0}
       justify="space-between"
       align="stretch"
+      color="white"
     >
       <OverlayTopRow />
       <OverlayBottomRow />
