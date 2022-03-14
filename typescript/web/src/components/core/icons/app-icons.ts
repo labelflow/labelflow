@@ -53,6 +53,19 @@ export const TOOLS_ICONS: Record<ToolIconName, IconType> = {
   aiAssistantTool: BsLightningFill,
 };
 
+export type IogIconName = `iog${PascalCase<
+  "add" | "delete" | "inside" | "outside" | "remove" | "target"
+>}`;
+
+const IOG_ICONS: Record<IogIconName, IconType> = {
+  iogAdd: IogAddSvg,
+  iogDelete: IogDeleteSvg,
+  iogInside: IogInsideSvg,
+  iogOutside: IogOutsideSvg,
+  iogRemove: IogRemoveSvg,
+  iogTarget: IogTargetSvg,
+};
+
 export type AppIcon =
   | "announcements"
   | "close"
@@ -64,6 +77,7 @@ export type AppIcon =
 export const APP_ICONS: Record<AppIcon, IconType> = {
   ...TOOLS_ICONS,
   ...LABELS_ICONS,
+  ...IOG_ICONS,
   announcements: BsMegaphone,
   close: RiCloseFill,
   search: IoSearch,

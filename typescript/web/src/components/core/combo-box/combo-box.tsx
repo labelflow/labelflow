@@ -1,6 +1,4 @@
 import {
-  Button,
-  ButtonProps,
   Flex,
   forwardRef,
   Popover,
@@ -14,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { isNil } from "lodash/fp";
 import { ForwardedRef, ReactNode } from "react";
+import { Button, ButtonProps } from "../button";
 import { Icon } from "../icons";
 import { SearchInput } from "../search-input";
 import {

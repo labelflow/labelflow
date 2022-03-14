@@ -5,7 +5,6 @@ import {
   PropsOf,
 } from "@chakra-ui/react";
 import { isEmpty } from "@labelflow/utils";
-import { isNil } from "lodash/fp";
 import NextLink from "next/link";
 import { OptionalParent } from "../../../utils";
 import { AppIcon, Icon, IconProps } from "../icons";
@@ -17,19 +16,12 @@ export type ButtonProps = Omit<LinkButtonProps, "leftIcon" | "rightIcon"> & {
   rightIcon?: AppIcon | IconProps;
 };
 
-const getIconProps = (
-  icon: AppIcon | IconProps | undefined
-): IconProps | undefined => {
-  if (isEmpty(icon)) return undefined;
-  return typeof icon === "string" ? { name: icon } : icon;
-};
-
 const getButtonIconProps = <TKey extends "leftIcon" | "rightIcon">(
   propKey: TKey,
   icon: AppIcon | IconProps | undefined
 ): LinkButtonProps[TKey] => {
-  const iconProps = getIconProps(icon);
-  if (isNil(iconProps)) return undefined;
+  if (isEmpty(icon)) return undefined;
+  const iconProps = typeof icon === "string" ? { name: icon } : icon;
   const iconComponent = <Icon {...iconProps} />;
   return { [propKey]: iconComponent };
 };
