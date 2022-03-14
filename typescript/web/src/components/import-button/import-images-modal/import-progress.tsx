@@ -39,7 +39,7 @@ const getTooltipProps = ({
   status,
   error,
 }: ImportProgressProps): ImportProgressTooltipProps => {
-  if (status === "error") getErrorProps(error);
+  if (status === "error") return getErrorProps(error);
   return status === "uploaded" ? UPLOADED_PROPS : UPLOADING_PROPS;
 };
 
@@ -58,6 +58,7 @@ export const ImportProgressTooltip = ({
           fontSize="xl"
           color={color}
           aria-label={ariaLabel}
+          data-testid="import-progress-tooltip-icon"
         />
       </span>
     </Tooltip>
