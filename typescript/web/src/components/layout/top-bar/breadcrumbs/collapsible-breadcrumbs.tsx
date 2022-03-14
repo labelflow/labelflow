@@ -7,14 +7,11 @@ import {
   ChakraProps,
   useColorModeValue,
 } from "@chakra-ui/react";
-// import { RiArrowRightSLine } from "react-icons/ri";
 
 import {
   CollapsedBreadcrumbs,
   CollapsedBreadcrumbsProps,
 } from "./collapsed-breadcrumbs";
-
-// const ArrowRightIcon = chakra(RiArrowRightSLine);
 
 const breadcrumbItemSx: ChakraProps["sx"] = {
   height: "10",
@@ -27,7 +24,7 @@ const breadcrumbItemSx: ChakraProps["sx"] = {
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
   maxWidth: "90em",
-  minWidth: "3em",
+  minWidth: "5em",
   "& p, a, span": {
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -53,7 +50,11 @@ export const CollapsibleBreadcrumbs = ({
 }: CollapsibleBreadcrumbsProps) => {
   const childrenCount = React.Children.count(children);
   const childrenArray = React.Children.toArray(children);
-
+  const firstBreadcrumb = () => (
+    <BreadcrumbItem key="firstBreadcrumb" minW="3em" mr="2">
+      {childrenArray[0]}
+    </BreadcrumbItem>
+  );
   const separatorColor = useColorModeValue("gray.300", "gray.600");
   return (
     <Breadcrumb
@@ -105,7 +106,8 @@ export const CollapsibleBreadcrumbs = ({
         }
         if (childrenCount <= maxNumberOfBreadcrumbsBeforeSplit) {
           return [
-            ...childrenArray.slice(0, childrenCount - 1).map((child, index) => (
+            firstBreadcrumb(),
+            ...childrenArray.slice(1, childrenCount - 1).map((child, index) => (
               // eslint-disable-next-line react/no-array-index-key
               <BreadcrumbItem key={index} sx={breadcrumbItemSx}>
                 {child}
@@ -117,8 +119,9 @@ export const CollapsibleBreadcrumbs = ({
           ];
         }
         return [
+          firstBreadcrumb(),
           ...childrenArray
-            .slice(0, numberOfFirstBreadcrumbsDisplayedWhenSplit)
+            .slice(1, numberOfFirstBreadcrumbsDisplayedWhenSplit)
             .map((child, index) => (
               // eslint-disable-next-line react/no-array-index-key
               <BreadcrumbItem key={`first${index}`} sx={breadcrumbItemSx}>
