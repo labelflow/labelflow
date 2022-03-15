@@ -1,6 +1,13 @@
 import { useQuery } from "@apollo/client";
 import { isEmpty } from "lodash/fp";
-import { createContext, PropsWithChildren, useContext, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 import {
   PaginatedImagesQuery,
   PaginatedImagesQueryVariables,
@@ -22,8 +29,8 @@ export type ImagesListState = Pick<
 > & {
   loading: boolean;
   images: PaginatedImagesQuery_images[];
-  toDelete?: string;
-  setToDelete: (value: string | undefined) => void;
+  imagesSelected: string[];
+  setImagesSelected: Dispatch<SetStateAction<string[]>>;
 };
 
 export const ImagesListContext = createContext({} as ImagesListState);
@@ -37,7 +44,7 @@ export const ImagesListProvider = ({
   children,
 }: ImagesListProviderProps) => {
   const { page, perPage, itemCount } = usePagination();
-  const [toDelete, setToDelete] = useState<string | undefined>(undefined);
+  const [imagesSelected, setImagesSelected] = useState<string[]>([]);
   const { data: imagesResult, loading: imagesQueryLoading } = useQuery<
     PaginatedImagesQuery,
     PaginatedImagesQueryVariables
@@ -55,8 +62,8 @@ export const ImagesListProvider = ({
     datasetId,
     loading: isEmpty(datasetId) || imagesQueryLoading,
     images: imagesResult?.images ?? [],
-    toDelete,
-    setToDelete,
+    imagesSelected,
+    setImagesSelected,
   };
   return (
     <ImagesListContext.Provider value={state}>

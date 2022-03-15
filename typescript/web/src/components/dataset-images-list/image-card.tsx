@@ -1,8 +1,8 @@
 import {
+  Checkbox,
   Flex,
   FlexProps,
   HStack,
-  IconButton,
   Skeleton,
   Text,
   useBoolean,
@@ -11,23 +11,21 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import {
+  ChangeEvent,
   createContext,
-  MouseEvent,
   PropsWithChildren,
-  useCallback,
   useContext,
 } from "react";
-import { HiTrash } from "react-icons/hi";
 import { EmptyStateImageNotFound } from "../empty-state";
 import { ImageWithFallback } from "../image";
 import { Tooltip } from "../tooltip";
+import { useImagesList } from "./images-list.context";
 
 export type ImageCardProps = {
   id: string;
   name: string;
   thumbnail?: string | null;
   href: string;
-  onAskImageDelete: (imageId: string) => void;
 };
 
 type ImageCardState = ImageCardProps & {
@@ -39,9 +37,15 @@ type ImageCardState = ImageCardProps & {
 const ImageCardContext = createContext({} as ImageCardState);
 
 const useProvider = (props: ImageCardProps): ImageCardState => {
+  const { imagesSelected } = useImagesList();
   const [displayOverlay, { on: showOverlay, off: hideOverlay }] =
     useBoolean(false);
-  return { ...props, displayOverlay, showOverlay, hideOverlay };
+  return {
+    ...props,
+    displayOverlay: imagesSelected.length !== 0 || displayOverlay,
+    showOverlay,
+    hideOverlay,
+  };
 };
 
 const ImageCardProvider = ({
@@ -54,35 +58,6 @@ const ImageCardProvider = ({
 );
 
 const useImageCard = () => useContext(ImageCardContext);
-
-const DeleteButton = () => {
-  const { id, onAskImageDelete } = useImageCard();
-  const handleClick = useCallback(
-    (event: MouseEvent<HTMLButtonElement>) => {
-      // Prevent parent onClick event from being fired too
-      event.preventDefault();
-      event.stopPropagation();
-      onAskImageDelete(id);
-    },
-    [onAskImageDelete, id]
-  );
-  return (
-    <Tooltip label="Delete image">
-      <IconButton
-        _hover={{ bgColor: "rgba(0, 0, 0, .2)" }}
-        _active={{ bgColor: "gray.600" }}
-        color="white"
-        aria-label="delete image"
-        isRound
-        size="md"
-        onClick={handleClick}
-        variant="ghost"
-      >
-        <HiTrash />
-      </IconButton>
-    </Tooltip>
-  );
-};
 
 const ImageErrorFallback = () => (
   <Flex
@@ -107,20 +82,36 @@ const ImageContent = () => {
       errorFallback={<ImageErrorFallback />}
       objectFit="cover"
       h="208px"
+      w="full"
     />
   );
 };
 
 const OverlayTopRow = () => {
-  const { displayOverlay } = useImageCard();
+  const { displayOverlay, id } = useImageCard();
+  const { imagesSelected, setImagesSelected } = useImagesList();
+  const handleChecked = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked === true) {
+      setImagesSelected([...imagesSelected, id]);
+    } else {
+      const newArray = imagesSelected.filter((imageId) => imageId !== id);
+      setImagesSelected(newArray);
+    }
+  };
   return (
     <HStack
       alignSelf="stretch"
-      justify="flex-end"
+      justify="flex-start"
       visibility={displayOverlay ? "visible" : "hidden"}
-      p={1}
+      p={4}
+      pointerEvents="all"
     >
-      <DeleteButton />
+      <Checkbox
+        size="lg"
+        colorScheme="blackAlpha"
+        onChange={handleChecked}
+        isChecked={imagesSelected.includes(id)}
+      />
     </HStack>
   );
 };
@@ -128,7 +119,7 @@ const OverlayTopRow = () => {
 const OverlayBottomRow = () => {
   const { name } = useImageCard();
   return (
-    <HStack justify="flex-start" p={2}>
+    <HStack justify="flex-start" p={2} pointerEvents="all">
       <Tooltip label={name}>
         <Text isTruncated fontWeight="semibold">
           {name}
@@ -150,6 +141,7 @@ const useOverlayBackground = (): FlexProps | undefined => {
 
 const ImageOverlay = () => (
   <Flex
+    pointerEvents="none"
     position="absolute"
     borderRadius="md"
     top={0}
@@ -174,18 +166,11 @@ const ImageOverlay = () => (
 );
 
 const ClickableOverlay = () => {
-  const { href, name } = useImageCard();
-  return (
-    <NextLink href={href}>
-      <a title="Open image" href={href} data-testid={name}>
-        <ImageOverlay />
-      </a>
-    </NextLink>
-  );
+  return <ImageOverlay />;
 };
 
 const ImageCardContent = () => {
-  const { name, showOverlay, hideOverlay } = useImageCard();
+  const { name, showOverlay, hideOverlay, href } = useImageCard();
   return (
     <Flex
       onMouseEnter={showOverlay}
@@ -201,7 +186,11 @@ const ImageCardContent = () => {
       maxW="350px"
     >
       <ClickableOverlay />
-      <ImageContent />
+      <NextLink href={href}>
+        <a title="Open image" href={href} data-testid={name}>
+          <ImageContent />
+        </a>
+      </NextLink>
     </Flex>
   );
 };

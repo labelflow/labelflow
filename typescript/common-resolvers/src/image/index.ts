@@ -7,6 +7,7 @@ import type {
   QueryImageArgs,
   QueryImagesArgs,
   MutationDeleteImageArgs,
+  MutationDeleteManyImagesArgs,
 } from "@labelflow/graphql-types";
 import {
   Context,
@@ -170,6 +171,18 @@ const deleteImage = async (
   return imageToDelete;
 };
 
+const deleteManyImages = async (
+  _: any,
+  args: MutationDeleteManyImagesArgs,
+  ctx: Context
+) => {
+  const { imagesIds } = args.where;
+  const deletedImages = imagesIds.map(async (imageId) => {
+    return await deleteImage(_, { where: { id: imageId } }, ctx);
+  });
+  return deletedImages;
+};
+
 const updateImage = async (
   _: any,
   args: MutationUpdateImageArgs,
@@ -226,6 +239,7 @@ export default {
     createManyImages,
     updateImage,
     deleteImage,
+    deleteManyImages,
   },
 
   Image: {

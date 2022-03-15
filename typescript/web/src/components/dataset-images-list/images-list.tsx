@@ -1,6 +1,20 @@
-import { Box, Center, Heading, SimpleGrid, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Heading,
+  HStack,
+  SimpleGrid,
+  Text,
+} from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import React from "react";
+import { HiOutlineTrash } from "react-icons/hi";
+import {
+  BiCheckboxChecked,
+  BiCheckbox,
+  BiCheckboxSquare,
+} from "react-icons/bi";
+import React, { useCallback, useState } from "react";
 import { EmptyStateNoImages } from "../empty-state";
 import { ImportButton } from "../import-button";
 import { PaginationProvider } from "../pagination";
@@ -49,20 +63,73 @@ const NoImages = () => (
 );
 
 const Gallery = () => {
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const handleDeleteModalClose = useCallback(() => {
+    setIsDeleteModalOpen(false);
+  }, []);
   const {
     workspaceSlug,
     datasetSlug,
     datasetId,
-    toDelete,
-    setToDelete,
     images,
+    imagesSelected,
+    setImagesSelected,
   } = useImagesList();
+  const selectedLength = imagesSelected.length;
+  const isSelectedEmpty = selectedLength === 0;
+  const getButtonIcon = () => {
+    if (isSelectedEmpty) {
+      return <BiCheckbox size="22" />;
+    }
+    if (selectedLength === images.length) {
+      return <BiCheckboxChecked size="22" />;
+    }
+    return <BiCheckboxSquare size="22" />;
+  };
+  const selectionButtonClick = () => {
+    if (isSelectedEmpty) {
+      const newSelectedArray = images.map((image) => image.id);
+      setImagesSelected(newSelectedArray);
+    } else {
+      setImagesSelected([]);
+    }
+  };
+  const handleDeleteManyClick = useCallback(() => {
+    setIsDeleteModalOpen(true);
+  }, []);
   return (
     <>
+      <HStack
+        d="flex"
+        bg="white"
+        h="48px"
+        px={{ base: "2", md: "8" }}
+        alignItems="center"
+        borderTop="1px"
+        borderColor="gray.100"
+        boxShadow="sm"
+      >
+        <Button
+          variant="ghost"
+          size="sm"
+          leftIcon={getButtonIcon()}
+          onClick={selectionButtonClick}
+        >
+          {isSelectedEmpty ? "Select all" : "Deselect all"}
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          leftIcon={<HiOutlineTrash />}
+          disabled={isSelectedEmpty}
+          onClick={handleDeleteManyClick}
+        >
+          Delete selected
+        </Button>
+      </HStack>
       <DeleteImageModal
-        isOpen={!isEmpty(toDelete)}
-        onClose={() => setToDelete(undefined)}
-        imageId={toDelete}
+        isOpen={isDeleteModalOpen}
+        onClose={handleDeleteModalClose}
         datasetId={datasetId!}
       />
       <SimpleGrid
@@ -78,7 +145,6 @@ const Gallery = () => {
             name={name}
             thumbnail={thumbnail500Url}
             href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
-            onAskImageDelete={setToDelete}
           />
         ))}
       </SimpleGrid>
