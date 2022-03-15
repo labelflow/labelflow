@@ -161,22 +161,25 @@ const ClickableOverlay = () => {
   );
 };
 
-const ImageCardContent = () => (
-  <Flex
-    direction="column"
-    align="stretch"
-    data-testid="image-card"
-    position="relative"
-    role="group"
-    borderRadius="md"
-    borderWidth={1}
-    borderColor={useColorModeValue("gray.200", "gray.800")}
-    maxW="350px"
-  >
-    <ClickableOverlay />
-    <ImageContent />
-  </Flex>
-);
+const ImageCardContent = () => {
+  const { name } = useImageCard();
+  return (
+    <Flex
+      direction="column"
+      align="stretch"
+      data-testid={`image-card-${name}`}
+      position="relative"
+      role="group"
+      borderRadius="md"
+      borderWidth={1}
+      borderColor={useColorModeValue("gray.200", "gray.800")}
+      maxW="350px"
+    >
+      <ClickableOverlay />
+      <ImageContent />
+    </Flex>
+  );
+};
 
 export const ImageCard = (props: ImageCardProps) => (
   <ImageCardProvider {...props}>
