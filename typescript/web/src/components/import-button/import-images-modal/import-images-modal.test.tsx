@@ -74,18 +74,20 @@ describe(ImportImagesModal, () => {
     const { getByLabelText } = await renderTestAndImport(files.slice(0, 1));
     await waitFor(() => expect(getByLabelText("Upload succeed")).toBeDefined());
   });
-
   it("displays an indicator when upload failed", async () => {
-    const { getByLabelText } = await renderTestAndImport(
+    const { getAllByTestId } = await renderTestAndImport(
       files.slice(0, 1),
       { isOpen: true },
       true
     );
     await waitFor(() =>
-      expect(getByLabelText("Error indicator")).toBeDefined()
+      expect(
+        getAllByTestId("import-progress-tooltip-icon")[0].getAttribute(
+          "aria-label"
+        )
+      ).toBe("Error indicator")
     );
   });
-
   it("displays a loading indicator when a file is uploading", async () => {
     const { getByLabelText } = await renderTestAndImport(files.slice(0, 1));
     expect(getByLabelText("Loading indicator")).toBeDefined();

@@ -252,6 +252,7 @@ export type ImportOptionsCoco = {
 export type ImportStatus = {
   __typename?: 'ImportStatus';
   error?: Maybe<Scalars['String']>;
+  warnings?: Maybe<Array<Scalars['String']>>;
 };
 
 export enum InvitationResult {
@@ -1179,6 +1180,7 @@ export type ImagesAggregatesResolvers<ContextType = any, ParentType extends Reso
 
 export type ImportStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportStatus'] = ResolversParentTypes['ImportStatus']> = {
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  warnings?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
