@@ -1,9 +1,11 @@
 import {
   Flex,
+  FlexProps,
   HStack,
   IconButton,
   Skeleton,
   Text,
+  useBoolean,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
@@ -28,13 +30,25 @@ export type ImageCardProps = {
   onAskImageDelete: (imageId: string) => void;
 };
 
-const ImageCardContext = createContext({} as ImageCardProps);
+type ImageCardState = ImageCardProps & {
+  displayOverlay: boolean;
+  showOverlay: () => void;
+  hideOverlay: () => void;
+};
+
+const ImageCardContext = createContext({} as ImageCardState);
+
+const useProvider = (props: ImageCardProps): ImageCardState => {
+  const [displayOverlay, { on: showOverlay, off: hideOverlay }] =
+    useBoolean(false);
+  return { ...props, displayOverlay, showOverlay, hideOverlay };
+};
 
 const ImageCardProvider = ({
   children,
   ...props
 }: PropsWithChildren<ImageCardProps>) => (
-  <ImageCardContext.Provider value={props}>
+  <ImageCardContext.Provider value={useProvider(props)}>
     {children}
   </ImageCardContext.Provider>
 );
@@ -97,17 +111,19 @@ const ImageContent = () => {
   );
 };
 
-const OverlayTopRow = () => (
-  <HStack
-    alignSelf="stretch"
-    justify="flex-end"
-    visibility="hidden"
-    _groupHover={{ visibility: "visible" }}
-    p={1}
-  >
-    <DeleteButton />
-  </HStack>
-);
+const OverlayTopRow = () => {
+  const { displayOverlay } = useImageCard();
+  return (
+    <HStack
+      alignSelf="stretch"
+      justify="flex-end"
+      visibility={displayOverlay ? "visible" : "hidden"}
+      p={1}
+    >
+      <DeleteButton />
+    </HStack>
+  );
+};
 
 const OverlayBottomRow = () => {
   const { name } = useImageCard();
@@ -122,6 +138,16 @@ const OverlayBottomRow = () => {
   );
 };
 
+const useOverlayBackground = (): FlexProps | undefined => {
+  const { displayOverlay } = useImageCard();
+  return displayOverlay
+    ? {
+        backgroundColor: "rgba(0, 0, 0, 0.65)",
+        transition: "background-color .125s",
+      }
+    : undefined;
+};
+
 const ImageOverlay = () => (
   <Flex
     position="absolute"
@@ -130,12 +156,9 @@ const ImageOverlay = () => (
     bottom={0}
     left={0}
     right={0}
-    background="linear-gradient(to top, rgba(0, 0, 0, .65), rgba(26, 32, 44, 0) 33%);"
-    _groupHover={{
-      backgroundColor: "rgba(0, 0, 0, 0.65)",
-      transition: "background-color .125s",
-    }}
     minW={0}
+    background="linear-gradient(to top, rgba(0, 0, 0, .65), rgba(26, 32, 44, 0) 33%);"
+    {...useOverlayBackground()}
   >
     <VStack
       flexGrow={1}
@@ -162,9 +185,11 @@ const ClickableOverlay = () => {
 };
 
 const ImageCardContent = () => {
-  const { name } = useImageCard();
+  const { name, showOverlay, hideOverlay } = useImageCard();
   return (
     <Flex
+      onMouseEnter={showOverlay}
+      onMouseLeave={hideOverlay}
       direction="column"
       align="stretch"
       data-testid={`image-card-${name}`}
