@@ -99,7 +99,7 @@ export type DbWorkspace = Omit<
   | "plan"
   | "stripeCustomerPortalUrl"
   | "status"
-  | "imagesAggregates"
+  | "imagesOfWorkspace"
 > & {
   plan: WorkspacePlan;
   stripeCustomerId?: string | undefined | null;
