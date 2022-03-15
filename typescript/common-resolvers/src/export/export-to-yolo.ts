@@ -1,10 +1,10 @@
 import { ExportOptionsYolo, LabelType } from "@labelflow/graphql-types";
-import { isEmpty, groupBy } from "lodash/fp";
 import JSZip from "jszip";
+import { groupBy, isEmpty } from "lodash/fp";
 import mime from "mime-types";
-import { DbImage, DbLabel, DbLabelClass } from "../types";
+import { Context, DbImage, DbLabel, DbLabelClass } from "../types";
+import { getSignedImageUrl } from "../utils";
 import { getImageName } from "./common";
-
 import { ExportFunction } from "./types";
 
 const groupLabelsByImage = (labelsArray: DbLabel[]) => {
@@ -24,21 +24,58 @@ export const generateDataFile = (
   return `classes = ${numberLabelClasses}\ntrain = ${datasetName}/train.txt\ndata = ${datasetName}/obj.names`;
 };
 
-export const generateImagesListFile = (
-  images: DbImage[],
-  datasetName: string,
-  options: ExportOptionsYolo
-): string => {
-  return images
-    .reduce(
-      (imagesList, image) =>
-        `${imagesList}${datasetName}/obj_train_data/${getImageName(
-          image,
-          options?.avoidImageNameCollisions ?? false
-        )}.${mime.extension(image.mimetype)}\n`,
-      ""
-    )
-    .trim();
+type GetImageUrlLineOptions = {
+  datasetName: string;
+  options: ExportOptionsYolo;
+  includeSignedUrl: boolean;
+  ctx: Context;
+};
+
+const getImageUrlLine = async (
+  image: DbImage,
+  {
+    datasetName,
+    options: { avoidImageNameCollisions },
+    includeSignedUrl,
+    ctx,
+  }: GetImageUrlLineOptions
+) => {
+  const imageName = getImageName(image, avoidImageNameCollisions ?? false);
+  const extension = mime.extension(image.mimetype);
+  const imagePath = `${datasetName}/obj_train_data/${imageName}.${extension}`;
+  if (!includeSignedUrl) return imagePath;
+  const signedUrl = await getSignedImageUrl(image.url, ctx);
+  return [signedUrl, imagePath].join(" ");
+};
+
+export type GetImageUrlListOptions = GetImageUrlLineOptions & {
+  images: DbImage[];
+};
+
+export const getImageUrlList = async ({
+  images,
+  ...options
+}: GetImageUrlListOptions): Promise<string> => {
+  const lines = await Promise.all(
+    images.map(async (image) => await getImageUrlLine(image, options))
+  );
+  return lines.join("\n");
+};
+
+type GenerateUrlListOptions = GetImageUrlListOptions & {
+  exportImages?: boolean;
+  zip: JSZip;
+};
+
+const generateUrlList = async ({
+  exportImages,
+  zip,
+  ...options
+}: GenerateUrlListOptions) => {
+  if (exportImages) return;
+  const { datasetName } = options;
+  const listFile = await getImageUrlList(options);
+  zip.file(`${datasetName}/train_url.txt`, listFile);
 };
 
 export const generateLabelsOfImageFile = (
@@ -68,11 +105,14 @@ export const generateLabelsOfImageFile = (
 export const exportToYolo: ExportFunction<ExportOptionsYolo> = async (
   datasetId,
   options = {},
-  { repository, req, user }
+  ctx
 ) => {
-  const images = await repository.image.list({ datasetId, user });
-  const labelClasses = await repository.labelClass.list({ datasetId, user });
-  const labels = await repository.label.list({ datasetId, user });
+  const { repository, req, user } = ctx;
+  const [images, labelClasses, labels] = await Promise.all([
+    repository.image.list({ datasetId, user }),
+    repository.labelClass.list({ datasetId, user }),
+    repository.label.list({ datasetId, user }),
+  ]);
   const labelsByImage = groupLabelsByImage(labels);
   const datasetName = options?.name ?? "dataset-yolo";
   const zip = new JSZip();
@@ -83,8 +123,22 @@ export const exportToYolo: ExportFunction<ExportOptionsYolo> = async (
   zip.file(`${datasetName}/obj.names`, generateNamesFile(labelClasses));
   zip.file(
     `${datasetName}/train.txt`,
-    generateImagesListFile(images, datasetName, options)
+    await getImageUrlList({
+      images,
+      datasetName,
+      options,
+      includeSignedUrl: false,
+      ctx,
+    })
   );
+  await generateUrlList({
+    zip,
+    images,
+    datasetName,
+    options,
+    includeSignedUrl: true,
+    ctx,
+  });
   await Promise.all(
     images.map(async (image) => {
       const imageName = getImageName(

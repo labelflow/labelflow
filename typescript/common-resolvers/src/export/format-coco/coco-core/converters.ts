@@ -1,17 +1,17 @@
-import mime from "mime-types";
+import { ExportOptionsCoco } from "@labelflow/graphql-types";
 import { Geometry } from "@turf/helpers";
 import { coordReduce } from "@turf/meta";
-import { ExportOptionsCoco } from "@labelflow/graphql-types";
-import { DbImage, DbLabelClass } from "../../../types";
-
+import mime from "mime-types";
+import { Context, DbImage, DbLabelClass } from "../../../types";
+import { getSignedImageUrl } from "../../../utils";
+import { getImageName } from "../../common";
 import {
-  CocoCategory,
   CocoAnnotation,
-  CocoImage,
+  CocoCategory,
   CocoDataset,
+  CocoImage,
   DbLabelWithImageDimensions,
 } from "./types";
-import { getImageName } from "../../common";
 
 export {
   initialCocoDataset,
@@ -154,11 +154,12 @@ const convertLabelsOfImageToCocoAnnotations = (
   }, [] as CocoAnnotation[]);
 };
 
-const convertImageToCocoImage = (
+const convertImageToCocoImage = async (
   image: DbImage,
   id: number,
-  options: ExportOptionsCoco
-): CocoImage => {
+  options: ExportOptionsCoco,
+  ctx: Context
+): Promise<CocoImage> => {
   const { createdAt, height, width, externalUrl, mimetype } = image;
   return {
     id,
@@ -167,6 +168,9 @@ const convertImageToCocoImage = (
       options?.avoidImageNameCollisions ?? false
     )}.${mime.extension(mimetype)}`,
     coco_url: externalUrl ?? "",
+    labelflow_url: options?.exportImages
+      ? undefined
+      : await getSignedImageUrl(image.url, ctx),
     date_captured: createdAt,
     height,
     width,
@@ -174,40 +178,42 @@ const convertImageToCocoImage = (
   };
 };
 
-const convertImagesToCocoImages = (
+const convertImagesToCocoImages = async (
   images: DbImage[],
-  options: ExportOptionsCoco
+  options: ExportOptionsCoco,
+  ctx: Context
 ) => {
   const imageIdsMap: Record<string, number> = {};
-  const cocoImages = images.map((image, index) => {
-    const cocoImageId = index + 1;
-    imageIdsMap[image.id] = cocoImageId;
-    return convertImageToCocoImage(image, cocoImageId, options);
-  });
+  const cocoImages = await Promise.all(
+    images.map((image, index) => {
+      const cocoImageId = index + 1;
+      imageIdsMap[image.id] = cocoImageId;
+      return convertImageToCocoImage(image, cocoImageId, options, ctx);
+    })
+  );
 
   return { cocoImages, imageIdsMap };
 };
 
-const convertLabelflowDatasetToCocoDataset = (
+const convertLabelflowDatasetToCocoDataset = async (
   images: DbImage[],
   labels: DbLabelWithImageDimensions[],
   labelClasses: DbLabelClass[],
-  options: ExportOptionsCoco
-): CocoDataset => {
-  const { cocoImages, imageIdsMap } = convertImagesToCocoImages(
+  options: ExportOptionsCoco,
+  ctx: Context
+): Promise<CocoDataset> => {
+  const { cocoImages, imageIdsMap } = await convertImagesToCocoImages(
     images,
-    options
+    options,
+    ctx
   );
-
   const { cocoCategories, labelClassIdsMap } =
     convertLabelClassesToCocoCategories(labelClasses);
-
   const cocoAnnotations = convertLabelsOfImageToCocoAnnotations(
     labels,
     imageIdsMap,
     labelClassIdsMap
   );
-
   return {
     ...initialCocoDataset,
     categories: cocoCategories,
