@@ -202,7 +202,21 @@ const stripeCustomerPortalUrl = async (
   return await stripe.createBillingPortalSession(stripeCustomerId, returnUrl);
 };
 
-const imagesAggregates = () => ({});
+const imagesOfWorkspace = async (parent: DbWorkspaceWithType) => {
+  const db = await getPrismaClient();
+
+  const queryResult = await db.dataset.findMany({
+    where: { workspaceSlug: parent.slug },
+    include: { images: true },
+  });
+
+  const totalCount = queryResult.reduce(
+    (prev, curr) => prev + curr.images.length,
+    0
+  );
+
+  return totalCount;
+};
 
 export default {
   Query: {
@@ -215,6 +229,6 @@ export default {
     memberships,
     datasets,
     stripeCustomerPortalUrl,
-    imagesAggregates,
+    imagesOfWorkspace,
   },
 };

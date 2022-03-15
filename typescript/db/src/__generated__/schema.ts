@@ -514,7 +514,7 @@ export const typeDefs = [
     datasets: [Dataset!]!
     id: ID!
     image: String
-    imagesAggregates: ImagesAggregates!
+    imagesOfWorkspace: Int!
     memberships: [Membership!]!
     name: String!
     plan: WorkspacePlan!

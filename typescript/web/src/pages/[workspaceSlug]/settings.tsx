@@ -27,9 +27,7 @@ const GET_WORKSPACE_DETAILS_QUERY = gql`
       image
       name
       stripeCustomerPortalUrl
-      imagesAggregates {
-        totalCount
-      }
+      imagesOfWorkspace
     }
   }
 `;
