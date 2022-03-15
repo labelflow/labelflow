@@ -104,6 +104,9 @@ export const CollapsibleBreadcrumbs = ({
         if (childrenCount <= 0) {
           return [];
         }
+        if (childrenCount === 1) {
+          return [firstBreadcrumb()];
+        }
         if (childrenCount <= maxNumberOfBreadcrumbsBeforeSplit) {
           return [
             firstBreadcrumb(),
