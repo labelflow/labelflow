@@ -38,12 +38,13 @@ describe("Golden path (online)", () => {
     cy.get(`[aria-label="Close"]`).click();
 
     cy.wait(420);
-    cy.get("main")
-      .contains(
+    cy.get(
+      `[data-testid="${
         imageSampleCollection[1]
           .split("?")[0]
           .split("https://images.unsplash.com/")[1]
-      )
+      }"]`
+    )
       .find('[aria-label="delete image"]')
       .click();
 

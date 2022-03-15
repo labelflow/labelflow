@@ -152,10 +152,10 @@ const ImageOverlay = () => (
 );
 
 const ClickableOverlay = () => {
-  const { href } = useImageCard();
+  const { href, name } = useImageCard();
   return (
     <NextLink href={href}>
-      <a title="Open image" href={href}>
+      <a title="Open image" href={href} data-testid={name}>
         <ImageOverlay />
       </a>
     </NextLink>
