@@ -1,9 +1,4 @@
-import {
-  Box,
-  BoxProps,
-  Text,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { Box, BoxProps, Text, useColorModeValue } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
 export type FieldGroupProps = Omit<BoxProps, "title"> & {
@@ -16,11 +11,12 @@ export const FieldGroup = ({
   description,
   ...boxProps
 }: FieldGroupProps) => {
+  const color = useColorModeValue("gray.600", "gray.400");
   return (
     <Box>
       <Text fontWeight="semibold">{title}</Text>
       {description && (
-        <Text color={mode("gray.600", "gray.400")} fontSize="sm">
+        <Text color={color} fontSize="sm">
           {description}
         </Text>
       )}

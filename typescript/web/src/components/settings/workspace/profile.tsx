@@ -8,7 +8,7 @@ import {
   SkeletonCircle,
   Stack,
   StackDivider,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { isEmpty, isNil } from "lodash/fp";
 import { useRouter } from "next/router";
@@ -77,8 +77,8 @@ const useUpdateWorkspace = (): [() => void, string | undefined] => {
 const AvatarInput = () => {
   const { image } = useWorkspaceSettings();
   const { name } = useWorkspaceNameInput();
-  const avatarBorderColor = mode("gray.200", "gray.700");
-  const avatarBackground = mode("white", "gray.700");
+  const avatarBorderColor = useColorModeValue("gray.200", "gray.700");
+  const avatarBackground = useColorModeValue("white", "gray.700");
   return (
     <>
       {name.length === 0 ? (

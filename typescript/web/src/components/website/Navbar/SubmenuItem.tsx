@@ -5,7 +5,7 @@ import {
   HStack,
   HTMLChakraProps,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import * as React from "react";
 
@@ -38,7 +38,7 @@ export const SubmenuItem = (props: SubmenuItemProps) => {
         w="10"
         h="10"
         fontSize="3xl"
-        color={mode("brand.600", "brand.400")}
+        color={useColorModeValue("brand.600", "brand.400")}
       >
         {icon}
       </Center>
@@ -46,13 +46,13 @@ export const SubmenuItem = (props: SubmenuItemProps) => {
         <HStack as="dt">
           <Text
             fontWeight="semibold"
-            color={mode("gray.900", "white")}
-            _groupHover={{ color: mode("gray.500", "inherit") }}
+            color={useColorModeValue("gray.900", "white")}
+            _groupHover={{ color: useColorModeValue("gray.500", "inherit") }}
           >
             {title}
           </Text>
         </HStack>
-        <Text as="dd" color={mode("gray.500", "gray.400")}>
+        <Text as="dd" color={useColorModeValue("gray.500", "gray.400")}>
           {children}
         </Text>
       </Box>

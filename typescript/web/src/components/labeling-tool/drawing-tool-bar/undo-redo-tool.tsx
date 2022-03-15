@@ -1,8 +1,4 @@
-import {
-  IconButton,
-  Tooltip,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { IconButton, Tooltip, useColorModeValue } from "@chakra-ui/react";
 import { BiUndo, BiRedo } from "react-icons/bi";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -43,7 +39,7 @@ export const UndoTool = () => {
       <IconButton
         icon={<BiUndo size="1.3em" />}
         onClick={undo}
-        backgroundColor={mode("white", "gray.800")}
+        backgroundColor={useColorModeValue("white", "gray.800")}
         aria-label="Undo tool"
         pointerEvents="initial"
         isDisabled={!isUndoAvailable}
@@ -75,7 +71,7 @@ export const RedoTool = () => {
       <IconButton
         icon={<BiRedo size="1.3em" />}
         onClick={redo}
-        backgroundColor={mode("white", "gray.800")}
+        backgroundColor={useColorModeValue("white", "gray.800")}
         aria-label="Redo tool"
         pointerEvents="initial"
         isDisabled={

@@ -5,7 +5,7 @@ import {
   SimpleGrid,
   SimpleGridProps,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { PageNavigation } from "./page-navigation";
 import { usePagination } from "./pagination.context";
@@ -53,7 +53,7 @@ export const PaginationToolbar = ({
   ...props
 }: PaginationToolbarProps) => (
   <SimpleGrid
-    bg={mode("white", "gray.800")}
+    bg={useColorModeValue("white", "gray.800")}
     paddingLeft={8}
     paddingRight={8}
     columns={{ base: 1, md: 3 }}

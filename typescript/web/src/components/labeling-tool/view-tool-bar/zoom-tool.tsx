@@ -3,7 +3,7 @@ import {
   IconButton,
   chakra,
   Tooltip,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -42,7 +42,7 @@ export const ZoomTool = () => {
     { splitKey: "/" },
     [canZoomOut, zoomFactor]
   );
-
+  const bgColor = useColorModeValue("white", "gray.800");
   return (
     <>
       <Tooltip
@@ -52,7 +52,7 @@ export const ZoomTool = () => {
       >
         <IconButton
           icon={<ZoomInIcon fontSize="lg" />}
-          backgroundColor={mode("white", "gray.800")}
+          backgroundColor={bgColor}
           aria-label="Zoom in"
           pointerEvents="initial"
           isDisabled={!canZoomIn || isImageLoading}
@@ -68,7 +68,7 @@ export const ZoomTool = () => {
       >
         <IconButton
           icon={<ZoomOutIcon fontSize="lg" />}
-          backgroundColor={mode("white", "gray.800")}
+          backgroundColor={bgColor}
           aria-label="Zoom out"
           pointerEvents="initial"
           isDisabled={!canZoomOut || isImageLoading}

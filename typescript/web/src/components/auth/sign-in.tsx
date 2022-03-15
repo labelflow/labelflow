@@ -1,9 +1,4 @@
-import {
-  Box,
-  Heading,
-  Text,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { Box, Heading, Text, useColorModeValue } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
 import { TextLink } from "../text-link";
@@ -26,11 +21,11 @@ const Header = () => (
       size="lg"
       mb="2"
       fontWeight="bold"
-      color={mode("gray.900", "white")}
+      color={useColorModeValue("gray.900", "white")}
     >
       Sign in to LabelFlow
     </Heading>
-    <Text fontSize="lg" color={mode("gray.600", "gray.400")}>
+    <Text fontSize="lg" color={useColorModeValue("gray.600", "gray.400")}>
       Get a free account. No credit card required
     </Text>
   </Box>
