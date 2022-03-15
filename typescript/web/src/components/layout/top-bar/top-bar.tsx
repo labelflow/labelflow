@@ -28,7 +28,7 @@ export const TopBar = ({ breadcrumbs, rightContent }: TopBarProps) => (
     <HStack
       as="header"
       alignItems="center"
-      padding={4}
+      padding={2}
       spacing={4}
       h="64px"
       flex={0}
