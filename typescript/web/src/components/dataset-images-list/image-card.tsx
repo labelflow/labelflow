@@ -55,7 +55,6 @@ const DeleteButton = () => {
   return (
     <Tooltip label="Delete image">
       <IconButton
-        data-testid="delete-image-button"
         _hover={{ bgColor: "rgba(0, 0, 0, .2)" }}
         _active={{ bgColor: "gray.600" }}
         color="white"
