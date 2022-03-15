@@ -107,10 +107,11 @@ const OverlayTopRow = () => {
       pointerEvents="all"
     >
       <Checkbox
+        colorScheme="unset"
         size="lg"
-        colorScheme="blackAlpha"
         onChange={handleChecked}
         isChecked={imagesSelected.includes(id)}
+        borderColor="white"
       />
     </HStack>
   );
