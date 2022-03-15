@@ -104,7 +104,7 @@
     "uuid": "8.3.2",
     "valid-url": "1.0.9",
     "zustand": "3.5.1",
-    "zustand-store-addons": "0.1.11"
+    "zustand-store-addons": "0.1.12"
   },
   "devDependencies": {
     "@labelflow/dev-utils": "workspace:typescript/dev-utils",

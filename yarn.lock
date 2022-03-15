@@ -8341,7 +8341,7 @@ __metadata:
     webpack-node-externals: 3.0.0
     wildcard-mock-link: 2.0.2
     zustand: 3.5.1
-    zustand-store-addons: 0.1.11
+    zustand-store-addons: 0.1.12
   languageName: unknown
   linkType: soft
 
@@ -37211,16 +37211,16 @@ typescript@~3.7.3:
   languageName: node
   linkType: hard
 
-"zustand-store-addons@npm:0.1.11":
-  version: 0.1.11
-  resolution: "zustand-store-addons@npm:0.1.11"
+"zustand-store-addons@npm:0.1.12":
+  version: 0.1.12
+  resolution: "zustand-store-addons@npm:0.1.12"
   dependencies:
     lodash-es: ^4.17.15
     string.prototype.matchall: ^4.0.2
   peerDependencies:
     react: ">=16"
     zustand: ">=3.0.0"
-  checksum: d2c20ff9695a2595f0fd5e2f5d4b6d24a62a9e575c8e579db07f7bdd9bdbb9a32e64a75eb8b2de1d765c928a26b2a73024e33aa241c408f4ef05bf120f78535a
+  checksum: 2f10cef0ab20b9046ae9e35cc0899c22fe0ad7c80f41790092cbd188355f49470820c03843ddda7683360040b8ab4730600ebbc823f4365ed01d451ebcaf36f0
   languageName: node
   linkType: hard
 

@@ -1,10 +1,11 @@
 import { LabelType } from "@labelflow/graphql-types";
-import { DbLabelClass, DbLabel, DbImageCreateInput } from "../types";
+import { DbLabelClass, DbLabel, DbImageCreateInput, Context } from "../types";
 import {
   generateNamesFile,
   generateDataFile,
-  generateImagesListFile,
+  getImageUrlList,
   generateLabelsOfImageFile,
+  GetImageUrlListOptions,
 } from "./export-to-yolo";
 
 const date = new Date("1995-12-17T03:24:00").toISOString();
@@ -60,12 +61,21 @@ const createImage = (
   updatedAt: date,
   height,
   width,
-  url: "",
+  url: `https://${name}`,
   externalUrl: `https://${name}`,
   path: "/path",
   mimetype: "image/png",
   datasetId: testDatasetId,
 });
+
+const COMMON_GET_IMAGE_URL_LIST_OPTIONS: Pick<
+  GetImageUrlListOptions,
+  "images" | "datasetName" | "ctx"
+> = {
+  images: [createImage("titi"), createImage("toto")],
+  datasetName: "my-dataset-name",
+  ctx: {} as Context,
+};
 
 describe("Yolo converters", () => {
   it("generates the obj.names file string content", () => {
@@ -85,26 +95,39 @@ data = my-dataset-name/obj.names`
     );
   });
 
-  it("generates the train.txt file string content with each image information", () => {
+  it("generates the train.txt file string content with each image information", async () => {
     expect(
-      generateImagesListFile(
-        [createImage("titi"), createImage("toto")],
-        "my-dataset-name",
-        { avoidImageNameCollisions: false }
-      )
+      await getImageUrlList({
+        ...COMMON_GET_IMAGE_URL_LIST_OPTIONS,
+        options: { avoidImageNameCollisions: false },
+        includeSignedUrl: false,
+      })
     ).toEqual(
       `my-dataset-name/obj_train_data/titi.png
 my-dataset-name/obj_train_data/toto.png`
     );
     expect(
-      generateImagesListFile(
-        [createImage("titi"), createImage("toto")],
-        "my-dataset-name",
-        { avoidImageNameCollisions: true }
-      )
+      await getImageUrlList({
+        ...COMMON_GET_IMAGE_URL_LIST_OPTIONS,
+        options: { avoidImageNameCollisions: true },
+        includeSignedUrl: false,
+      })
     ).toEqual(
       `my-dataset-name/obj_train_data/titi_id-titi.png
 my-dataset-name/obj_train_data/toto_id-toto.png`
+    );
+  });
+
+  it("generates the train_url.txt file string content with each image information", async () => {
+    expect(
+      await getImageUrlList({
+        ...COMMON_GET_IMAGE_URL_LIST_OPTIONS,
+        options: { avoidImageNameCollisions: false },
+        includeSignedUrl: true,
+      })
+    ).toEqual(
+      `https://titi my-dataset-name/obj_train_data/titi.png
+https://toto my-dataset-name/obj_train_data/toto.png`
     );
   });
 

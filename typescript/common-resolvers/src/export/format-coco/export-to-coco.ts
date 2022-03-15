@@ -12,17 +12,20 @@ export const exportToCoco: ExportFunction<ExportOptionsCoco> = async (
   options = {},
   { repository, req, user }
 ) => {
-  const images = await repository.image.list({ datasetId, user });
-  const labelClasses = await repository.labelClass.list({ datasetId, user });
-  const labels = await repository.label.list({ datasetId, user });
+  const [images, labelClasses, labels] = await Promise.all([
+    repository.image.list({ datasetId, user }),
+    repository.labelClass.list({ datasetId, user }),
+    repository.label.list({ datasetId, user }),
+  ]);
 
   const labelsWithImageDimensions = addImageDimensionsToLabels(labels, images);
   const annotationsFileJson = JSON.stringify(
-    convertLabelflowDatasetToCocoDataset(
+    await convertLabelflowDatasetToCocoDataset(
       images,
       labelsWithImageDimensions,
       labelClasses,
-      options
+      options,
+      { repository, req, user }
     )
   );
   const annotationsFileDataUri = jsonToDataUri(annotationsFileJson);
