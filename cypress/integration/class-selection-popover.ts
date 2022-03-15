@@ -295,7 +295,9 @@ describe("Class selection popover", () => {
     cy.get('[aria-label="Confirm delete label class"]').click();
     cy.contains("A new class").should("not.exist");
     cy.contains(/^images$/).click();
-    cy.get("main").contains("photo-1579513141590-c597876aefbc").click();
+    cy.get(
+      '[data-testid="image-card-photo-1579513141590-c597876aefbc"]'
+    ).click();
 
     cy.wait(420);
     cy.get('[aria-label="loading indicator"]').should("not.exist");

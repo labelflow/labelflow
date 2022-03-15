@@ -1,7 +1,5 @@
 import { View as OlView } from "ol";
 import { zoomByDelta as olZoomByDelta } from "ol/interaction/Interaction";
-// Needed to correct https://github.com/Diablow/zustand-store-addons/issues/2
-import type { UseStore } from "zustand";
 import create from "zustand-store-addons";
 import { Coordinate } from "ol/coordinate";
 
@@ -86,7 +84,6 @@ export const useLabelingStore = create<LabelingState>(
         ...iogSpinnerPositions,
         [timestamp]: iogSpinnerPosition,
       };
-      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({
         iogProcessingLabels,
         iogSpinnerPositions: newIogSpinnerPositions,
@@ -102,7 +99,6 @@ export const useLabelingStore = create<LabelingState>(
           )
           .map((key) => [key, iogSpinnerPositions[parseInt(key, 10)]])
       );
-      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       return set({
         iogSpinnerPositions: newIogSpinnerPositions,
         iogProcessingLabels,
@@ -110,38 +106,27 @@ export const useLabelingStore = create<LabelingState>(
     },
     isContextMenuOpen: false,
     setIsContextMenuOpen: (isContextMenuOpen: boolean) =>
-      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ isContextMenuOpen }),
     contextMenuLocation: undefined,
     setContextMenuLocation: (contextMenuLocation: Coordinate | undefined) =>
-      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ contextMenuLocation }),
     selectedTool: getRouterValue("selectedTool") ?? Tools.SELECTION,
     selectedLabelId: getRouterValue("selectedLabelId") ?? null,
     selectedLabelClassId: getRouterValue("selectedLabelClassId") ?? null,
     boxDrawingToolState: DrawingToolState.IDLE,
     setDrawingToolState: (boxDrawingToolState: DrawingToolState) =>
-      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ boxDrawingToolState }),
     selectionToolState: SelectionToolState.DEFAULT,
     setSelectionToolState: (selectionToolState: SelectionToolState) =>
-      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ selectionToolState }),
-    // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
     setView: (view: OlView) => set({ view }),
-    // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
     setSelectedTool: (selectedTool: Tools) => set({ selectedTool }),
     setSelectedLabelId: (selectedLabelId: string | null) =>
-      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ selectedLabelId }),
     setSelectedLabelClassId: (labelClassId: string | null) =>
-      // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
       set({ selectedLabelClassId: labelClassId }),
-    // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
     setCanZoomIn: (canZoomIn: boolean) => set({ canZoomIn }),
-    // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
     setCanZoomOut: (canZoomOut: boolean) => set({ canZoomOut }),
-    // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
     setIsImageLoading: (isImageLoading: boolean) => set({ isImageLoading }),
     zoomByDelta: (ratio: number) => {
       const { view } = get();
@@ -159,13 +144,10 @@ export const useLabelingStore = create<LabelingState>(
       //   3. geometry and name hidden
       const { showLabelsGeometry, showLabelsName } = get();
       if (showLabelsGeometry && showLabelsName) {
-        // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
         set({ showLabelsName: false });
       } else if (showLabelsGeometry && !showLabelsName) {
-        // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
         set({ showLabelsGeometry: false });
       } else if (!showLabelsGeometry && !showLabelsName) {
-        // @ts-ignore See https://github.com/Diablow/zustand-store-addons/issues/2
         set({ showLabelsGeometry: true, showLabelsName: true });
       } else {
         // If you change the code above, take care to respect the cycle described
@@ -192,4 +174,4 @@ export const useLabelingStore = create<LabelingState>(
       selectedLabelClassId: setRouterValue("selectedLabelClassId"),
     },
   }
-) as UseStore<LabelingState>; // Needed to correct https://github.com/Diablow/zustand-store-addons/issues/2
+);

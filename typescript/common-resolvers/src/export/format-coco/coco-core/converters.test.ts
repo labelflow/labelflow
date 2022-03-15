@@ -1,5 +1,5 @@
 import { LabelType } from "@labelflow/graphql-types";
-import { DbImageCreateInput, DbLabelClass } from "../../../types";
+import { Context, DbImageCreateInput, DbLabelClass } from "../../../types";
 
 import {
   convertLabelClassToCocoCategory,
@@ -21,6 +21,7 @@ import {
 describe("Coco converters", () => {
   const date = new Date("1995-12-17T03:24:00").toISOString();
   const testDatasetId = "test-dataset-id";
+  const fakeImageUrl = "https://fake-image-url";
 
   const createLabelClass = (name: string): DbLabelClass => ({
     id: `id-${name}`,
@@ -73,7 +74,7 @@ describe("Coco converters", () => {
     updatedAt: date,
     height,
     width,
-    url: "",
+    url: fakeImageUrl,
     externalUrl: `https://${name}`,
     path: "/path",
     mimetype: "image/png",
@@ -159,51 +160,67 @@ describe("Coco converters", () => {
     expect(cocoAnnotations).toMatchObject(expectedAnnotations);
   });
 
-  it("converts an image to coco json image", () => {
+  it("converts an image to coco json image", async () => {
     const image = createImage("an-image", 1, 2);
     expect(
-      convertImageToCocoImage(image, 1, {
-        avoidImageNameCollisions: true,
-      })
+      await convertImageToCocoImage(
+        image,
+        1,
+        {
+          avoidImageNameCollisions: true,
+        },
+        {} as Context
+      )
     ).toEqual({
       id: 1,
       date_captured: date,
       height: 1,
       width: 2,
       coco_url: "https://an-image",
+      labelflow_url: fakeImageUrl,
       file_name: "an-image_id-an-image.png",
       license: 0,
     });
     expect(
-      convertImageToCocoImage(image, 1, {
-        avoidImageNameCollisions: false,
-      })
+      await convertImageToCocoImage(
+        image,
+        1,
+        {
+          avoidImageNameCollisions: false,
+        },
+        {} as Context
+      )
     ).toEqual({
       id: 1,
       date_captured: date,
       height: 1,
       width: 2,
       coco_url: "https://an-image",
+      labelflow_url: fakeImageUrl,
       file_name: "an-image.png",
       license: 0,
     });
   });
 
-  it("converts a list of images to coco images", () => {
+  it("converts a list of images to coco images", async () => {
     const images = [
       createImage("an-image", 1, 2),
       createImage("another-image", 3, 4),
     ];
-    const { cocoImages, imageIdsMap } = convertImagesToCocoImages(images, {
-      avoidImageNameCollisions: false,
-    });
+    const { cocoImages, imageIdsMap } = await convertImagesToCocoImages(
+      images,
+      {
+        avoidImageNameCollisions: false,
+      },
+      {} as Context
+    );
     const expectedCocoImage = [{ id: 1 }, { id: 2 }];
     const expectedMapping = { "id-an-image": 1, "id-another-image": 2 };
     expect(cocoImages).toMatchObject(expectedCocoImage);
     expect(imageIdsMap).toEqual(expectedMapping);
   });
 
-  it("converts a set of images and label classes to a coco dataset", () => {
+  it("converts a set of images and label classes to a coco dataset", async () => {
     const labelClass1 = createLabelClass("label-class-1");
     const labelClass2 = createLabelClass("label-class-2");
     const image1 = createImage("image-1", 1, 2);
@@ -234,11 +251,12 @@ describe("Coco converters", () => {
       ],
     };
     expect(
-      convertLabelflowDatasetToCocoDataset(
+      await convertLabelflowDatasetToCocoDataset(
         [image1, image2],
         [label1, label2, label3],
         [labelClass1, labelClass2],
-        { avoidImageNameCollisions: false }
+        { avoidImageNameCollisions: false },
+        {} as Context
       )
     ).toMatchObject(expectedCocoDataset);
   });

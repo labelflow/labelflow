@@ -38,14 +38,16 @@ describe("Golden path (online)", () => {
     cy.get(`[aria-label="Close"]`).click();
 
     cy.wait(420);
-    cy.get("main")
-      .contains(
+    cy.get(
+      `[data-testid="image-card-${
         imageSampleCollection[1]
           .split("?")[0]
           .split("https://images.unsplash.com/")[1]
-      )
+      }"]`
+    )
+      .trigger("mouseover")
       .find('[aria-label="delete image"]')
-      .click();
+      .click({ force: true });
 
     cy.get('[aria-label="Confirm deleting image"]').click();
 
@@ -64,7 +66,7 @@ describe("Golden path (online)", () => {
           .split("?")[0]
           .split("https://images.unsplash.com/")[1]
       )
-      .click();
+      .click({ force: true });
 
     cy.url().should("match", /.*\/images\/([a-zA-Z0-9_-]*)/);
     cy.get("header").within(() => {
