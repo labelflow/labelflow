@@ -75,8 +75,8 @@ export const DeleteImageModal = ({
             }`}
           </AlertDialogHeader>
           <AlertDialogBody>
-            Are you sure? Labels linked to this image will be deleted. This
-            action can not be undone.
+            Are you sure? Every labels will also be deleted. This action can not
+            be undone.
           </AlertDialogBody>
 
           <AlertDialogFooter>
