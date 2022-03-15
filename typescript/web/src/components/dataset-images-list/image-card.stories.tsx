@@ -37,7 +37,7 @@ Hovered.play = async ({ canvasElement }) => {
   const card = getByTestId("image-card");
   userEvent.hover(card);
   // Wait for the fade to finish before taking a snapshot
-  await sleep(500);
+  await sleep(250);
 };
 
 export const WithoutThumbnail = Template.bind({});
