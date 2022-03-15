@@ -12,7 +12,8 @@ export default {
 } as ComponentMeta<typeof Tooltip>;
 
 const Template: ComponentStory<typeof Tooltip> = (args) => (
-  <HStack align="flex-start">
+  // Height is fixed to that the tooltip is visible in Chromatic snapshot
+  <HStack align="flex-start" h="500px">
     <Tooltip shouldWrapChildren {...args}>
       <Text data-testid="tooltip-child">Hover me</Text>
     </Tooltip>
