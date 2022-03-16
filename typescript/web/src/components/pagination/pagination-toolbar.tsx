@@ -43,7 +43,9 @@ export const PaginationToolbar = (props: SimpleGridProps) => {
     >
       <Box d="flex" alignItems="center">
         <Text fontWeight="500">
-          {imagesSelected.length > 0 && `${imagesSelected.length} selected`}
+          {imagesSelected &&
+            imagesSelected.length > 0 &&
+            `${imagesSelected.length} selected`}
         </Text>
       </Box>
       <Center>

@@ -88,7 +88,7 @@ const ImageContent = () => {
 };
 
 const OverlayTopRow = () => {
-  const { displayOverlay, id } = useImageCard();
+  const { displayOverlay, id, name } = useImageCard();
   const { imagesSelected, setImagesSelected } = useImagesList();
   const handleChecked = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked === true) {
@@ -107,6 +107,7 @@ const OverlayTopRow = () => {
       pointerEvents="all"
     >
       <Checkbox
+        data-testid={`image-checkbox-${name}`}
         colorScheme="unset"
         size="lg"
         onChange={handleChecked}

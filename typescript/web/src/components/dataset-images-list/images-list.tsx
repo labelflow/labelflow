@@ -118,6 +118,7 @@ const Gallery = () => {
           {isSelectedEmpty ? "Select all" : "Deselect all"}
         </Button>
         <Button
+          data-testid="delete-selected-images"
           variant="ghost"
           size="sm"
           leftIcon={<HiOutlineTrash />}
