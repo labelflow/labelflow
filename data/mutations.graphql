@@ -27,6 +27,7 @@ type Mutation {
   createIogLabel(data: CreateIogLabelInput!): Label
 
   createDataset(data: DatasetCreateInput!): Dataset
+  createTutorialDataset(data: DatasetCreateTutorialInput!): Dataset
   updateDataset(
     where: DatasetWhereUniqueInput!
     data: DatasetUpdateInput!
@@ -36,10 +37,8 @@ type Mutation {
     where: DatasetWhereUniqueInput!
     data: DatasetImportInput!
   ): ImportStatus
-  createWorkspace(
-    data: WorkspaceCreateInput!
-    options: WorkspaceCreateOptions
-  ): Workspace
+
+  createWorkspace(data: WorkspaceCreateInput!): Workspace
   updateWorkspace(
     where: WorkspaceWhereUniqueInput!
     data: WorkspaceUpdateInput!

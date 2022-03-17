@@ -25,7 +25,7 @@ import { BoolParam } from "../../../utils/query-param-bool";
 
 const CREATE_WORKSPACE_MUTATION = gql`
   mutation CreateWorkspaceMutation($name: String!) {
-    createWorkspace(data: { name: $name }, options: { createTutorial: true }) {
+    createWorkspace(data: { name: $name }) {
       id
       slug
     }

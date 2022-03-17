@@ -22,7 +22,6 @@ import { getPrismaClient } from "../prisma-client";
 import { AuthorizationError } from "../repository/authorization-error";
 import { castObjectNullsToUndefined } from "../repository/utils";
 import { stripe } from "../utils";
-import { createTutorialDataset } from "../utils/tutorial";
 
 function foundWorkspace<TData extends DbWorkspaceWithType | DbWorkspace>(
   data: TData | null | undefined,
@@ -81,7 +80,7 @@ const workspaces = async (
 
 const createWorkspace = async (
   _: any,
-  { data, options }: MutationCreateWorkspaceArgs,
+  { data }: MutationCreateWorkspaceArgs,
   ctx: Context
 ): Promise<DbWorkspaceWithType> => {
   const { repository, user } = ctx;
@@ -108,9 +107,6 @@ const createWorkspace = async (
     repository,
     user
   );
-  if (options?.createTutorial) {
-    await createTutorialDataset(newWorkspace.id, newWorkspace.slug, ctx);
-  }
   return newWorkspace;
 };
 

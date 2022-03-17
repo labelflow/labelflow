@@ -1,22 +1,13 @@
-import {
-  Box,
-  Button,
-  Center,
-  chakra,
-  Code,
-  Heading,
-  HStack,
-  Text,
-} from "@chakra-ui/react";
+import { Button, chakra, Code, HStack, Text } from "@chakra-ui/react";
 import { NextPageContext } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { FallbackProps } from "react-error-boundary";
-import { EmptyStateError } from "../components/empty-state";
 import BrowserLock from "../components/graphics/browser-lock";
 import { Layout } from "../components/layout";
 import { NavLogo } from "../components/logo/nav-logo";
 import { Meta } from "../components/meta";
+import { InfoBody } from "../components/info-body/info-body";
 
 export const EmptyStateLock = chakra(BrowserLock, {
   baseStyle: {
@@ -34,8 +25,56 @@ type Props = FallbackProps & {
   resetErrorBoundary?: () => void;
 };
 
+const ErrorBody = ({
+  error,
+  resetErrorBoundary,
+}: Omit<Props, "statusCode">) => (
+  <>
+    <Text mt="4" fontSize="lg">
+      Please let us know about this issue by reporting it.
+      {error && <br />}
+      {error && "Here is the error message:"}
+    </Text>
+    {error && (
+      <Code as="p" mt="4">
+        {error?.message ?? error}
+      </Code>
+    )}
+    <HStack
+      spacing={4}
+      align="center"
+      justifyContent="center"
+      mt="8"
+      width="full"
+    >
+      {resetErrorBoundary && (
+        <Button onClick={resetErrorBoundary}>Retry</Button>
+      )}
+      {/* Not using next/link here in order to resetErrorBoundary and clear the error reliably  */}
+      <Button as="a" href="/debug">
+        See debug info
+      </Button>
+      <Button
+        colorScheme="brand"
+        variant="solid"
+        as="a"
+        target="_blank"
+        rel="noreferrer"
+        href="https://github.com/labelflow/labelflow/issues/new?assignees=&labels=bug&template=bug_report.md&title="
+      >
+        Report this issue
+      </Button>
+    </HStack>
+  </>
+);
+
 const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
   const router = useRouter();
+  const errorIsNotAuth =
+    (error?.message ?? error ?? "").match(/not authenticated/) != null;
+  const errorTitle = errorIsNotAuth
+    ? "Authentication required"
+    : `An error ${statusCode ?? ""} occurred ${statusCode && "on server"}`;
 
   useEffect(() => {
     const resetErrorBoundaryIfExist = () => {
@@ -51,107 +90,29 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
     };
   }, [router.events, router.reload, resetErrorBoundary]);
 
-  if ((error?.message ?? error ?? "").match(/not authenticated/) != null) {
-    return (
-      <>
-        <Meta title="LabelFlow | Authentication required" />
-        <Layout breadcrumbs={[<NavLogo key={0} />]}>
-          <Center h="full">
-            <Box as="section">
-              <Box
-                maxW="2xl"
-                mx="auto"
-                px={{ base: "6", lg: "8" }}
-                py={{ base: "16", sm: "20" }}
-                textAlign="center"
-              >
-                <EmptyStateLock w="full" />
-                <Heading as="h2">Authentication required</Heading>
-
-                <Text mt="4" fontSize="lg">
-                  This page is only available to signed-in users. Please sign in
-                  to access it.
-                </Text>
-
-                <HStack
-                  spacing={4}
-                  align="center"
-                  justifyContent="center"
-                  mt="8"
-                  width="full"
-                >
-                  {/* Not using next/link here in order to resetErrorBoundary and clear the error reliably  */}
-                  <Button as="a" href="/">
-                    Go back to safety
-                  </Button>
-                </HStack>
-              </Box>
-            </Box>
-          </Center>
-        </Layout>
-      </>
-    );
-  }
   return (
     <>
-      <Meta title="LabelFlow | Error" />
+      <Meta
+        title={`LabelFlow | ${
+          errorIsNotAuth ? "Authentication required" : "error"
+        }`}
+      />
       <Layout breadcrumbs={[<NavLogo key={0} />]}>
-        <Center h="full">
-          <Box as="section">
-            <Box
-              maxW="2xl"
-              mx="auto"
-              px={{ base: "6", lg: "8" }}
-              py={{ base: "16", sm: "20" }}
-              textAlign="center"
-            >
-              <EmptyStateError w="full" />
-              <Heading as="h2">
-                {statusCode
-                  ? `An error ${statusCode} occurred on server`
-                  : "An error occurred"}
-              </Heading>
-
-              <Text mt="4" fontSize="lg">
-                Please let us know about this issue by reporting it.
-                {error && <br />}
-                {error && "Here is the error message:"}
-              </Text>
-              {error && (
-                <Code as="p" mt="4">
-                  {error?.message ?? error}
-                </Code>
-              )}
-              <HStack
-                spacing={4}
-                align="center"
-                justifyContent="center"
-                mt="8"
-                width="full"
-              >
-                {resetErrorBoundary && (
-                  <Button onClick={resetErrorBoundary}>Retry</Button>
-                )}
-
-                {/* Not using next/link here in order to resetErrorBoundary and clear the error reliably  */}
-                <Button as="a" href="/debug">
-                  See debug info
-                </Button>
-
-                <Button
-                  colorScheme="brand"
-                  variant="solid"
-                  as="a"
-                  target="_blank"
-                  rel="noreferrer"
-                  href="https://github.com/labelflow/labelflow/issues/new?assignees=&labels=bug&template=bug_report.md&title="
-                >
-                  Report this issue
-                </Button>
-              </HStack>
-            </Box>
-          </Box>
-        </Center>
+        <InfoBody
+          title={errorTitle}
+          illustration={EmptyStateLock}
+          homeButtonType={errorIsNotAuth ? "button" : "none"}
+          homeButtonLabel="Go back to safety"
+        >
+          {errorIsNotAuth ? (
+            <Text mt="4" fontSize="lg">
+              This page is only available to signed-in users. Please sign in to
+              access it.
+            </Text>
+          ) : (
+            <ErrorBody error={error} resetErrorBoundary={resetErrorBoundary} />
+          )}
+        </InfoBody>
       </Layout>
     </>
   );
