@@ -1,6 +1,10 @@
-import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers";
-import { WorkspacePlan } from "@labelflow/graphql-types";
+import {
+  DbWorkspace,
+  DEFAULT_WORKSPACE_PLAN,
+} from "@labelflow/common-resolvers";
+import { WorkspacePlan, WorkspaceStatus } from "@labelflow/graphql-types";
 import { toEnumValue } from "@labelflow/utils";
+import { pascalCase } from "change-case";
 import { addDays, getUnixTime } from "date-fns";
 import { isNil } from "lodash/fp";
 import Stripe from "stripe";
@@ -72,11 +76,14 @@ export class StripeService {
     name: string,
     slug: string,
     plan: WorkspacePlan
-  ): Promise<Record<string, string> | undefined> => {
-    if (!this.hasStripe) return undefined;
+  ): Promise<Partial<Pick<DbWorkspace, "stripeCustomerId" | "status">>> => {
+    if (!this.hasStripe) return { status: WorkspaceStatus.Active };
     const { id } = await this.createCustomer(name, { name, slug });
     const { status } = await this.createSubscription(id, { slug, plan });
-    return { id, status };
+    return {
+      stripeCustomerId: id,
+      status: toEnumValue(WorkspaceStatus, pascalCase(status)),
+    };
   };
 
   public readonly tryDeleteCustomer = async (

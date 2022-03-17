@@ -1,15 +1,14 @@
 import {
   DbWorkspace,
   DbWorkspaceWithType,
+  DEFAULT_WORKSPACE_PLAN,
   getSlug,
   INVALID_WORKSPACE_NAME_MESSAGES,
   PartialWithNullAllowed,
   Repository,
   validWorkspaceName,
-  DEFAULT_WORKSPACE_PLAN,
 } from "@labelflow/common-resolvers";
-
-import { WorkspaceStatus, WorkspaceType } from "@labelflow/graphql-types";
+import { WorkspaceType } from "@labelflow/graphql-types";
 import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
 import { Prisma, UserRole } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
@@ -51,19 +50,14 @@ export const addWorkspaceImpl: Repository["workspace"]["add"] = async (
   const slug = getSlug(workspace.name);
   validWorkspaceName(workspace.name, slug);
   const plan = workspace.plan ?? DEFAULT_WORKSPACE_PLAN;
-  const createCustomerReturn = await stripe.tryCreateCustomer(
-    workspace.name,
-    slug,
-    plan
-  );
+  const stripeInfo = await stripe.tryCreateCustomer(workspace.name, slug, plan);
   const db = await getPrismaClient();
   const createdWorkspace = await db.workspace.create({
     data: castObjectNullsToUndefined({
       ...workspace,
-      status: createCustomerReturn?.status as WorkspaceStatus,
+      ...stripeInfo,
       plan,
       slug,
-      stripeCustomerId: createCustomerReturn?.id,
       memberships: {
         create: {
           user: { connect: { id: user?.id } },
