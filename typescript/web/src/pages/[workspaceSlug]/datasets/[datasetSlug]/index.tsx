@@ -30,6 +30,10 @@ const Body = () => {
     skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });
 
+  if (error) {
+    router.push("/404");
+  }
+
   const datasetName = datasetResult?.dataset.name;
 
   useEffect(() => {
