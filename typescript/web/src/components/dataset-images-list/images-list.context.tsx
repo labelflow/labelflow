@@ -29,6 +29,8 @@ export type ImagesListState = Pick<
 > & {
   loading: boolean;
   images: PaginatedImagesQuery_images[];
+  toDelete?: string;
+  setToDelete: (value: string | undefined) => void;
   imagesSelected: string[];
   setImagesSelected: Dispatch<SetStateAction<string[]>>;
 };
@@ -45,6 +47,7 @@ export const ImagesListProvider = ({
 }: ImagesListProviderProps) => {
   const { page, perPage, itemCount } = usePagination();
   const [imagesSelected, setImagesSelected] = useState<string[]>([]);
+  const [toDelete, setToDelete] = useState<string | undefined>(undefined);
   const { data: imagesResult, loading: imagesQueryLoading } = useQuery<
     PaginatedImagesQuery,
     PaginatedImagesQueryVariables
@@ -64,6 +67,8 @@ export const ImagesListProvider = ({
     images: imagesResult?.images ?? [],
     imagesSelected,
     setImagesSelected,
+    toDelete,
+    setToDelete,
   };
   return (
     <ImagesListContext.Provider value={state}>

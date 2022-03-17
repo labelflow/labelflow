@@ -20,13 +20,14 @@ import { ImportButton } from "../import-button";
 import { PaginationProvider } from "../pagination";
 import { PaginationFooter } from "../pagination/pagination-footer";
 import { LayoutSpinner } from "../spinner";
-import { DeleteImageModal } from "./delete-image-modal";
+import { DeleteManyImagesModal } from "./delete-many-images-modal";
 import { ImageCard } from "./image-card";
 import {
   ImagesListProps,
   ImagesListProvider,
   useImagesList,
 } from "./images-list.context";
+import { DeleteImageModal } from "./delete-image-modal";
 
 const ImportImagesButton = () => {
   const { datasetId } = useImagesList();
@@ -73,6 +74,8 @@ const Gallery = () => {
     datasetId,
     images,
     imagesSelected,
+    toDelete,
+    setToDelete,
     setImagesSelected,
   } = useImagesList();
   const selectedLength = imagesSelected.length;
@@ -129,6 +132,12 @@ const Gallery = () => {
         </Button>
       </HStack>
       <DeleteImageModal
+        isOpen={!isEmpty(toDelete)}
+        onClose={() => setToDelete(undefined)}
+        imageId={toDelete}
+        datasetId={datasetId!}
+      />
+      <DeleteManyImagesModal
         isOpen={isDeleteModalOpen}
         onClose={handleDeleteModalClose}
         datasetId={datasetId!}
@@ -146,6 +155,7 @@ const Gallery = () => {
             name={name}
             thumbnail={thumbnail500Url}
             href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
+            onAskImageDelete={setToDelete}
           />
         ))}
       </SimpleGrid>

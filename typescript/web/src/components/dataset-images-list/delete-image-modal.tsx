@@ -1,28 +1,30 @@
-import { gql, useMutation } from "@apollo/client";
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Button,
-} from "@chakra-ui/react";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { isEmpty } from "lodash/fp";
 import { useRef } from "react";
 import {
-  DeleteManyImagesMutation,
-  DeleteManyImagesMutationVariables,
-} from "../../graphql-types";
+  GetImageByIdQuery,
+  GetImageByIdQueryVariables,
+} from "../../graphql-types/GetImageByIdQuery";
 import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../shared-queries/dataset-images-page.query";
+import { DeleteModal } from "./delete-modal";
 import { useImagesList } from "./images-list.context";
 import {
   PAGINATED_IMAGES_QUERY,
   useFlushPaginatedImagesCache,
 } from "./paginated-images-query";
 
-const DELETE_MANY_IMAGES_MUTATION = gql`
-  mutation DeleteManyImagesMutation($imagesIds: [ID!]!) {
-    deleteManyImages(where: { imagesIds: $imagesIds }) {
+const GET_IMAGE_BY_ID_QUERY = gql`
+  query GetImageByIdQuery($id: ID!) {
+    image(where: { id: $id }) {
+      id
+      name
+    }
+  }
+`;
+
+const DELETE_IMAGE_MUTATION = gql`
+  mutation DeleteImageMutation($id: ID!) {
+    deleteImage(where: { id: $id }) {
       id
     }
   }
@@ -31,76 +33,55 @@ const DELETE_MANY_IMAGES_MUTATION = gql`
 export const DeleteImageModal = ({
   isOpen = false,
   onClose = () => {},
+  imageId,
   datasetId,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
+  imageId?: string | null;
   datasetId: string;
 }) => {
   const { imagesSelected, setImagesSelected } = useImagesList();
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const { data } = useQuery<GetImageByIdQuery, GetImageByIdQueryVariables>(
+    GET_IMAGE_BY_ID_QUERY,
+    {
+      variables: { id: imageId ?? "" },
+      skip: isEmpty(imageId),
+    }
+  );
 
   const flushPaginatedImagesCache = useFlushPaginatedImagesCache(datasetId);
-  const [deletedImagesIds, { loading }] = useMutation<
-    DeleteManyImagesMutation,
-    DeleteManyImagesMutationVariables
-  >(DELETE_MANY_IMAGES_MUTATION, {
-    update: (cache) => cache.evict({ id: `Dataset:${datasetId}` }),
-  });
-
+  const [deleteImage, { loading: deleteImageLoading }] = useMutation(
+    DELETE_IMAGE_MUTATION,
+    { update: (cache) => cache.evict({ id: `Dataset:${datasetId}` }) }
+  );
   const handleDeleteButtonClick = async () => {
     await flushPaginatedImagesCache();
-    await deletedImagesIds({
-      variables: { imagesIds: imagesSelected },
+    await deleteImage({
+      variables: { id: imageId },
       refetchQueries: [
         DATASET_IMAGES_PAGE_DATASET_QUERY,
         PAGINATED_IMAGES_QUERY,
       ],
     });
-    setImagesSelected([]);
+    if (imageId) {
+      const filteredImages = imagesSelected.filter((id) => id !== imageId);
+      setImagesSelected(filteredImages);
+    }
+
     onClose();
   };
-  return (
-    <AlertDialog
-      isOpen={isOpen}
-      leastDestructiveRef={cancelRef}
-      onClose={onClose}
-      isCentered
-    >
-      <AlertDialogOverlay>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            {`Delete ${imagesSelected.length} image${
-              imagesSelected.length > 1 ? "s" : ""
-            }`}
-          </AlertDialogHeader>
-          <AlertDialogBody>
-            Are you sure? Every labels will also be deleted. This action can not
-            be undone.
-          </AlertDialogBody>
 
-          <AlertDialogFooter>
-            <Button
-              disabled={loading}
-              ref={cancelRef}
-              onClick={onClose}
-              aria-label="Cancel delete"
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={loading}
-              colorScheme="red"
-              onClick={handleDeleteButtonClick}
-              aria-label="Confirm deleting image"
-              ml={3}
-              isLoading={loading}
-            >
-              Delete
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialogOverlay>
-    </AlertDialog>
+  return (
+    <DeleteModal
+      isOpen={isOpen}
+      cancelRef={cancelRef}
+      onClose={onClose}
+      loading={deleteImageLoading}
+      handleDeleteButtonClick={handleDeleteButtonClick}
+      header={`Delete image ${data?.image?.name}`}
+      body="Are you sure? Labels linked to this image will be deleted. This action can not be undone."
+    />
   );
 };

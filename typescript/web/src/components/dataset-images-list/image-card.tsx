@@ -4,6 +4,7 @@ import {
   FlexProps,
   HStack,
   Skeleton,
+  IconButton,
   Text,
   useBoolean,
   useColorModeValue,
@@ -14,8 +15,11 @@ import {
   ChangeEvent,
   createContext,
   PropsWithChildren,
+  MouseEvent,
+  useCallback,
   useContext,
 } from "react";
+import { HiTrash } from "react-icons/hi";
 import { EmptyStateImageNotFound } from "../empty-state";
 import { ImageWithFallback } from "../image";
 import { Tooltip } from "../tooltip";
@@ -26,6 +30,7 @@ export type ImageCardProps = {
   name: string;
   thumbnail?: string | null;
   href: string;
+  onAskImageDelete: (imageId: string) => void;
 };
 
 type ImageCardState = ImageCardProps & {
@@ -58,6 +63,35 @@ const ImageCardProvider = ({
 );
 
 const useImageCard = () => useContext(ImageCardContext);
+
+const DeleteButton = () => {
+  const { id, onAskImageDelete } = useImageCard();
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      // Prevent parent onClick event from being fired too
+      event.preventDefault();
+      event.stopPropagation();
+      onAskImageDelete(id);
+    },
+    [onAskImageDelete, id]
+  );
+  return (
+    <Tooltip label="Delete image">
+      <IconButton
+        _hover={{ bgColor: "rgba(0, 0, 0, .2)" }}
+        _active={{ bgColor: "gray.600" }}
+        color="white"
+        aria-label="delete image"
+        isRound
+        size="md"
+        onClick={handleClick}
+        variant="ghost"
+      >
+        <HiTrash />
+      </IconButton>
+    </Tooltip>
+  );
+};
 
 const ImageErrorFallback = () => (
   <Flex
@@ -101,9 +135,10 @@ const OverlayTopRow = () => {
   return (
     <HStack
       alignSelf="stretch"
-      justify="flex-start"
+      justify="space-between"
       visibility={displayOverlay ? "visible" : "hidden"}
-      p={4}
+      px={4}
+      py={1}
       pointerEvents="all"
     >
       <Checkbox
@@ -114,6 +149,7 @@ const OverlayTopRow = () => {
         isChecked={imagesSelected.includes(id)}
         borderColor="white"
       />
+      <DeleteButton />
     </HStack>
   );
 };
