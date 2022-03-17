@@ -78,12 +78,14 @@ const DeleteButton = () => {
   return (
     <Tooltip label="Delete image">
       <IconButton
-        _hover={{ bgColor: "rgba(0, 0, 0, .2)" }}
+        w="24px"
+        h="24px"
+        minW="unset"
+        _hover={{ bgColor: "gray.500" }}
         _active={{ bgColor: "gray.600" }}
         color="white"
         aria-label="delete image"
         isRound
-        size="md"
         onClick={handleClick}
         variant="ghost"
       >
@@ -138,7 +140,7 @@ const OverlayTopRow = () => {
       justify="space-between"
       visibility={displayOverlay ? "visible" : "hidden"}
       px={4}
-      py={1}
+      py={3}
       pointerEvents="all"
     >
       <Checkbox
