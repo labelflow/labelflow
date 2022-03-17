@@ -825,7 +825,7 @@ export type Workspace = {
   datasets: Array<Dataset>;
   id: Scalars['ID'];
   image?: Maybe<Scalars['String']>;
-  imagesOfWorkspace: Scalars['Int'];
+  imagesAggregates: ImagesAggregates;
   memberships: Array<Membership>;
   name: Scalars['String'];
   plan: WorkspacePlan;
@@ -1350,7 +1350,7 @@ export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversPa
   datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  imagesOfWorkspace?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;

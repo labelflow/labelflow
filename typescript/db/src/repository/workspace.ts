@@ -181,3 +181,12 @@ export const deleteWorkspace: Repository["workspace"]["delete"] = async (
     await stripe.tryDeleteCustomer(stripeCustomerId);
   }
 };
+
+export const countImages: Repository["workspace"]["countImages"] = async (
+  where
+) => {
+  const db = await getPrismaClient();
+  return await db.image.count({
+    where: { dataset: { workspace: castObjectNullsToUndefined(where) } },
+  });
+};

@@ -99,7 +99,7 @@ export type DbWorkspace = Omit<
   | "plan"
   | "stripeCustomerPortalUrl"
   | "status"
-  | "imagesOfWorkspace"
+  | "imagesAggregates"
 > & {
   plan: WorkspacePlan;
   stripeCustomerId?: string | undefined | null;
@@ -217,6 +217,7 @@ export type Repository = {
     >;
     update: Update<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
     delete: Delete<WorkspaceWhereUniqueInput>;
+    countImages: Get<number, WorkspaceWhereUniqueInput>;
   };
   upload: {
     getUploadTargetHttp: (

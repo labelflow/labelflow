@@ -26,6 +26,7 @@ import {
   getWorkspace,
   listWorkspace,
   updateWorkspace,
+  countImages as countWorkspaceImages,
 } from "./workspace";
 
 const getWorkspaceFilter = (
@@ -354,6 +355,7 @@ export const repository: Repository = {
     list: listWorkspace,
     update: updateWorkspace,
     delete: deleteWorkspace,
+    countImages: countWorkspaceImages,
   },
   upload: {
     delete: deleteFromStorage,

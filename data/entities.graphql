@@ -93,7 +93,7 @@ type Workspace {
   memberships: [Membership!]!
   stripeCustomerPortalUrl: String
   status: WorkspaceStatus!
-  imagesOfWorkspace: Int!
+  imagesAggregates: ImagesAggregates!
 }
 
 type Membership {

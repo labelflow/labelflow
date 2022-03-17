@@ -68,7 +68,10 @@ const YourPlan = () => {
 };
 
 const Usage = () => {
-  const { plan, imagesOfWorkspace: totalCount } = useWorkspaceSettings();
+  const {
+    plan,
+    imagesAggregates: { totalCount },
+  } = useWorkspaceSettings();
   const maxCount = MAX_IMAGES_PER_WORKSPACE[plan];
   return (
     <FieldGroup
