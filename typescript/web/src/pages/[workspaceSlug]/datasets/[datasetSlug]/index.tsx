@@ -6,6 +6,7 @@ import React, { useEffect } from "react";
 import { useErrorHandler } from "react-error-boundary";
 import { Authenticated } from "../../../../components/auth";
 import { CookieBanner } from "../../../../components/cookie-banner";
+import { CreateTutorial } from "../../../../components/datasets";
 import { GET_DATASET_BY_SLUG_QUERY } from "../../../../components/datasets/datasets.query";
 import { ExportButton } from "../../../../components/export-button";
 import { ImportButton } from "../../../../components/import-button";
@@ -16,6 +17,10 @@ import { Meta } from "../../../../components/meta";
 import { LayoutSpinner } from "../../../../components/spinner";
 import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
 import { Error404Content } from "../../../404";
+
+type ApolloNetworkError =
+  | { result?: { errors?: { message: string }[] } }
+  | undefined;
 
 const Body = () => {
   const router = useRouter();
@@ -29,8 +34,9 @@ const Body = () => {
     variables: { slug: datasetSlug, workspaceSlug },
     skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });
-
   const datasetName = datasetResult?.dataset.name;
+  const isTutorial = datasetSlug === "tutorial";
+  const datasetTitle = isTutorial ? "Tutorial" : datasetName ?? "Dataset";
 
   useEffect(() => {
     if (router.isReady && !error && !loading) {
@@ -39,47 +45,59 @@ const Body = () => {
         query: queryRest,
       });
     }
-  }, [error, loading, router.isReady]);
+  }, [
+    datasetSlug,
+    error,
+    loading,
+    queryRest,
+    router,
+    router.isReady,
+    workspaceSlug,
+  ]);
 
   const handleError = useErrorHandler();
-  if (error && !loading) {
-    if (!error.message.match(/Couldn't find dataset corresponding to/)) {
-      handleError(error);
-    }
-    return (
-      <>
-        <Meta title="LabelFlow | Dataset not found" />
-        <CookieBanner />
-        <Error404Content />
-      </>
-    );
+  // See https://github.com/apollographql/apollo-client/issues/6222
+  const errorMessage =
+    error && !loading
+      ? (error.networkError as ApolloNetworkError)?.result?.errors?.[0].message
+      : undefined;
+  const isNotFound =
+    error &&
+    !loading &&
+    errorMessage?.match(/Couldn't find dataset corresponding to/);
+  if (error && !loading && !isNotFound) {
+    handleError(error);
   }
 
   return (
     <>
-      <Meta title={`LabelFlow | ${datasetName ?? "Dataset"}`} />
+      <Meta
+        title={`LabelFlow | ${isNotFound ? "Dataset not found" : datasetTitle}`}
+      />
       <CookieBanner />
-      <Layout
-        breadcrumbs={[
-          <NavLogo key={0} />,
-          <WorkspaceSwitcher key={1} />,
-          <NextLink key={2} href={`/${workspaceSlug}/datasets`}>
-            <BreadcrumbLink>Datasets</BreadcrumbLink>
-          </NextLink>,
-          <Text key={3}>{datasetName}</Text> ?? (
-            <Skeleton key={1}>Dataset Name</Skeleton>
-          ),
-        ]}
-        topBarRightContent={
-          <>
-            <KeymapButton />
-            <ImportButton datasetId={datasetResult?.dataset?.id} />
-            <ExportButton />
-          </>
-        }
-      >
-        <LayoutSpinner />
-      </Layout>
+      {(isNotFound && !isTutorial && <Error404Content />) || (
+        <Layout
+          breadcrumbs={[
+            <NavLogo key={0} />,
+            <WorkspaceSwitcher key={1} />,
+            <NextLink key={2} href={`/${workspaceSlug}/datasets`}>
+              <BreadcrumbLink>Datasets</BreadcrumbLink>
+            </NextLink>,
+            <Text key={3}>{datasetName}</Text> ?? (
+              <Skeleton key={1}>Dataset Name</Skeleton>
+            ),
+          ]}
+          topBarRightContent={
+            <>
+              <KeymapButton />
+              <ImportButton datasetId={datasetResult?.dataset?.id} />
+              <ExportButton />
+            </>
+          }
+        >
+          {(!loading && isTutorial && <CreateTutorial />) || <LayoutSpinner />}
+        </Layout>
+      )}
     </>
   );
 };

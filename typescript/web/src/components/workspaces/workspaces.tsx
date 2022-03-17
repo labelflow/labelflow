@@ -1,16 +1,10 @@
-import {
-  Center,
-  chakra,
-  Flex,
-  Heading,
-  Text,
-  useBoolean,
-} from "@chakra-ui/react";
+import { chakra, Flex, Text, useBoolean } from "@chakra-ui/react";
 import { isEmpty } from "lodash";
 import { isNil } from "lodash/fp";
 import { FormEvent, useCallback } from "react";
 import { useOptionalWorkspaces, useWorkspaces } from "../../hooks";
 import NoWorkspacesGraphics from "../graphics/no-workspace";
+import { InfoBody } from "../info-body/info-body";
 import { LayoutSpinner } from "../spinner";
 import {
   useWorkspaceNameInput,
@@ -61,18 +55,16 @@ const CreateWorkspaceForm = () => {
 };
 
 const NoWorkspaces = () => (
-  <Center my="auto" h="full">
-    <Flex direction="column" align="center">
-      <ChakraNoWorkspaces />
-      <Heading mt="8" textAlign="center">
-        Create your first workspace
-      </Heading>
-      <Text mt="4" textAlign="center">
-        Workspaces allow you to store your image datasets
-      </Text>
-      <CreateWorkspaceForm />
-    </Flex>
-  </Center>
+  <InfoBody
+    title="Create your first workspace"
+    illustration={ChakraNoWorkspaces}
+    illustrationTitleSpacing={8}
+  >
+    <Text mt="4" textAlign="center">
+      Workspaces allow you to store your image datasets
+    </Text>
+    <CreateWorkspaceForm />
+  </InfoBody>
 );
 
 const WorkspacesBody = (props: WorkspacesProps) => {

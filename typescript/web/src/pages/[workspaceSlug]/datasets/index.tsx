@@ -6,6 +6,7 @@ import { Authenticated } from "../../../components/auth";
 import { CookieBanner } from "../../../components/cookie-banner";
 import { DatasetList, NewDatasetCard } from "../../../components/datasets";
 import { DeleteDatasetModal } from "../../../components/datasets/delete-dataset-modal";
+import { TutorialPrompt } from "../../../components/datasets/tutorial-prompt";
 import { UpsertDatasetModal } from "../../../components/datasets/upsert-dataset-modal";
 import { Layout } from "../../../components/layout";
 import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-tab-bar";
@@ -79,6 +80,7 @@ const Body = () => {
         />
 
         <Flex direction="row" wrap="wrap" p={4}>
+          <TutorialPrompt />
           <NewDatasetCard
             disabled={!isReady}
             addDataset={() => {

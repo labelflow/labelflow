@@ -164,9 +164,12 @@ const createTutorialDataset = async (
   args: MutationCreateTutorialDatasetArgs,
   { repository, user, req }: Context
 ): Promise<DbDataset & { __typename: string }> => {
-  const existingWorkspace = await repository.workspace.get({
-    slug: args.data.workspaceSlug,
-  });
+  const existingWorkspace = await repository.workspace.get(
+    {
+      slug: args.data.workspaceSlug,
+    },
+    user
+  );
   if (!existingWorkspace) {
     throw new Error(
       `Could not find or access workspace with slug ${args.data.workspaceSlug}`

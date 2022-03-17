@@ -298,12 +298,13 @@ export const repository: Repository = {
           "You should either specify the id or the slugs when looking for a dataset"
         );
       }
-      await checkUserAccessToDataset({ where, user });
       const dataset = await (
         await getPrismaClient()
       ).dataset.findUnique({
         where: castObjectNullsToUndefined(where),
       });
+      if (dataset === null) return null;
+      await checkUserAccessToDataset({ where, user });
       return dataset;
     },
     update: async (where, dataset, user) => {
