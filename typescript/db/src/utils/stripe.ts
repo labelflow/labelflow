@@ -72,11 +72,11 @@ export class StripeService {
     name: string,
     slug: string,
     plan: WorkspacePlan
-  ): Promise<string | undefined> => {
+  ): Promise<Record<string, string> | undefined> => {
     if (!this.hasStripe) return undefined;
     const { id } = await this.createCustomer(name, { name, slug });
-    await this.createSubscription(id, { slug, plan });
-    return id;
+    const { status } = await this.createSubscription(id, { slug, plan });
+    return { id, status };
   };
 
   public readonly tryDeleteCustomer = async (

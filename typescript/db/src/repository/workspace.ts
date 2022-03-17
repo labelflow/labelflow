@@ -9,7 +9,7 @@ import {
   DEFAULT_WORKSPACE_PLAN,
 } from "@labelflow/common-resolvers";
 
-import { WorkspaceType } from "@labelflow/graphql-types";
+import { WorkspaceStatus, WorkspaceType } from "@labelflow/graphql-types";
 import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
 import { Prisma, UserRole } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
@@ -51,7 +51,7 @@ export const addWorkspaceImpl: Repository["workspace"]["add"] = async (
   const slug = getSlug(workspace.name);
   validWorkspaceName(workspace.name, slug);
   const plan = workspace.plan ?? DEFAULT_WORKSPACE_PLAN;
-  const stripeCustomerId = await stripe.tryCreateCustomer(
+  const createCustomerReturn = await stripe.tryCreateCustomer(
     workspace.name,
     slug,
     plan
@@ -60,9 +60,10 @@ export const addWorkspaceImpl: Repository["workspace"]["add"] = async (
   const createdWorkspace = await db.workspace.create({
     data: castObjectNullsToUndefined({
       ...workspace,
+      status: createCustomerReturn?.status as WorkspaceStatus,
       plan,
       slug,
-      stripeCustomerId,
+      stripeCustomerId: createCustomerReturn?.id,
       memberships: {
         create: {
           user: { connect: { id: user?.id } },
