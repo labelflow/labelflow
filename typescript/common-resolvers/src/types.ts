@@ -24,7 +24,7 @@ import type {
   WorkspaceWhereUniqueInput,
   WorkspaceType,
 } from "@labelflow/graphql-types";
-import { WorkspacePlan } from "@prisma/client";
+import { WorkspacePlan, WorkspaceStatus } from "@prisma/client";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 
@@ -98,7 +98,13 @@ export type DbWorkspace = Omit<
   | "memberships"
   | "plan"
   | "stripeCustomerPortalUrl"
-> & { plan: WorkspacePlan; stripeCustomerId?: string | undefined | null };
+  | "status"
+  | "imagesAggregates"
+> & {
+  plan: WorkspacePlan;
+  stripeCustomerId?: string | undefined | null;
+  status: WorkspaceStatus;
+};
 
 export type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
 
@@ -211,6 +217,7 @@ export type Repository = {
     >;
     update: Update<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
     delete: Delete<WorkspaceWhereUniqueInput>;
+    countImages: Get<number, WorkspaceWhereUniqueInput>;
   };
   upload: {
     getUploadTargetHttp: (

@@ -10,7 +10,6 @@ const WORKSPACE_PLAN_STYLE: Record<WorkspacePlan, WorkspacePlanStyle> = {
   Community: { color: "gray.200", emoji: "🐠" },
   Starter: { color: "pink.200", emoji: "🐙" },
   Pro: { color: "cyan.200", emoji: "🐳" },
-  Enterprise: { color: "green.200", emoji: "🏢" },
 };
 
 export const WorkspacePlanBadge = ({ plan }: { plan: WorkspacePlan }) => {

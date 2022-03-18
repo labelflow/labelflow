@@ -17,7 +17,7 @@ import { WorkspacePlan } from "@labelflow/graphql-types";
 import { isEmpty } from "lodash/fp";
 import { useWorkspace } from "./workspaces-context";
 import { randomBackgroundGradient } from "../../utils/random-background-gradient";
-import { WorkspacePlanBadge } from "./workspace-badge";
+import { WorkspacePlanBadge } from "./workspace-plan-badge";
 import { UserWithWorkspacesQuery_user_memberships_workspace } from "../../graphql-types/UserWithWorkspacesQuery";
 
 const TableHead = () => (

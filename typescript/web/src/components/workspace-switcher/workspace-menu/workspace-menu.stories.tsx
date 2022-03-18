@@ -10,7 +10,7 @@ import { ResponsiveBreadcrumbs } from "../../layout/top-bar/breadcrumbs/responsi
 import { WorkspaceMenu } from "./workspace-menu";
 
 export default {
-  title: storybookTitle("Workspace Switcher", WorkspaceMenu),
+  title: storybookTitle("Workspaces", "Workspace Switcher", WorkspaceMenu),
   decorators: [
     createCommonDecorator({
       auth: { withWorkspaces: true },

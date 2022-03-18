@@ -15,7 +15,7 @@ import { WorkspaceSwitcher } from "../../components/workspace-switcher";
 import {
   GetWorkspaceDetailsQuery,
   GetWorkspaceDetailsQueryVariables,
-} from "../../graphql-types/GetWorkspaceDetailsQuery";
+} from "../../graphql-types";
 import { useWorkspace } from "../../hooks";
 
 const GET_WORKSPACE_DETAILS_QUERY = gql`
@@ -27,6 +27,9 @@ const GET_WORKSPACE_DETAILS_QUERY = gql`
       image
       name
       stripeCustomerPortalUrl
+      imagesAggregates {
+        totalCount
+      }
     }
   }
 `;
@@ -42,6 +45,7 @@ const Body = () => {
     {
       variables: { workspaceSlug },
       skip: isEmpty(workspaceSlug),
+      pollInterval: 1000 * 60 * 5,
     }
   );
 

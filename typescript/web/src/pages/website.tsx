@@ -9,7 +9,7 @@ import { Footer } from "../components/website/Footer/Footer";
 import { Hero } from "../components/website/hero";
 import { LogoGrid } from "../components/website/Logos/LogoGrid";
 import { NavBar } from "../components/website/Navbar/NavBar";
-import { Pricing } from "../components/website/Pricing/Pricing";
+import { Pricing } from "../components/website/pricing";
 import { Proof } from "../components/website/proof";
 import { IntroVideo } from "../components/website/intro-video";
 import { Roadmap } from "../components/website/roadmap/roadmap";

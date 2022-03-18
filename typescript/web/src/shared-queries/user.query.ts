@@ -39,6 +39,7 @@ export const USER_WITH_WORKSPACES_QUERY = gql`
           slug
           image
           plan
+          status
         }
       }
     }
