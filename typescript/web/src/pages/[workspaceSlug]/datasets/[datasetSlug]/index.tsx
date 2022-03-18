@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { BreadcrumbLink, Skeleton, Text } from "@chakra-ui/react";
+import { isNil } from "lodash/fp";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -30,7 +31,13 @@ const Body = () => {
     skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
   });
 
-  if (error) {
+  if (
+    error &&
+    !isNil(error.networkError) &&
+    "result" in error.networkError &&
+    error.networkError.result.errors[0].message ===
+      "User not authorized to access dataset"
+  ) {
     router.push("/404");
   }
 
