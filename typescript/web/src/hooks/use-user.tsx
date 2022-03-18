@@ -57,7 +57,14 @@ const useUserQuery = <TTypes extends UserTupleTypes>(
     skip,
   });
 
-  if (error) {
+  if (
+    error &&
+    !isNil(error.networkError) &&
+    "result" in error.networkError &&
+    error.networkError.result.errors[0].message.match(
+      /Couldn't find an user with id/
+    )
+  ) {
     signOut({ callbackUrl: "/" });
   }
   return skip ? undefined : data?.user;
