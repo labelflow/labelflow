@@ -100,6 +100,7 @@ const createWorkspace = async (
       id: data.id ?? undefined,
       name: data.name,
       image: data.image ?? undefined,
+      plan: data.plan,
     },
     user
   );
@@ -208,5 +209,9 @@ export default {
     workspaceExists,
   },
   Mutation: { createWorkspace, updateWorkspace, deleteWorkspace },
-  Workspace: { memberships, datasets, stripeCustomerPortalUrl },
+  Workspace: {
+    memberships,
+    datasets,
+    stripeCustomerPortalUrl,
+  },
 };

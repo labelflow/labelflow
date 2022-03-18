@@ -8,7 +8,7 @@ import {
 import { TestComponent, TEST_CASES } from "./workspace-name-input.fixtures";
 
 export default {
-  title: storybookTitle(WorkspaceNameInput),
+  title: storybookTitle("Workspaces", WorkspaceNameInput),
   decorators: [chakraDecorator, apolloMockDecorator],
 };
 

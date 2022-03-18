@@ -5,13 +5,11 @@ import {
   MembershipRole,
   MembershipStatus,
   MutationCreateMembershipArgs,
-  MutationCreateWorkspaceArgs,
-  Workspace,
 } from "@labelflow/graphql-types";
 import { v4 as uuidV4 } from "uuid";
 import { client, user } from "../../dev/apollo-client";
 import { getPrismaClient } from "../../prisma-client";
-import { CREATE_WORKSPACE_MUTATION } from "../../utils/tests";
+import { createWorkspace } from "../../utils/tests";
 
 // @ts-ignore
 fetch.disableFetchMocks();
@@ -35,17 +33,6 @@ const createMembership = async (
       }
     `,
     variables: { data },
-  });
-};
-
-const createWorkspace = async (
-  data?: Partial<MutationCreateWorkspaceArgs["data"]>
-) => {
-  return await client.mutate<{
-    createWorkspace: Pick<Workspace, "id" | "name" | "slug" | "plan" | "type">;
-  }>({
-    mutation: CREATE_WORKSPACE_MUTATION,
-    variables: { data: { ...data, name: data?.name ?? "test" } },
   });
 };
 

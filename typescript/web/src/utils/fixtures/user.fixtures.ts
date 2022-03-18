@@ -11,7 +11,7 @@ import {
   USER_WITH_WORKSPACES_QUERY,
 } from "../../shared-queries/user.query";
 import { ApolloMockResponse } from "../tests/apollo-mock";
-import { WORKSPACE_DATA } from "./workspace.fixtures";
+import { UNPAID_WORKSPACE_DATA, WORKSPACE_DATA } from "./workspace.fixtures";
 
 export const USER_QUERY_DATA: UserQuery_user = {
   id: "e66e5aff-86f2-4543-bb51-7b414f5f6774",
@@ -27,7 +27,10 @@ export const USER_WITH_WORKSPACES_DATA: UserWithWorkspacesQuery_user = {
   createdAt: new Date(),
   email: "full.user@localhost",
   image: null,
-  memberships: [{ workspace: WORKSPACE_DATA }],
+  memberships: [
+    { workspace: WORKSPACE_DATA },
+    { workspace: UNPAID_WORKSPACE_DATA },
+  ],
 };
 
 export const mockUserQuery = <TTypes extends UserTupleTypes>(

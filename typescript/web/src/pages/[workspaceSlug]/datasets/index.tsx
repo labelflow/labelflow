@@ -12,6 +12,7 @@ import { WorkspaceTabBar } from "../../../components/layout/tab-bar/workspace-ta
 import { NavLogo } from "../../../components/logo/nav-logo";
 import { Meta } from "../../../components/meta";
 import { WorkspaceSwitcher } from "../../../components/workspace-switcher";
+import { UpgradePlanBanner } from "../../../components/workspaces/upgrade-plan-banner";
 import { useWorkspace } from "../../../hooks";
 import { BoolParam, IdParam } from "../../../utils/query-param-bool";
 
@@ -55,6 +56,7 @@ const Body = () => {
 
   return (
     <>
+      <UpgradePlanBanner />
       <Meta title="LabelFlow | Datasets" />
       <CookieBanner />
       <Layout
