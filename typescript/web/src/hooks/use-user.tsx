@@ -1,6 +1,6 @@
 import { DocumentNode, useQuery } from "@apollo/client";
 import { isEmpty, isNil } from "lodash/fp";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { PropsWithChildren, useEffect, useMemo } from "react";
 import { useCookies } from "react-cookie";
 import { LAST_WORKSPACE_ID_COOKIE_NAME } from "../constants";
@@ -52,10 +52,14 @@ const useUserQuery = <TTypes extends UserTupleTypes>(
 ): TTypes[2] | undefined => {
   const id = useUserId() ?? "";
   const skip = isEmpty(id);
-  const { data } = useQuery<TTypes[0], TTypes[1]>(query, {
+  const { data, error } = useQuery<TTypes[0], TTypes[1]>(query, {
     variables: { id },
     skip,
   });
+
+  if (error) {
+    signOut({ callbackUrl: "/" });
+  }
   return skip ? undefined : data?.user;
 };
 
