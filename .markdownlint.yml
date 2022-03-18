@@ -2,6 +2,9 @@ default: true
 line-length: false
 no-bare-urls: false
 
+# Rule is too strict and we can't have condensed lists with children
+blanks-around-lists: false
+
 # Repository main README.md has a custom top-level header
 no-inline-html: false
 first-line-heading: false
