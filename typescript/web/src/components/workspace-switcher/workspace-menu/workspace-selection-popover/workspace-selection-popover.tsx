@@ -46,7 +46,7 @@ const filterWorkspaces = ({
   const filteredWorkspaces = workspaces.filter((workspace: WorkspaceItem) => {
     return workspace.name
       .toLowerCase()
-      .startsWith((inputValueCombobox ?? "").toLowerCase());
+      .includes((inputValueCombobox ?? "").toLowerCase());
   });
 
   return [
