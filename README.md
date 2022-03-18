@@ -84,31 +84,31 @@ You need to have below listed softwares installed on your machine to run labelfl
 
 1. Clone the repository on your machine using
 
-   ```shell
+   ```txt
    git clone https://github.com/labelflow/labelflow.git
    ```
 
 2. Go into the labelflow folder
 
-   ```shell
+   ```txt
    cd labelflow
    ```
 
 3. Install dependencies using yarn
 
-   ```shell
+   ```txt
    yarn install
    ```
 
 4. Build the web app
 
-   ```shell
+   ```txt
    yarn build:web
    ```
 
 5. Start the web server
 
-   ```shell
+   ```txt
    yarn start:web
    ```
 
