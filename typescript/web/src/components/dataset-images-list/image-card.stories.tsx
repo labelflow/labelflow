@@ -1,16 +1,30 @@
 import { sleep } from "@labelflow/utils";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { userEvent, within } from "@storybook/testing-library";
-import { chakraDecorator, storybookTitle } from "../../utils/stories";
-import { ImageCard } from "./image-card";
+import { createCommonDecorator, storybookTitle } from "../../utils/stories";
+import { ImageCard, ImageCardProps } from "./image-card";
+import { ImagesListProvider } from "./images-list.context";
 
 export default {
   title: storybookTitle(ImageCard),
   component: ImageCard,
-  decorators: [chakraDecorator],
+  decorators: [
+    createCommonDecorator({
+      apollo: true,
+    }),
+  ],
 } as ComponentMeta<typeof ImageCard>;
 
-const Template: ComponentStory<typeof ImageCard> = ImageCard;
+const Template: ComponentStory<typeof ImageCard> = (args: ImageCardProps) => (
+  <ImagesListProvider
+    datasetSlug=""
+    workspaceSlug=""
+    datasetId=""
+    imagesTotalCount={0}
+  >
+    <ImageCard {...args} />
+  </ImagesListProvider>
+);
 
 const IMAGE_ID = "bffcd063-c5dc-414c-bceb-23d349a87739";
 const IMAGE_URL = "https://bit.ly/2Z4KKcF";
