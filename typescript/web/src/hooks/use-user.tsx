@@ -19,6 +19,7 @@ import {
   USER_QUERY,
   USER_WITH_WORKSPACES_QUERY,
 } from "../shared-queries/user.query";
+import { getApolloErrorMessage } from "../utils/get-apollo-error-message";
 import { createOptionalContext } from "./use-optional-context";
 import { useRouterQueryString } from "./use-router-query-string";
 
@@ -59,11 +60,7 @@ const useUserQuery = <TTypes extends UserTupleTypes>(
 
   if (
     error &&
-    !isNil(error.networkError) &&
-    "result" in error.networkError &&
-    error.networkError.result.errors[0].message.match(
-      /Couldn't find an user with id/
-    )
+    getApolloErrorMessage(error).match(/Couldn't find an user with id/)
   ) {
     signOut({ callbackUrl: "/" });
   }
