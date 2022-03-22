@@ -15,7 +15,7 @@ import {
   AlertDialogOverlay,
   Button,
 } from "@chakra-ui/react";
-import { isEmpty, isNil } from "lodash/fp";
+import { isEmpty, isNil, partition } from "lodash/fp";
 import { useCallback, useRef } from "react";
 import {
   GetLabelClassByIdQuery,
@@ -78,22 +78,25 @@ export const DeleteLabelClassModal = () => {
                   imageRef
                 ) as unknown as Reference[];
                 if (!labels) return;
-                labels.forEach((labelRef) => {
+                const [labelsToDelete, labelsToKeep] = partition((labelRef) => {
                   const labelClassRef: Reference | undefined = readField(
                     "labelClass",
                     labelRef
                   );
-                  if (deleteClassId === readField("id", labelClassRef)) {
-                    cache.modify({
-                      /* eslint-disable-next-line no-underscore-dangle */
-                      id: labelRef.__ref,
-                      fields: {
-                        labelClass: () => {
-                          return null;
-                        },
-                      },
-                    });
-                  }
+                  return deleteClassId === readField("id", labelClassRef);
+                }, labels);
+                cache.modify({
+                  // eslint-disable-next-line no-underscore-dangle
+                  id: imageRef.__ref,
+                  fields: {
+                    labels: () => labelsToKeep,
+                  },
+                });
+                labelsToDelete.forEach((labelRef) => {
+                  cache.evict({
+                    /* eslint-disable-next-line no-underscore-dangle */
+                    id: labelRef.__ref,
+                  });
                 });
               });
               return existingImageRefs;
@@ -130,8 +133,8 @@ export const DeleteLabelClassModal = () => {
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            Are you sure? Labels linked to this class will be set to the class
-            None. This action can not be undone.
+            Are you sure? Labels linked to this class will be deleted. This
+            action cannot be undone.
           </AlertDialogBody>
 
           <AlertDialogFooter>

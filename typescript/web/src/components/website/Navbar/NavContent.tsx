@@ -13,8 +13,8 @@ import {
 import NextLink from "next/link";
 import * as React from "react";
 import { RiStarLine } from "react-icons/ri";
+import { Logo } from "../../logo";
 import { APP_GITHUB_URL } from "../../../constants";
-import { Logo } from "../Logo";
 import { NavLink } from "./NavLink";
 import { NavMenu } from "./NavMenu";
 import { Submenu } from "./Submenu";
@@ -70,7 +70,7 @@ const MobileNavContext = (props: FlexProps) => {
         </Box>
         <NextLink href="/website">
           <Box as="a" rel="home" mx="auto" cursor="pointer">
-            <Logo h="24px" iconColor="brand.400" />
+            <Logo h="6" />
           </Box>
         </NextLink>
         <Spacer />
@@ -114,7 +114,7 @@ const DesktopNavContent = (props: FlexProps) => {
       <NextLink href="/website">
         <Box as="a" rel="home" cursor="pointer">
           <VisuallyHidden>LabelFlow</VisuallyHidden>
-          <Logo h="6" iconColor="brand.500" />
+          <Logo h="6" />
         </Box>
       </NextLink>
       <HStack

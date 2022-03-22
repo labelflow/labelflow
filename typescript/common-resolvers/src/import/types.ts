@@ -1,4 +1,4 @@
-import { ImportOptionsCoco } from "@labelflow/graphql-types";
+import { ImportOptionsCoco, ImportStatus } from "@labelflow/graphql-types";
 import { Context } from "../types";
 
 export type ImportFunction = (
@@ -6,4 +6,4 @@ export type ImportFunction = (
   datasetId: string,
   context: Context,
   options?: ImportOptionsCoco
-) => void;
+) => Promise<ImportStatus>;

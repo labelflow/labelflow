@@ -3,9 +3,9 @@ import * as React from "react";
 import NextLink from "next/link";
 import { Copyright } from "./Copyright";
 import { LinkGrid } from "./LinkGrid";
-import { Logo } from "../Logo";
 import { SocialMediaLinks } from "./SocialMediaLinks";
 import { SubscribeForm } from "./SubscribeForm";
+import { Logo } from "../../logo";
 
 export const Footer = () => (
   <Box
@@ -24,7 +24,7 @@ export const Footer = () => (
         <NextLink href="/website">
           <Box as="a" href="/website" mx={{ base: "auto", lg: "0" }}>
             <VisuallyHidden>LabelFlow</VisuallyHidden>
-            <Logo h="24px" iconColor="brand.400" cursor="pointer" />
+            <Logo h="6" cursor="pointer" />
           </Box>
         </NextLink>
 

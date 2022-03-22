@@ -252,6 +252,7 @@ export type ImportOptionsCoco = {
 export type ImportStatus = {
   __typename?: 'ImportStatus';
   error?: Maybe<Scalars['String']>;
+  warnings?: Maybe<Array<Scalars['String']>>;
 };
 
 export enum InvitationResult {
@@ -824,10 +825,12 @@ export type Workspace = {
   datasets: Array<Dataset>;
   id: Scalars['ID'];
   image?: Maybe<Scalars['String']>;
+  imagesAggregates: ImagesAggregates;
   memberships: Array<Membership>;
   name: Scalars['String'];
   plan: WorkspacePlan;
   slug: Scalars['String'];
+  status: WorkspaceStatus;
   stripeCustomerPortalUrl?: Maybe<Scalars['String']>;
   type: WorkspaceType;
   updatedAt: Scalars['DateTime'];
@@ -837,6 +840,7 @@ export type WorkspaceCreateInput = {
   id?: InputMaybe<Scalars['ID']>;
   image?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
+  plan?: InputMaybe<WorkspacePlan>;
 };
 
 export type WorkspaceCreateOptions = {
@@ -845,7 +849,6 @@ export type WorkspaceCreateOptions = {
 
 export enum WorkspacePlan {
   Community = 'Community',
-  Enterprise = 'Enterprise',
   Pro = 'Pro',
   Starter = 'Starter'
 }
@@ -854,6 +857,16 @@ export type WorkspaceSlugAndDatasetSlug = {
   slug: Scalars['String'];
   workspaceSlug: Scalars['String'];
 };
+
+export enum WorkspaceStatus {
+  Active = 'Active',
+  Canceled = 'Canceled',
+  Incomplete = 'Incomplete',
+  IncompleteExpired = 'IncompleteExpired',
+  PastDue = 'PastDue',
+  Trialing = 'Trialing',
+  Unpaid = 'Unpaid'
+}
 
 export enum WorkspaceType {
   Local = 'Local',
@@ -1025,6 +1038,7 @@ export type ResolversTypes = {
   WorkspaceCreateOptions: WorkspaceCreateOptions;
   WorkspacePlan: WorkspacePlan;
   WorkspaceSlugAndDatasetSlug: WorkspaceSlugAndDatasetSlug;
+  WorkspaceStatus: WorkspaceStatus;
   WorkspaceType: WorkspaceType;
   WorkspaceUpdateInput: WorkspaceUpdateInput;
   WorkspaceWhereInput: WorkspaceWhereInput;
@@ -1179,6 +1193,7 @@ export type ImagesAggregatesResolvers<ContextType = any, ParentType extends Reso
 
 export type ImportStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportStatus'] = ResolversParentTypes['ImportStatus']> = {
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  warnings?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1335,10 +1350,12 @@ export type WorkspaceResolvers<ContextType = any, ParentType extends ResolversPa
   datasets?: Resolver<Array<ResolversTypes['Dataset']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  imagesAggregates?: Resolver<ResolversTypes['ImagesAggregates'], ParentType, ContextType>;
   memberships?: Resolver<Array<ResolversTypes['Membership']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   plan?: Resolver<ResolversTypes['WorkspacePlan'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['WorkspaceStatus'], ParentType, ContextType>;
   stripeCustomerPortalUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['WorkspaceType'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;

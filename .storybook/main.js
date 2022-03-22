@@ -7,6 +7,7 @@ module.exports = {
   },
   addons: [
     "@storybook/addon-essentials",
+    "@storybook/addon-interactions",
     "storybook-addon-next-router",
     "@chakra-ui/storybook-addon",
   ],

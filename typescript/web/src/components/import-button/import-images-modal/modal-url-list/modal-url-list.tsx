@@ -14,7 +14,7 @@ import {
 } from "../../../../graphql-types/GetDatasetBySlugQuery";
 import { GET_DATASET_BY_SLUG_QUERY } from "../../../datasets/datasets.query";
 import { useDataset, useWorkspace } from "../../../../hooks";
-import { DroppedUrl, UploadStatuses } from "../types";
+import { DroppedUrl, UploadInfoRecord } from "../types";
 import { importUrls } from "./import-urls";
 import { UrlList } from "./url-list";
 import { UrlStatuses } from "./url-statuses";
@@ -39,7 +39,7 @@ export const ImportImagesModalUrlList = ({
    * internal state
    */
   const [urls, setUrls] = useState<Array<DroppedUrl>>([]);
-  const [uploadStatuses, setUploadStatuses] = useState<UploadStatuses>({});
+  const [uploadInfo, setUploadInfo] = useState<UploadInfoRecord>({});
 
   const { data: datasetResult } = useQuery<
     GetDatasetBySlugQuery,
@@ -59,12 +59,12 @@ export const ImportImagesModalUrlList = ({
         urls: urlsToImport,
         apolloClient,
         datasetId,
-        setUploadStatuses,
+        setUploadInfo,
       });
 
       onUploadEnd();
     },
-    [apolloClient, datasetId, setUploadStatuses, onUploadStart, onUploadEnd]
+    [apolloClient, datasetId, setUploadInfo, onUploadStart, onUploadEnd]
   );
 
   useEffect(() => {
@@ -108,7 +108,7 @@ export const ImportImagesModalUrlList = ({
         {isEmpty(urls) ? (
           <UrlList onDropEnd={setUrls} />
         ) : (
-          <UrlStatuses urls={urls} uploadStatuses={uploadStatuses} />
+          <UrlStatuses urls={urls} uploadInfo={uploadInfo} />
         )}
       </ModalBody>
     </>

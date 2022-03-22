@@ -11,7 +11,11 @@ export const LABEL_CLASS_EXISTS_QUERY = gql`
   }
 `;
 
-export const useLabelClassExists = (datasetId: string, name: string) => {
+export const useLabelClassExists = (
+  datasetId: string,
+  name: string,
+  skip: boolean
+) => {
   const [debouncedName] = useDebounce(name, 200, {
     leading: true,
     trailing: true,
@@ -21,7 +25,7 @@ export const useLabelClassExists = (datasetId: string, name: string) => {
     {
       fetchPolicy: "network-only",
       variables: { datasetId, name },
-      skip: !datasetId || !name || name !== debouncedName,
+      skip: skip || !datasetId || !name || name !== debouncedName,
     }
   );
 };

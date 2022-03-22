@@ -11,7 +11,7 @@ import { getApolloMockLink } from "../../../utils/tests";
 import { GRAPHQL_MOCKS } from "../../workspace-name-input/workspace-name-input.fixtures";
 
 export default {
-  title: storybookTitle("Workspace Switcher", CreateWorkspaceModal),
+  title: storybookTitle("Workspaces", CreateWorkspaceModal),
   decorators: [chakraDecorator, queryParamsDecorator],
 };
 

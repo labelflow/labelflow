@@ -11,6 +11,10 @@ import {
   Text,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers";
+import { WorkspacePlan } from "@labelflow/graphql-types";
+import { toEnumValue } from "@labelflow/utils";
+import { pascalCase } from "change-case";
 import { isEmpty, isNil } from "lodash/fp";
 import React, {
   createContext,
@@ -101,8 +105,14 @@ export const useCreateWorkspace = (): [
   string | undefined
 ] => {
   const { name } = useWorkspaceNameInput();
+  const [planStr] = useQueryParam("plan", StringParam);
+  const plan = toEnumValue(
+    WorkspacePlan,
+    pascalCase(planStr ?? ""),
+    DEFAULT_WORKSPACE_PLAN
+  );
   const [create, { loading, error: createError, called }] =
-    useCreateWorkspaceMutation(name);
+    useCreateWorkspaceMutation(name, plan);
   const error =
     isNil(createError) || !called
       ? undefined

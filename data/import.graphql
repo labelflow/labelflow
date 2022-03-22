@@ -1,5 +1,6 @@
 type ImportStatus{
     error: String
+    warnings: [String!]
 }
 
 input ImportOptionsCoco {

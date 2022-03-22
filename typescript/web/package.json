@@ -51,6 +51,7 @@
     "autoprefixer": "10.2.6",
     "bluebird": "3.7.2",
     "browser-builtins": "3.3.1",
+    "change-case": "4.1.2",
     "csv-stringify": "6.0.5",
     "date-fns": "2.23.0",
     "detect-browser": "5.2.0",
@@ -104,11 +105,13 @@
     "uuid": "8.3.2",
     "valid-url": "1.0.9",
     "zustand": "3.5.1",
-    "zustand-store-addons": "0.1.11"
+    "zustand-store-addons": "0.1.12"
   },
   "devDependencies": {
     "@labelflow/dev-utils": "workspace:typescript/dev-utils",
+    "@storybook/expect": "27.5.2-0",
     "@storybook/react": "6.4.19",
+    "@storybook/testing-library": "0.0.9",
     "@svgr/webpack": "6.2.1",
     "@testing-library/dom": "7.31.0",
     "@testing-library/jest-dom": "5.12.0",

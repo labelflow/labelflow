@@ -10,7 +10,11 @@ import {
 import { WorkspaceSelectionPopover } from "./workspace-selection-popover";
 
 export default {
-  title: storybookTitle("Workspace Switcher", WorkspaceSelectionPopover),
+  title: storybookTitle(
+    "Workspaces",
+    "Workspace Switcher",
+    WorkspaceSelectionPopover
+  ),
   decorators: [
     createCommonDecorator({
       auth: { withWorkspaces: true },

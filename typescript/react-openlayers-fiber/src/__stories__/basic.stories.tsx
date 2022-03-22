@@ -4,9 +4,6 @@ import { Map } from "../map";
 
 export default {
   title: "react-openlayers-fiber/Other Examples",
-  parameters: {
-    chromatic: { disableSnapshot: true },
-  },
 };
 
 /**
@@ -21,6 +18,7 @@ export const BasicConstructorArgs = () => (
     </olLayerTile>
   </Map>
 );
+BasicConstructorArgs.parameters = { chromatic: { disableSnapshot: true } };
 
 /**
  * In this story we only provide props for the view, so it should load with default values
@@ -42,6 +40,7 @@ export const BasicProps = () => {
     </Map>
   );
 };
+BasicProps.parameters = { chromatic: { disableSnapshot: true } };
 
 /**
  * In this story we provide props and initial props for the view, so it should behave like the Basic Props example values.
@@ -67,3 +66,4 @@ export const BasicBoth = () => {
     </Map>
   );
 };
+BasicBoth.parameters = { chromatic: { disableSnapshot: true } };

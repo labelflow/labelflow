@@ -207,6 +207,9 @@ const totalCount = async (
       user,
     });
   }
+  if (typename === "Workspace") {
+    return await repository.workspace.countImages({ id: parent.id });
+  }
 
   return await repository.image.count({ user });
 };
@@ -237,6 +240,10 @@ export default {
   ImagesAggregates: { totalCount },
 
   Dataset: {
+    imagesAggregates,
+  },
+
+  Workspace: {
     imagesAggregates,
   },
 };

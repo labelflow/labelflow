@@ -1,10 +1,9 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { WorkspacePlan } from ".prisma/client";
 import { gql } from "@apollo/client";
 import {
   MembershipRole,
   Workspace,
   WorkspaceType,
+  WorkspacePlan,
 } from "@labelflow/graphql-types";
 import { v4 as uuidV4 } from "uuid";
 import { client, user } from "../../dev/apollo-client";
@@ -103,8 +102,15 @@ describe("createWorkspace mutation", () => {
     expect(data.createWorkspace.slug).toEqual("test-with-spaces-and-caps");
   });
 
-  it("creates a workspace with the Community plan", async () => {
+  it("creates a workspace with the Pro plan when no argument is provided", async () => {
     const { data } = await createWorkspace();
+    expect(data.createWorkspace.plan).toEqual(WorkspacePlan.Pro);
+  });
+
+  it("creates a workspace with the Community plan", async () => {
+    const { data } = await createWorkspace({
+      plan: WorkspacePlan.Community,
+    });
     expect(data.createWorkspace.plan).toEqual(WorkspacePlan.Community);
   });
 

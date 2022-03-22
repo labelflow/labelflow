@@ -22,7 +22,9 @@ const useRedirectIfAuthenticated = (redirectUrl?: string) => {
 };
 
 const MustLogInMessage = () => (
-  <Heading as="h3">Please sign-in to continue</Heading>
+  <Heading as="h3" textAlign="center" fontSize="3xl">
+    Please sign-in to continue
+  </Heading>
 );
 
 type BodyProps = {

@@ -226,6 +226,7 @@ export const typeDefs = [
 
   type ImportStatus {
     error: String
+    warnings: [String!]
   }
 
   enum InvitationResult {
@@ -513,10 +514,12 @@ export const typeDefs = [
     datasets: [Dataset!]!
     id: ID!
     image: String
+    imagesAggregates: ImagesAggregates!
     memberships: [Membership!]!
     name: String!
     plan: WorkspacePlan!
     slug: String!
+    status: WorkspaceStatus!
     stripeCustomerPortalUrl: String
     type: WorkspaceType!
     updatedAt: DateTime!
@@ -526,6 +529,7 @@ export const typeDefs = [
     id: ID
     image: String
     name: String!
+    plan: WorkspacePlan
   }
 
   input WorkspaceCreateOptions {
@@ -534,7 +538,6 @@ export const typeDefs = [
 
   enum WorkspacePlan {
     Community
-    Enterprise
     Pro
     Starter
   }
@@ -542,6 +545,16 @@ export const typeDefs = [
   input WorkspaceSlugAndDatasetSlug {
     slug: String!
     workspaceSlug: String!
+  }
+
+  enum WorkspaceStatus {
+    Active
+    Canceled
+    Incomplete
+    IncompleteExpired
+    PastDue
+    Trialing
+    Unpaid
   }
 
   enum WorkspaceType {

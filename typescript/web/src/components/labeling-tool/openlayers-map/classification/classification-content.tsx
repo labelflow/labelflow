@@ -46,6 +46,9 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
     const { perform } = useUndoStore();
     const client = useApolloClient();
     const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
+    const showLabelsGeometry = useLabelingStore(
+      (state) => state.showLabelsGeometry
+    );
     const labels =
       getImageLabelsData?.image?.labels ??
       previousImageLabelsData?.image?.labels ??
@@ -141,22 +144,23 @@ export const ClassificationContent = forwardRef<HTMLDivElement>(
           padding={2}
           pointerEvents={isInDrawingMode ? "none" : "initial"}
         >
-          {labels
-            .filter(({ type }) => type === LabelType.Classification)
-            .map((label) => {
-              return (
-                <ClassificationTag
-                  key={label.id}
-                  label={label}
-                  client={client}
-                  setSelectedLabelId={setSelectedLabelId}
-                  createNewClass={handleCreateNewClass}
-                  labelClasses={labelClasses}
-                  selectedLabelId={selectedLabelId}
-                  onSelectedClassChange={handleSelectedClassChange}
-                />
-              );
-            })}
+          {showLabelsGeometry &&
+            labels
+              .filter(({ type }) => type === LabelType.Classification)
+              .map((label) => {
+                return (
+                  <ClassificationTag
+                    key={label.id}
+                    label={label}
+                    client={client}
+                    setSelectedLabelId={setSelectedLabelId}
+                    createNewClass={handleCreateNewClass}
+                    labelClasses={labelClasses}
+                    selectedLabelId={selectedLabelId}
+                    onSelectedClassChange={handleSelectedClassChange}
+                  />
+                );
+              })}
         </HStack>
       </Box>
     );

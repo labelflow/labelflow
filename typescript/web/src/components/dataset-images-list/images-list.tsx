@@ -66,7 +66,7 @@ const Gallery = () => {
         datasetId={datasetId!}
       />
       <SimpleGrid
-        minChildWidth="240px"
+        minChildWidth="312px"
         spacing={{ base: "2", md: "8" }}
         padding={{ base: "2", md: "8" }}
         paddingBottom={{ base: "24", md: "16" }}

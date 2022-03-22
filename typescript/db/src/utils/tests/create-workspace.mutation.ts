@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers";
 import {
   MutationCreateWorkspaceArgs,
   Workspace,
@@ -24,9 +25,11 @@ export const CREATE_WORKSPACE_MUTATION = gql`
   }
 `;
 
-export const createWorkspace = (
-  data?: Partial<MutationCreateWorkspaceArgs["data"]>
-) =>
+export const createWorkspace = ({
+  name = "test",
+  plan = DEFAULT_WORKSPACE_PLAN,
+  ...data
+}: Partial<MutationCreateWorkspaceArgs["data"]> = {}) =>
   client.mutate<{
     createWorkspace: Pick<
       Workspace,
@@ -35,7 +38,7 @@ export const createWorkspace = (
   }>({
     mutation: CREATE_WORKSPACE_MUTATION,
     variables: {
-      data: { ...data, name: data?.name === undefined ? "test" : data.name },
+      data: { ...data, name, plan },
     },
     refetchQueries: [USER_WITH_WORKSPACES_QUERY],
   });
