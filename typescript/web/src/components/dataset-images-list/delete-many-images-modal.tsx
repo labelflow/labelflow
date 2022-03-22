@@ -13,10 +13,8 @@ import {
 } from "./paginated-images-query";
 
 const DELETE_MANY_IMAGES_MUTATION = gql`
-  mutation DeleteManyImagesMutation($imagesIds: [ID!]!) {
-    deleteManyImages(where: { imagesIds: $imagesIds }) {
-      id
-    }
+  mutation DeleteManyImagesMutation($imagesIds: [ID!]!, $datasetId: ID!) {
+    deleteManyImages(where: { imagesIds: $imagesIds, datasetId: $datasetId })
   }
 `;
 
@@ -43,11 +41,12 @@ export const DeleteManyImagesModal = ({
   const handleDeleteButtonClick = async () => {
     await flushPaginatedImagesCache();
     await deletedImagesIds({
-      variables: { imagesIds: imagesSelected },
+      variables: { imagesIds: imagesSelected, datasetId },
       refetchQueries: [
         DATASET_IMAGES_PAGE_DATASET_QUERY,
         PAGINATED_IMAGES_QUERY,
       ],
+      awaitRefetchQueries: true,
     });
     setImagesSelected([]);
     onClose();

@@ -233,6 +233,7 @@ export type ImageWhereInput = {
 };
 
 export type ImageWhereManyInput = {
+  datasetId: Scalars['ID'];
   imagesIds: Array<Scalars['ID']>;
 };
 
@@ -440,7 +441,7 @@ export type Mutation = {
   deleteImage?: Maybe<Image>;
   deleteLabel?: Maybe<Label>;
   deleteLabelClass?: Maybe<LabelClass>;
-  deleteManyImages: Array<Image>;
+  deleteManyImages: Scalars['Int'];
   deleteMembership?: Maybe<Membership>;
   deleteWorkspace?: Maybe<Workspace>;
   getUploadTarget: UploadTarget;
@@ -1283,7 +1284,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationDeleteImageArgs, 'where'>>;
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
-  deleteManyImages?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationDeleteManyImagesArgs, 'where'>>;
+  deleteManyImages?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationDeleteManyImagesArgs, 'where'>>;
   deleteMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeleteMembershipArgs, 'where'>>;
   deleteWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationDeleteWorkspaceArgs, 'where'>>;
   getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;

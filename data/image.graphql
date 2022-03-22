@@ -66,4 +66,5 @@ type ImagesAggregates {
 
 input ImageWhereManyInput {
   imagesIds: [ID!]!
+  datasetId: ID!
 }

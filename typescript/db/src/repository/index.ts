@@ -118,6 +118,26 @@ export const repository: Repository = {
       await checkUserAccessToImage({ where, user });
       await (await getPrismaClient()).image.delete({ where });
     },
+    deleteMany: async (
+      {
+        imagesIds,
+        datasetId,
+      }: {
+        imagesIds: string[];
+        datasetId: string;
+      },
+      user
+    ) => {
+      await checkUserAccessToDataset({
+        where: { id: datasetId },
+        user,
+      });
+      const prisma = await getPrismaClient();
+      const { count } = await prisma.image.deleteMany({
+        where: { id: { in: imagesIds } },
+      });
+      return count;
+    },
   },
   label: {
     add: async (label, user) => {
@@ -141,6 +161,20 @@ export const repository: Repository = {
     delete: async ({ id }, user) => {
       await checkUserAccessToLabel({ where: { id }, user });
       await (await getPrismaClient()).label.delete({ where: { id } });
+    },
+    deleteMany: async (
+      { labelsIds, datasetId }: { labelsIds: string[]; datasetId: string },
+      user
+    ) => {
+      await checkUserAccessToDataset({
+        where: { id: datasetId },
+        user,
+      });
+      const prisma = await getPrismaClient();
+      const { count } = await prisma.label.deleteMany({
+        where: { id: { in: labelsIds } },
+      });
+      return count;
     },
     /* Needs to be casted as Prisma doesn't let us specify
      * the type for geometry */

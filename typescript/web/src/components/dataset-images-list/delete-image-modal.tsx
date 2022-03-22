@@ -64,6 +64,7 @@ export const DeleteImageModal = ({
         DATASET_IMAGES_PAGE_DATASET_QUERY,
         PAGINATED_IMAGES_QUERY,
       ],
+      awaitRefetchQueries: true,
     });
     if (imageId) {
       const filteredImages = imagesSelected.filter((id) => id !== imageId);

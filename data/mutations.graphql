@@ -6,7 +6,7 @@ type Mutation {
   getUploadTarget(data: UploadTargetInput!): UploadTarget!
   updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
   deleteImage(where: ImageWhereUniqueInput!): Image
-  deleteManyImages(where: ImageWhereManyInput!): [Image!]!
+  deleteManyImages(where: ImageWhereManyInput!): Int!
 
   createLabel(data: LabelCreateInput!): Label
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label

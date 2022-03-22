@@ -50,6 +50,17 @@ export const listLabels: Repository["label"]["list"] = async (
   }
   if ("datasetId" in where) {
     await checkUserAccessToDataset({ where: { id: where.datasetId }, user });
+    if (
+      "imagesIds" in where &&
+      where.imagesIds &&
+      where.imagesIds.in.length > 0
+    ) {
+      return (await getPrismaClient()).label.findMany({
+        where: {
+          imageId: { in: where.imagesIds.in },
+        },
+      }) as unknown as DbLabel[];
+    }
     return (await getPrismaClient()).label.findMany({
       where: {
         image: { datasetId: where.datasetId ?? undefined },

@@ -174,13 +174,28 @@ const deleteImage = async (
 const deleteManyImages = async (
   _: any,
   args: MutationDeleteManyImagesArgs,
-  ctx: Context
+  { repository, user }: Context
 ) => {
-  const { imagesIds } = args.where;
-  const deletedImages = imagesIds.map(async (imageId) => {
-    return await deleteImage(_, { where: { id: imageId } }, ctx);
+  const { imagesIds, datasetId } = args.where;
+  const labelsToDelete = await repository.label.list({
+    datasetId,
+    imagesIds: { in: imagesIds },
+    user,
   });
-  return deletedImages;
+  await repository.label.deleteMany(
+    {
+      labelsIds: labelsToDelete.map((label) => label.id),
+      datasetId,
+    },
+    user
+  );
+  return await repository.image.deleteMany(
+    {
+      imagesIds,
+      datasetId,
+    },
+    user
+  );
 };
 
 const updateImage = async (

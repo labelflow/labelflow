@@ -164,6 +164,13 @@ export type Repository = {
       ImageWhereInput & { user?: { id: string } } & { id?: { in: string[] } }
     >;
     delete: Delete<ImageWhereUniqueInput>;
+    deleteMany: (
+      args: {
+        imagesIds: string[];
+        datasetId: string;
+      },
+      user?: { id: string }
+    ) => Promise<number>;
     update: Update<DbImage, ImageWhereUniqueInput>;
   };
   label: {
@@ -177,10 +184,19 @@ export type Repository = {
     ) => Promise<ID[]>;
     count: Count<LabelWhereInput & { user?: { id: string } }>;
     delete: Delete<LabelWhereUniqueInput>;
+    deleteMany: (
+      args: {
+        labelsIds: string[];
+        datasetId: string;
+      },
+      user?: { id: string }
+    ) => Promise<number>;
     get: Get<DbLabel, LabelWhereUniqueInput>;
     list: List<
       DbLabel,
-      LabelWhereInput & { user?: { id: string } } & { id?: { in: string[] } }
+      LabelWhereInput & { user?: { id: string } } & {
+        id?: { in: string[] };
+      } & { imagesIds?: { in: string[] } }
     >;
     update: Update<DbLabel, LabelWhereUniqueInput>;
   };
