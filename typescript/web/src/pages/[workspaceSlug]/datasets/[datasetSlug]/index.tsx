@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
 import { BreadcrumbLink, Skeleton, Text } from "@chakra-ui/react";
-import { isNil } from "lodash/fp";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -16,6 +15,7 @@ import { NavLogo } from "../../../../components/logo/nav-logo";
 import { Meta } from "../../../../components/meta";
 import { LayoutSpinner } from "../../../../components/spinner";
 import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
+import { getApolloErrorMessage } from "../../../../utils/get-apollo-error-message";
 import { Error404Content } from "../../../404";
 
 const Body = () => {
@@ -33,10 +33,7 @@ const Body = () => {
 
   if (
     error &&
-    !isNil(error.networkError) &&
-    "result" in error.networkError &&
-    error.networkError.result.errors[0].message ===
-      "User not authorized to access dataset"
+    getApolloErrorMessage(error) === "User not authorized to access dataset"
   ) {
     router.push("/404");
   }
