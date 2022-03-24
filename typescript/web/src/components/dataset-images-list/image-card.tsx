@@ -35,6 +35,7 @@ export type ImageCardProps = {
 
 type ImageCardState = ImageCardProps & {
   displayOverlay: boolean;
+  isSelected: boolean;
   showOverlay: () => void;
   hideOverlay: () => void;
 };
@@ -43,11 +44,13 @@ const ImageCardContext = createContext({} as ImageCardState);
 
 const useProvider = (props: ImageCardProps): ImageCardState => {
   const { imagesSelected } = useImagesList();
+  const isSelected = imagesSelected.includes(props.id);
   const [displayOverlay, { on: showOverlay, off: hideOverlay }] =
     useBoolean(false);
   return {
     ...props,
-    displayOverlay: imagesSelected.length !== 0 || displayOverlay,
+    isSelected,
+    displayOverlay: isSelected || displayOverlay,
     showOverlay,
     hideOverlay,
   };
@@ -124,10 +127,10 @@ const ImageContent = () => {
 };
 
 const OverlayTopRow = () => {
-  const { displayOverlay, id, name } = useImageCard();
+  const { displayOverlay, id, name, isSelected } = useImageCard();
   const { imagesSelected, setImagesSelected } = useImagesList();
   const handleChecked = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked === true) {
+    if (event.target.checked) {
       setImagesSelected([...imagesSelected, id]);
     } else {
       const newArray = imagesSelected.filter((imageId) => imageId !== id);
@@ -148,7 +151,7 @@ const OverlayTopRow = () => {
         colorScheme="unset"
         size="lg"
         onChange={handleChecked}
-        isChecked={imagesSelected.includes(id)}
+        isChecked={isSelected}
         borderColor="white"
       />
       <DeleteButton />
