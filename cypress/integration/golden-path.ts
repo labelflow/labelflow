@@ -47,7 +47,7 @@ describe("Golden path (online)", () => {
     )
       .trigger("mouseover")
       .get(
-        `[data-testid="image-checkbox-${
+        `[data-testid="select-image-checkbox-${
           imageSampleCollection[1]
             .split("?")[0]
             .split("https://images.unsplash.com/")[1]

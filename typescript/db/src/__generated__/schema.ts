@@ -130,6 +130,10 @@ export const typeDefs = [
     type: String!
   }
 
+  input IdInInput {
+    in: [ID!]!
+  }
+
   type Image {
     createdAt: DateTime!
     dataset: Dataset!
@@ -206,11 +210,7 @@ export const typeDefs = [
 
   input ImageWhereInput {
     datasetId: ID
-  }
-
-  input ImageWhereManyInput {
-    datasetId: ID!
-    imagesIds: [ID!]!
+    id: IdInInput
   }
 
   input ImageWhereUniqueInput {
@@ -411,7 +411,7 @@ export const typeDefs = [
     deleteImage(where: ImageWhereUniqueInput!): Image
     deleteLabel(where: LabelWhereUniqueInput!): Label
     deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
-    deleteManyImages(where: ImageWhereManyInput!): Int!
+    deleteManyImages(where: ImageWhereInput!): Int!
     deleteMembership(where: MembershipWhereUniqueInput!): Membership
     deleteWorkspace(where: WorkspaceWhereUniqueInput!): Workspace
     getUploadTarget(data: UploadTargetInput!): UploadTarget!

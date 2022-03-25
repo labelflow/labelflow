@@ -9,6 +9,7 @@ import {
   useBoolean,
   useColorModeValue,
   VStack,
+  useControllableState,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import {
@@ -18,41 +19,55 @@ import {
   MouseEvent,
   useCallback,
   useContext,
+  memo,
 } from "react";
 import { HiTrash } from "react-icons/hi";
+import { SetRequired } from "type-fest";
 import { EmptyStateImageNotFound } from "../empty-state";
 import { ImageWithFallback } from "../image";
 import { Tooltip } from "../tooltip";
-import { useImagesList } from "./images-list.context";
 
 export type ImageCardProps = {
   id: string;
   name: string;
   thumbnail?: string | null;
   href: string;
-  onAskImageDelete: (imageId: string) => void;
+  onDelete: (imageId: string) => void;
+  selected?: boolean;
+  onChangeSelected?: (value: boolean) => void;
 };
 
-type ImageCardState = ImageCardProps & {
+type ImageCardState = SetRequired<
+  Omit<ImageCardProps, "onChangeSelected">,
+  "selected"
+> & {
   displayOverlay: boolean;
-  isSelected: boolean;
   showOverlay: () => void;
   hideOverlay: () => void;
+  setSelected: (value: boolean) => void;
 };
 
 const ImageCardContext = createContext({} as ImageCardState);
 
-const useProvider = (props: ImageCardProps): ImageCardState => {
-  const { imagesSelected } = useImagesList();
-  const isSelected = imagesSelected.includes(props.id);
+const useProvider = ({
+  selected: selectedProp,
+  onChangeSelected,
+  ...props
+}: ImageCardProps): ImageCardState => {
   const [displayOverlay, { on: showOverlay, off: hideOverlay }] =
     useBoolean(false);
+  const [selected, setSelected] = useControllableState({
+    defaultValue: false,
+    value: selectedProp,
+    onChange: onChangeSelected,
+  });
   return {
     ...props,
-    isSelected,
-    displayOverlay: isSelected || displayOverlay,
+    displayOverlay: selected || displayOverlay,
     showOverlay,
     hideOverlay,
+    selected,
+    setSelected,
   };
 };
 
@@ -67,23 +82,39 @@ const ImageCardProvider = ({
 
 const useImageCard = () => useContext(ImageCardContext);
 
+const SelectCheckbox = () => {
+  const { name, selected, setSelected } = useImageCard();
+  const handleChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => setSelected(event.target.checked),
+    [setSelected]
+  );
+  return (
+    <Checkbox
+      data-testid={`select-image-checkbox-${name}`}
+      size="lg"
+      onChange={handleChange}
+      isChecked={selected}
+      colorScheme={selected ? "unset" : undefined}
+      borderColor="white"
+      iconColor="white"
+    />
+  );
+};
+
 const DeleteButton = () => {
-  const { id, onAskImageDelete } = useImageCard();
+  const { id, onDelete } = useImageCard();
   const handleClick = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
       // Prevent parent onClick event from being fired too
       event.preventDefault();
       event.stopPropagation();
-      onAskImageDelete(id);
+      onDelete(id);
     },
-    [onAskImageDelete, id]
+    [onDelete, id]
   );
   return (
     <Tooltip label="Delete image">
       <IconButton
-        w="24px"
-        h="24px"
-        minW="unset"
         _hover={{ bgColor: "gray.500" }}
         _active={{ bgColor: "gray.600" }}
         color="white"
@@ -91,6 +122,9 @@ const DeleteButton = () => {
         isRound
         onClick={handleClick}
         variant="ghost"
+        h="32px"
+        minW="32px"
+        size="lg"
       >
         <HiTrash />
       </IconButton>
@@ -98,62 +132,19 @@ const DeleteButton = () => {
   );
 };
 
-const ImageErrorFallback = () => (
-  <Flex
-    align="center"
-    justify="center"
-    h="208px"
-    bg={useColorModeValue("gray.400", "gray.600")}
-    borderRadius="md"
-  >
-    <EmptyStateImageNotFound h="150px" />
-  </Flex>
-);
-
-const ImageContent = () => {
-  const { name, thumbnail } = useImageCard();
-  return (
-    <ImageWithFallback
-      borderRadius="md"
-      alt={name}
-      src={thumbnail ?? undefined}
-      loadingFallback={<Skeleton h="208px" borderRadius="md" />}
-      errorFallback={<ImageErrorFallback />}
-      objectFit="cover"
-      h="208px"
-      w="full"
-    />
-  );
-};
-
 const OverlayTopRow = () => {
-  const { displayOverlay, id, name, isSelected } = useImageCard();
-  const { imagesSelected, setImagesSelected } = useImagesList();
-  const handleChecked = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      setImagesSelected([...imagesSelected, id]);
-    } else {
-      const newArray = imagesSelected.filter((imageId) => imageId !== id);
-      setImagesSelected(newArray);
-    }
-  };
+  const { displayOverlay } = useImageCard();
   return (
     <HStack
       alignSelf="stretch"
       justify="space-between"
       visibility={displayOverlay ? "visible" : "hidden"}
-      px={4}
-      py={3}
+      pl={3}
+      pr={2}
+      py={2}
       pointerEvents="all"
     >
-      <Checkbox
-        data-testid={`image-checkbox-${name}`}
-        colorScheme="unset"
-        size="lg"
-        onChange={handleChecked}
-        isChecked={isSelected}
-        borderColor="white"
-      />
+      <SelectCheckbox />
       <DeleteButton />
     </HStack>
   );
@@ -208,12 +199,47 @@ const ImageOverlay = () => (
   </Flex>
 );
 
-const ClickableOverlay = () => {
-  return <ImageOverlay />;
+const ImageErrorFallback = () => (
+  <Flex
+    align="center"
+    justify="center"
+    h="208px"
+    bg={useColorModeValue("gray.400", "gray.600")}
+    borderRadius="md"
+  >
+    <EmptyStateImageNotFound h="150px" />
+  </Flex>
+);
+
+const ImageContent = () => {
+  const { name, thumbnail } = useImageCard();
+  return (
+    <ImageWithFallback
+      borderRadius="md"
+      alt={name}
+      src={thumbnail ?? undefined}
+      loadingFallback={<Skeleton h="208px" borderRadius="md" />}
+      errorFallback={<ImageErrorFallback />}
+      objectFit="cover"
+      h="208px"
+      w="full"
+    />
+  );
+};
+
+const ClickableImageContent = () => {
+  const { name, href } = useImageCard();
+  return (
+    <NextLink href={href}>
+      <a title="Open image" href={href} data-testid={name}>
+        <ImageContent />
+      </a>
+    </NextLink>
+  );
 };
 
 const ImageCardContent = () => {
-  const { name, showOverlay, hideOverlay, href } = useImageCard();
+  const { name, showOverlay, hideOverlay } = useImageCard();
   return (
     <Flex
       onMouseEnter={showOverlay}
@@ -228,18 +254,14 @@ const ImageCardContent = () => {
       borderColor={useColorModeValue("gray.200", "gray.800")}
       maxW="350px"
     >
-      <ClickableOverlay />
-      <NextLink href={href}>
-        <a title="Open image" href={href} data-testid={name}>
-          <ImageContent />
-        </a>
-      </NextLink>
+      <ImageOverlay />
+      <ClickableImageContent />
     </Flex>
   );
 };
 
-export const ImageCard = (props: ImageCardProps) => (
+export const ImageCard = memo((props: ImageCardProps) => (
   <ImageCardProvider {...props}>
     <ImageCardContent />
   </ImageCardProvider>
-);
+));

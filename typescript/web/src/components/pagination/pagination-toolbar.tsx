@@ -1,17 +1,23 @@
 import {
   Center,
+  Flex,
   HStack,
   SimpleGrid,
   SimpleGridProps,
   Text,
-  Box,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import { useImagesList } from "../dataset-images-list/images-list.context";
 import { PageNavigation } from "./page-navigation";
 import { usePagination } from "./pagination.context";
 import { PerPageInput } from "./per-page-input";
 
+type LeftLabelProps = { leftLabel?: string };
+
+const LeftLabel = ({ leftLabel }: LeftLabelProps) => (
+  <Flex align="center">
+    <Text>{leftLabel}</Text>
+  </Flex>
+);
 const Range = () => {
   const { page, total, itemCount, perPage } = usePagination();
   const skip = (page - 1) * perPage;
@@ -30,28 +36,30 @@ const ItemsDetails = () => (
   </HStack>
 );
 
-export const PaginationToolbar = (props: SimpleGridProps) => {
-  const { imagesSelected } = useImagesList();
-  return (
-    <SimpleGrid
-      bg={mode("white", "gray.800")}
-      paddingLeft={8}
-      paddingRight={8}
-      columns={{ base: 1, md: 3 }}
-      paddingTop={{ base: 2, md: 0 }}
-      {...props}
-    >
-      <Box d="flex" alignItems="center">
-        <Text fontWeight="500">
-          {imagesSelected &&
-            imagesSelected.length > 0 &&
-            `${imagesSelected.length} selected`}
-        </Text>
-      </Box>
-      <Center>
-        <PageNavigation />
-      </Center>
-      <ItemsDetails />
-    </SimpleGrid>
-  );
-};
+const Body = ({ leftLabel }: LeftLabelProps) => (
+  <>
+    <LeftLabel leftLabel={leftLabel} />
+    <Center>
+      <PageNavigation />
+    </Center>
+    <ItemsDetails />
+  </>
+);
+
+export type PaginationToolbarProps = SimpleGridProps & LeftLabelProps;
+
+export const PaginationToolbar = ({
+  leftLabel = "",
+  ...props
+}: PaginationToolbarProps) => (
+  <SimpleGrid
+    bg={mode("white", "gray.800")}
+    paddingLeft={8}
+    paddingRight={8}
+    columns={{ base: 1, md: 3 }}
+    paddingTop={{ base: 2, md: 0 }}
+    {...props}
+  >
+    <Body leftLabel={leftLabel} />
+  </SimpleGrid>
+);

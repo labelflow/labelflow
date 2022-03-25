@@ -153,6 +153,10 @@ export type GeometryInput = {
   type: Scalars['String'];
 };
 
+export type IdInInput = {
+  in: Array<Scalars['ID']>;
+};
+
 export type Image = {
   __typename?: 'Image';
   createdAt: Scalars['DateTime'];
@@ -230,11 +234,7 @@ export type ImageUpdateInput = {
 
 export type ImageWhereInput = {
   datasetId?: InputMaybe<Scalars['ID']>;
-};
-
-export type ImageWhereManyInput = {
-  datasetId: Scalars['ID'];
-  imagesIds: Array<Scalars['ID']>;
+  id?: InputMaybe<IdInInput>;
 };
 
 export type ImageWhereUniqueInput = {
@@ -541,7 +541,7 @@ export type MutationDeleteLabelClassArgs = {
 
 
 export type MutationDeleteManyImagesArgs = {
-  where: ImageWhereManyInput;
+  where: ImageWhereInput;
 };
 
 
@@ -993,13 +993,13 @@ export type ResolversTypes = {
   Geometry: ResolverTypeWrapper<Geometry>;
   GeometryInput: GeometryInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  IdInInput: IdInInput;
   Image: ResolverTypeWrapper<Image>;
   ImageCreateInput: ImageCreateInput;
   ImageCreateManyInput: ImageCreateManyInput;
   ImageCreateManySingleInput: ImageCreateManySingleInput;
   ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
-  ImageWhereManyInput: ImageWhereManyInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ResolverTypeWrapper<ImagesAggregates>;
   ImportOptions: ImportOptions;
@@ -1082,13 +1082,13 @@ export type ResolversParentTypes = {
   Geometry: Geometry;
   GeometryInput: GeometryInput;
   ID: Scalars['ID'];
+  IdInInput: IdInInput;
   Image: Image;
   ImageCreateInput: ImageCreateInput;
   ImageCreateManyInput: ImageCreateManyInput;
   ImageCreateManySingleInput: ImageCreateManySingleInput;
   ImageUpdateInput: ImageUpdateInput;
   ImageWhereInput: ImageWhereInput;
-  ImageWhereManyInput: ImageWhereManyInput;
   ImageWhereUniqueInput: ImageWhereUniqueInput;
   ImagesAggregates: ImagesAggregates;
   ImportOptions: ImportOptions;
