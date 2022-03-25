@@ -234,7 +234,7 @@ const useDeleteSelected = ({
 const useProvider = (
   props: Omit<ImagesListProviderProps, "children">
 ): ImagesListState => {
-  const { images, loading: loadingImages } = useImages(props);
+  const { images, loading } = useImages(props);
   const selectionState = useSelection({ ...props, images });
   const { deletingSingle, ...deleteSingleState } = useDeleteSingle({
     ...props,
@@ -248,7 +248,7 @@ const useProvider = (
     ...props,
     images,
     ...selectionState,
-    loading: loadingImages || deletingSingle || deletingSelected,
+    loading,
     ...deleteSingleState,
     deletingSingle,
     ...deleteSelectedState,
