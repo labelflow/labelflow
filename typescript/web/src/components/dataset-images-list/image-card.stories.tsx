@@ -8,7 +8,7 @@ import { ImageCard, ImageCardProps } from "./image-card";
 const [TEST_IMAGE] = BASIC_DATASET_DATA.images;
 
 export default {
-  title: storybookTitle("datasets", "images", ImageCard),
+  title: storybookTitle("datasets", "images", "ImageCard"),
   component: ImageCard,
   decorators: [chakraDecorator],
 } as ComponentMeta<typeof ImageCard>;
