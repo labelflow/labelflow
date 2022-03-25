@@ -57,7 +57,7 @@ describe("Golden path (online)", () => {
 
     cy.get(`[data-testid="delete-selected-images"]`).click();
 
-    cy.get('[aria-label="Confirm deleting image"]').click();
+    cy.get('[data-testid="confirm-delete-button"]').click();
 
     cy.get("main")
       .contains(
