@@ -21,7 +21,7 @@ describe(DeleteDatasetModal, () => {
   it("deletes a dataset when the delete button is clicked", async () => {
     const onClose = jest.fn();
     renderModal({ onClose, datasetId: BASIC_DATASET_DATA.id });
-    const button = screen.getByLabelText(/Dataset delete/i);
+    const button = screen.getByTestId("confirm-delete-button");
     fireEvent.click(button);
     await waitFor(() => expect(onClose).toHaveBeenCalled());
     expect(DELETE_DATASET_BY_ID_MOCK.result).toHaveBeenCalled();

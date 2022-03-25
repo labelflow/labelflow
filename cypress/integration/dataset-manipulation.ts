@@ -30,7 +30,7 @@ describe("Dataset creation, edition, deletion (online)", () => {
     cy.contains("Update Dataset").click();
     cy.contains("renamed cypress dataset");
     cy.get('[aria-label="delete dataset"]').click();
-    cy.get('[aria-label="Dataset delete"]').click();
+    cy.get('[data-testid="confirm-delete-button"]').click();
     cy.get('[aria-label="delete dataset"]').should("not.exist");
   });
 });

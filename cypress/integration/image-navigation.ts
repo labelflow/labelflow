@@ -26,7 +26,15 @@ describe("Image Navigation (online)", () => {
     });
     cy.contains("Start Import").click();
     cy.get(`[data-testid="start-labeling-button"]`).click();
-    cy.get("main").contains("photo").click({ force: true });
+    cy.get(
+      `[data-testid="image-card-${
+        imageSampleCollection[1]
+          .split("?")[0]
+          .split("https://images.unsplash.com/")[1]
+      }"]`
+    )
+      .trigger("mouseover")
+      .click();
 
     // Check that we can reach the end of the list
     cy.get("main nav").scrollTo("right");

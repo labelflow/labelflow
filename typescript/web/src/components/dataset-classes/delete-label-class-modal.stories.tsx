@@ -1,7 +1,10 @@
 import React from "react";
-import { storybookTitle } from "../../utils/stories";
-import { getApolloMockDecorator } from "../../utils/stories/apollo-mock-decorator";
-import { chakraDecorator } from "../../utils/stories/chakra-decorator";
+import {
+  chakraDecorator,
+  getApolloMockDecorator,
+  modalDecorator,
+  storybookTitle,
+} from "../../utils/stories";
 import { DeleteLabelClassModal } from "./delete-label-class-modal";
 import {
   APOLLO_MOCKS,
@@ -10,7 +13,11 @@ import {
 
 export default {
   title: storybookTitle("Dataset classes", DeleteLabelClassModal),
-  decorators: [chakraDecorator, getApolloMockDecorator(APOLLO_MOCKS)],
+  decorators: [
+    chakraDecorator,
+    modalDecorator,
+    getApolloMockDecorator(APOLLO_MOCKS),
+  ],
 };
 
 export const Default = () => <TestComponent />;

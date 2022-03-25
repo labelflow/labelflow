@@ -153,6 +153,10 @@ export type GeometryInput = {
   type: Scalars['String'];
 };
 
+export type IdInInput = {
+  in: Array<Scalars['ID']>;
+};
+
 export type Image = {
   __typename?: 'Image';
   createdAt: Scalars['DateTime'];
@@ -230,6 +234,7 @@ export type ImageUpdateInput = {
 
 export type ImageWhereInput = {
   datasetId?: InputMaybe<Scalars['ID']>;
+  id?: InputMaybe<IdInInput>;
 };
 
 export type ImageWhereUniqueInput = {
@@ -436,6 +441,7 @@ export type Mutation = {
   deleteImage?: Maybe<Image>;
   deleteLabel?: Maybe<Label>;
   deleteLabelClass?: Maybe<LabelClass>;
+  deleteManyImages: Scalars['Int'];
   deleteMembership?: Maybe<Membership>;
   deleteWorkspace?: Maybe<Workspace>;
   getUploadTarget: UploadTarget;
@@ -531,6 +537,11 @@ export type MutationDeleteLabelArgs = {
 
 export type MutationDeleteLabelClassArgs = {
   where: LabelClassWhereUniqueInput;
+};
+
+
+export type MutationDeleteManyImagesArgs = {
+  where: ImageWhereInput;
 };
 
 
@@ -982,6 +993,7 @@ export type ResolversTypes = {
   Geometry: ResolverTypeWrapper<Geometry>;
   GeometryInput: GeometryInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  IdInInput: IdInInput;
   Image: ResolverTypeWrapper<Image>;
   ImageCreateInput: ImageCreateInput;
   ImageCreateManyInput: ImageCreateManyInput;
@@ -1070,6 +1082,7 @@ export type ResolversParentTypes = {
   Geometry: Geometry;
   GeometryInput: GeometryInput;
   ID: Scalars['ID'];
+  IdInInput: IdInInput;
   Image: Image;
   ImageCreateInput: ImageCreateInput;
   ImageCreateManyInput: ImageCreateManyInput;
@@ -1271,6 +1284,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationDeleteImageArgs, 'where'>>;
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
+  deleteManyImages?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationDeleteManyImagesArgs, 'where'>>;
   deleteMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeleteMembershipArgs, 'where'>>;
   deleteWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationDeleteWorkspaceArgs, 'where'>>;
   getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;

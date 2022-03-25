@@ -55,7 +55,7 @@ export const TabBarBody = ({ tabs }: TabBarProps) => {
     <Flex
       alignItems="center"
       padding={0}
-      height="64px"
+      height="44px"
       flex={0}
       borderTop="1px solid"
       borderColor={mode("gray.100", "gray.700")}
@@ -75,10 +75,9 @@ export const TabBarBody = ({ tabs }: TabBarProps) => {
               display="flex"
               alignItems="center"
               justifyContent="center"
-              paddingBottom="4"
-              paddingTop="4"
-              paddingInlineStart="4"
-              paddingInlineEnd="4"
+              py="2"
+              paddingInlineStart="5"
+              paddingInlineEnd="5"
               margin="0"
               borderBottom="2px solid"
               color={isActive ? "brand.500" : "inherit"}

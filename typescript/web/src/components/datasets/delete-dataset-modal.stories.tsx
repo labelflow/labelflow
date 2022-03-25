@@ -2,6 +2,7 @@ import { Button, useDisclosure } from "@chakra-ui/react";
 import {
   apolloMockDecorator,
   chakraDecorator,
+  modalDecorator,
   queryParamsDecorator,
   storybookTitle,
 } from "../../utils/stories";
@@ -9,7 +10,12 @@ import { DeleteDatasetModal } from "./delete-dataset-modal";
 
 export default {
   title: storybookTitle(DeleteDatasetModal),
-  decorators: [chakraDecorator, apolloMockDecorator, queryParamsDecorator],
+  decorators: [
+    chakraDecorator,
+    modalDecorator,
+    apolloMockDecorator,
+    queryParamsDecorator,
+  ],
 };
 
 export const Default = () => {
