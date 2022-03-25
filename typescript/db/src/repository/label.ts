@@ -1,5 +1,8 @@
-import { DbLabel, Repository } from "@labelflow/common-resolvers";
-import { LabelWhereInput } from "@labelflow/graphql-types";
+import {
+  DbLabel,
+  DbLabelWhereInput,
+  Repository,
+} from "@labelflow/common-resolvers";
 import { Prisma } from "@prisma/client";
 import { isEmpty, isNil } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";
@@ -11,7 +14,7 @@ import {
 } from "./utils";
 
 type WhereWithUser =
-  | (LabelWhereInput & { user?: { id: string } })
+  | (DbLabelWhereInput & { user?: { id: string } })
   | undefined
   | null;
 
