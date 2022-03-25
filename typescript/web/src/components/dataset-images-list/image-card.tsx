@@ -15,6 +15,7 @@ import NextLink from "next/link";
 import {
   ChangeEvent,
   createContext,
+  FC,
   PropsWithChildren,
   MouseEvent,
   useCallback,
@@ -260,8 +261,13 @@ const ImageCardContent = () => {
   );
 };
 
-export const ImageCard = memo((props: ImageCardProps) => (
+// We use FC to workaround this TypeScript compiler bug:
+//   Type instantiation is excessively deep and possibly infinite
+//   https://github.com/microsoft/TypeScript/issues/34933
+const ImageCardComponent: FC<ImageCardProps> = (props: ImageCardProps) => (
   <ImageCardProvider {...props}>
     <ImageCardContent />
   </ImageCardProvider>
-));
+);
+
+export const ImageCard = memo(ImageCardComponent);
