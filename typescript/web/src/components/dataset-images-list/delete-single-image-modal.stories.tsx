@@ -1,6 +1,10 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { BASIC_DATASET_DATA } from "../../utils/fixtures";
-import { createCommonDecorator, storybookTitle } from "../../utils/stories";
+import {
+  createCommonDecorator,
+  modalDecorator,
+  storybookTitle,
+} from "../../utils/stories";
 import { DeleteSingleImageModal as DeleteSingleImageModalComponent } from "./delete-single-image-modal";
 import { APOLLO_MOCKS, TestWrapper, TEST_IMAGE } from "./images-list.fixtures";
 
@@ -18,6 +22,7 @@ export default {
       },
       apollo: { extraMocks: APOLLO_MOCKS },
     }),
+    modalDecorator,
   ],
 } as ComponentMeta<typeof DeleteSingleImageModalComponent>;
 

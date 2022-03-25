@@ -1,11 +1,15 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { chakraDecorator, storybookTitle } from "../../utils/stories";
+import {
+  chakraDecorator,
+  modalDecorator,
+  storybookTitle,
+} from "../../utils/stories";
 import { DeleteModal as DeleteModalComponent } from "./delete-modal";
 
 export default {
   title: storybookTitle(DeleteModalComponent),
   component: DeleteModalComponent,
-  decorators: [chakraDecorator],
+  decorators: [chakraDecorator, modalDecorator],
 } as ComponentMeta<typeof DeleteModalComponent>;
 
 const Template: ComponentStory<typeof DeleteModalComponent> = (args) => (
