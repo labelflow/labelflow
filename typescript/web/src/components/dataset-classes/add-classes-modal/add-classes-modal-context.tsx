@@ -12,6 +12,7 @@ import {
   useState,
 } from "react";
 import { useDebounce } from "use-debounce";
+import { getApolloErrorMessage } from "../../../utils/get-apollo-error-message";
 import { useDatasetClasses } from "../dataset-classes.context";
 import { useCreateManyLabelClassesMutation } from "./create-many-label-classes.mutation";
 
@@ -134,7 +135,7 @@ const useSubmit = ({
       onClose();
     } catch (error) {
       if (error instanceof ApolloError) {
-        setError(error.message);
+        setError(getApolloErrorMessage(error));
       } else {
         throw error;
       }
