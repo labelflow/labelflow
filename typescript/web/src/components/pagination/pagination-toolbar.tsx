@@ -1,5 +1,6 @@
 import {
   Center,
+  Flex,
   HStack,
   SimpleGrid,
   SimpleGridProps,
@@ -10,6 +11,13 @@ import { PageNavigation } from "./page-navigation";
 import { usePagination } from "./pagination.context";
 import { PerPageInput } from "./per-page-input";
 
+type LeftLabelProps = { leftLabel?: string };
+
+const LeftLabel = ({ leftLabel }: LeftLabelProps) => (
+  <Flex align="center">
+    <Text>{leftLabel}</Text>
+  </Flex>
+);
 const Range = () => {
   const { page, total, itemCount, perPage } = usePagination();
   const skip = (page - 1) * perPage;
@@ -21,14 +29,29 @@ const Range = () => {
 };
 
 const ItemsDetails = () => (
-  <HStack alignItems="center">
+  <HStack alignItems="center" justifyContent="flex-end">
     <Text>Items:</Text>
     <PerPageInput />
     <Range />
   </HStack>
 );
 
-export const PaginationToolbar = (props: SimpleGridProps) => (
+const Body = ({ leftLabel }: LeftLabelProps) => (
+  <>
+    <LeftLabel leftLabel={leftLabel} />
+    <Center>
+      <PageNavigation />
+    </Center>
+    <ItemsDetails />
+  </>
+);
+
+export type PaginationToolbarProps = SimpleGridProps & LeftLabelProps;
+
+export const PaginationToolbar = ({
+  leftLabel = "",
+  ...props
+}: PaginationToolbarProps) => (
   <SimpleGrid
     bg={mode("white", "gray.800")}
     paddingLeft={8}
@@ -37,9 +60,6 @@ export const PaginationToolbar = (props: SimpleGridProps) => (
     paddingTop={{ base: 2, md: 0 }}
     {...props}
   >
-    <ItemsDetails />
-    <Center>
-      <PageNavigation />
-    </Center>
+    <Body leftLabel={leftLabel} />
   </SimpleGrid>
 );

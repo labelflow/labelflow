@@ -1,39 +1,43 @@
+import {
+  DbLabel,
+  DbLabelWhereInput,
+  Repository,
+} from "@labelflow/common-resolvers";
 import { Prisma } from "@prisma/client";
-import { Repository, DbLabel } from "@labelflow/common-resolvers";
+import { isEmpty, isNil } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";
-import { castObjectNullsToUndefined } from "./utils";
-import { checkUserAccessToDataset } from "./access-control";
+import { AuthorizationError } from "./authorization-error";
+import {
+  castObjectNullsToUndefined,
+  getImageFilter,
+  sanitizeWhereIn,
+} from "./utils";
+
+type WhereWithUser =
+  | (DbLabelWhereInput & { user?: { id: string } })
+  | undefined
+  | null;
+
+const sanitizeWhereInput = (
+  whereWithUser: WhereWithUser
+): Prisma.LabelWhereInput | undefined => {
+  if (isNil(whereWithUser)) return undefined;
+  const { user, id, datasetId, ...where } = whereWithUser;
+  if (isNil(user) || isEmpty(user?.id)) return undefined;
+  return castObjectNullsToUndefined({
+    ...where,
+    ...sanitizeWhereIn("id", id),
+    ...getImageFilter(user.id, datasetId),
+  });
+};
 
 export const countLabels: Repository["label"]["count"] = async (
   whereWithUser
 ) => {
-  if (!whereWithUser) {
-    return 0;
-  }
-  const { user, ...where } = whereWithUser;
-  if (user?.id == null) {
-    return 0;
-  }
-  if ("datasetId" in where) {
-    checkUserAccessToDataset({ where: { id: where.datasetId }, user });
-    return await (
-      await getPrismaClient()
-    ).label.count({
-      where: { image: { datasetId: where.datasetId ?? undefined } },
-    });
-  }
-  return await (
-    await getPrismaClient()
-  ).label.count({
-    where: castObjectNullsToUndefined({
-      ...where,
-      image: {
-        dataset: {
-          workspace: { memberships: { some: { userId: user?.id } } },
-        },
-      },
-    }),
-  });
+  const where = sanitizeWhereInput(whereWithUser);
+  if (isNil(where)) return 0;
+  const db = await getPrismaClient();
+  return await db.label.count({ where });
 };
 
 export const listLabels: Repository["label"]["list"] = async (
@@ -41,37 +45,31 @@ export const listLabels: Repository["label"]["list"] = async (
   skip = undefined,
   first = undefined
 ) => {
-  if (!whereWithUser) {
-    return [];
-  }
-  const { user = undefined, ...where } = whereWithUser;
-  if (user?.id == null) {
-    return [];
-  }
-  if ("datasetId" in where) {
-    await checkUserAccessToDataset({ where: { id: where.datasetId }, user });
-    return (await getPrismaClient()).label.findMany({
-      where: {
-        image: { datasetId: where.datasetId ?? undefined },
-      },
-      orderBy: { createdAt: Prisma.SortOrder.asc },
-      skip: skip ?? undefined,
-      take: first ?? undefined,
-    }) as unknown as DbLabel[];
-  }
-  return (await getPrismaClient()).label.findMany(
+  const where = sanitizeWhereInput(whereWithUser);
+  if (isNil(where)) return [];
+  const db = await getPrismaClient();
+  return db.label.findMany(
     castObjectNullsToUndefined({
-      where: castObjectNullsToUndefined({
-        ...where,
-        image: {
-          dataset: {
-            workspace: { memberships: { some: { userId: user?.id } } },
-          },
-        },
-      }),
+      where,
       orderBy: { createdAt: Prisma.SortOrder.asc },
       skip,
       take: first,
     })
+    // ts(2322) - Types of property 'geometry' are incompatible.
+    //   Type 'JsonValue' is not assignable to type 'Geometry'.
+    //     Type 'null' is not assignable to type 'Geometry'.
   ) as unknown as DbLabel[];
+};
+
+export const deleteManyLabels: Repository["label"]["deleteMany"] = async (
+  whereInput,
+  user
+) => {
+  const db = await getPrismaClient();
+  const where = sanitizeWhereInput({ ...whereInput, user });
+  if (isNil(where)) {
+    throw new AuthorizationError("deleteManyLabels");
+  }
+  const { count } = await db.label.deleteMany({ where });
+  return count;
 };

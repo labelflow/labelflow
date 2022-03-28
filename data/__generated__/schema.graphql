@@ -128,6 +128,10 @@ input GeometryInput {
   type: String!
 }
 
+input IdInInput {
+  in: [ID!]!
+}
+
 type Image {
   createdAt: DateTime!
   dataset: Dataset!
@@ -204,6 +208,7 @@ input ImageUpdateInput {
 
 input ImageWhereInput {
   datasetId: ID
+  id: IdInInput
 }
 
 input ImageWhereUniqueInput {
@@ -404,6 +409,7 @@ type Mutation {
   deleteImage(where: ImageWhereUniqueInput!): Image
   deleteLabel(where: LabelWhereUniqueInput!): Label
   deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
+  deleteManyImages(where: ImageWhereInput!): Int!
   deleteMembership(where: MembershipWhereUniqueInput!): Membership
   deleteWorkspace(where: WorkspaceWhereUniqueInput!): Workspace
   getUploadTarget(data: UploadTargetInput!): UploadTarget!

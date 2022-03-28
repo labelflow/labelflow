@@ -1,20 +1,11 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Button,
-} from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import { useRef } from "react";
 import {
   GetDatasetByIdQuery,
   GetDatasetByIdQueryVariables,
 } from "../../graphql-types/GetDatasetByIdQuery";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
+import { DeleteModal } from "../delete-modal";
 import {
   GET_DATASET_BY_ID_QUERY,
   useFlushPaginatedDatasetsCache,
@@ -42,7 +33,6 @@ export const DeleteDatasetModal = ({
   const flushPaginatedDatasets = useFlushPaginatedDatasetsCache(
     workspaceSlug as string
   );
-  const cancelRef = useRef<HTMLButtonElement>(null);
   const { data } = useQuery<GetDatasetByIdQuery, GetDatasetByIdQueryVariables>(
     GET_DATASET_BY_ID_QUERY,
     {
@@ -70,44 +60,13 @@ export const DeleteDatasetModal = ({
   };
 
   return (
-    <AlertDialog
+    <DeleteModal
       isOpen={isOpen}
-      leastDestructiveRef={cancelRef}
       onClose={onClose}
-      isCentered
-    >
-      <AlertDialogOverlay>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            Delete Dataset {data?.dataset?.name}
-          </AlertDialogHeader>
-
-          <AlertDialogBody>
-            Are you sure? Images, Labels and Classes will be deleted. This
-            action cannot be undone.
-          </AlertDialogBody>
-
-          <AlertDialogFooter>
-            <Button
-              ref={cancelRef}
-              onClick={onClose}
-              aria-label="Cancel delete"
-            >
-              Cancel
-            </Button>
-            <Button
-              colorScheme="red"
-              isLoading={loading}
-              loadingText="Deleting..."
-              onClick={deleteDataset}
-              aria-label="Dataset delete"
-              ml={3}
-            >
-              Delete
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialogOverlay>
-    </AlertDialog>
+      header={`Delete Dataset ${data?.dataset?.name}`}
+      body="Are you sure? Images, Labels and Classes will be deleted. This action cannot be undone."
+      deleting={loading}
+      onDelete={deleteDataset}
+    />
   );
 };

@@ -133,6 +133,11 @@ type Delete<EntityWhereUniqueInput> = (
   user?: { id: string }
 ) => Promise<void>;
 
+type DeleteMany<EntityWhereInput> = (
+  input: EntityWhereInput,
+  user?: { id: string }
+) => Promise<number>;
+
 type Get<EntityType, EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
   user?: { id: string }
@@ -150,6 +155,10 @@ type Update<Entity, EntityWhereUniqueInput> = (
   user?: { id: string }
 ) => Promise<boolean>;
 
+export type DbLabelWhereInput = LabelWhereInput & {
+  id?: { in: string[] };
+};
+
 export type Repository = {
   image: {
     add: Add<DbImageCreateInput>;
@@ -159,11 +168,9 @@ export type Repository = {
     ) => Promise<ID[]>;
     count: Count<ImageWhereInput & { user?: { id: string } }>;
     get: Get<DbImage, ImageWhereUniqueInput>;
-    list: List<
-      DbImage,
-      ImageWhereInput & { user?: { id: string } } & { id?: { in: string[] } }
-    >;
+    list: List<DbImage, ImageWhereInput & { user?: { id: string } }>;
     delete: Delete<ImageWhereUniqueInput>;
+    deleteMany: DeleteMany<ImageWhereInput>;
     update: Update<DbImage, ImageWhereUniqueInput>;
   };
   label: {
@@ -175,13 +182,11 @@ export type Repository = {
       },
       user?: { id: string }
     ) => Promise<ID[]>;
-    count: Count<LabelWhereInput & { user?: { id: string } }>;
+    count: Count<DbLabelWhereInput & { user?: { id: string } }>;
     delete: Delete<LabelWhereUniqueInput>;
+    deleteMany: DeleteMany<DbLabelWhereInput>;
     get: Get<DbLabel, LabelWhereUniqueInput>;
-    list: List<
-      DbLabel,
-      LabelWhereInput & { user?: { id: string } } & { id?: { in: string[] } }
-    >;
+    list: List<DbLabel, DbLabelWhereInput & { user?: { id: string } }>;
     update: Update<DbLabel, LabelWhereUniqueInput>;
   };
   labelClass: {
