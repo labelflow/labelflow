@@ -1,8 +1,7 @@
 import { DbLabel, getSlug, Repository } from "@labelflow/common-resolvers";
 import { Prisma } from "@prisma/client";
 import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
-import { isNil, uniq } from "lodash/fp";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { uniq } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";
 import {
   checkUserAccessToDataset,
@@ -21,7 +20,12 @@ import {
   getUploadTargetHttp,
   putInStorage,
 } from "./upload-s3";
-import { castObjectNullsToUndefined, getWorkspaceFilter } from "./utils";
+import {
+  castObjectNullsToUndefined,
+  getPrismaErrorTarget,
+  getWorkspaceFilter,
+  isPrismaError,
+} from "./utils";
 import {
   addWorkspace,
   deleteWorkspace,
@@ -32,14 +36,8 @@ import {
 } from "./workspace";
 
 const overrideLabelclassExistError: ErrorOverride = (error: unknown) => {
-  // Try to see if the query failed because another workspace with the same name or slug already exists
-  if (
-    error instanceof PrismaClientKnownRequestError &&
-    // P2002: "Unique constraint failed on the {constraint}"
-    error.code === "P2002" &&
-    !isNil(error.meta)
-  ) {
-    const { target = [] } = error.meta as { target?: string[] };
+  if (isPrismaError(error, "P2002")) {
+    const target = getPrismaErrorTarget(error);
     if (target.includes("datasetId") && target.includes("name")) {
       throw new Error("One or more label class already exist in this dataset");
     }

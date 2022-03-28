@@ -1,9 +1,23 @@
 import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { isEmpty, isNil } from "lodash/fp";
 
 type ObjectWithoutNulls<T> = {
   [key in keyof T]: Exclude<T[key], null>;
 };
+
+export const getPrismaErrorTarget = (error: PrismaClientKnownRequestError) => {
+  const { target = [] } = error.meta as { target?: string[] };
+  return target;
+};
+
+export const isPrismaError = (
+  error: unknown,
+  code?: string
+): error is PrismaClientKnownRequestError =>
+  error instanceof PrismaClientKnownRequestError &&
+  error.code === code &&
+  !isNil(error.meta);
 
 export function castObjectNullsToUndefined<T>(
   item: T | undefined | null

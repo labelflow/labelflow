@@ -11,12 +11,15 @@ import {
 import { WorkspaceType } from "@labelflow/graphql-types";
 import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
 import { Prisma, UserRole } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { isNil } from "lodash";
 import { getPrismaClient } from "../prisma-client";
 import { stripe } from "../utils";
 import { checkUserAccessToWorkspace } from "./access-control";
-import { castObjectNullsToUndefined } from "./utils";
+import {
+  castObjectNullsToUndefined,
+  getPrismaErrorTarget,
+  isPrismaError,
+} from "./utils";
 
 const addTypeToWorkspace = (
   workspaceWithoutType: DbWorkspace
@@ -26,14 +29,8 @@ const addTypeToWorkspace = (
 });
 
 const overrideWorkspaceExistError: ErrorOverride = (error: unknown) => {
-  // Try to see if the query failed because another workspace with the same name or slug already exists
-  if (
-    error instanceof PrismaClientKnownRequestError &&
-    // P2002: "Unique constraint failed on the {constraint}"
-    error.code === "P2002" &&
-    !isNil(error.meta)
-  ) {
-    const { target = [] } = error.meta as { target?: string[] };
+  if (isPrismaError(error, "P2002")) {
+    const target = getPrismaErrorTarget(error);
     if (target.includes("name") || target.includes("slug")) {
       throw new Error(INVALID_WORKSPACE_NAME_MESSAGES.workspaceExists);
     }
