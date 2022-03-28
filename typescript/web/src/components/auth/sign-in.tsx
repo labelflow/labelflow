@@ -39,7 +39,11 @@ const Header = () => (
 const Disclaimer = () => (
   <Text textAlign="center" my="6" fontSize="xs" color="gray.400">
     <Text>By continuing, you agree to LabelFlow</Text>
-    <TextLink href="/legal/terms-and-conditions">
+    <TextLink
+      href="/legal/terms-and-conditions"
+      textDecoration="underline"
+      target="_blank"
+    >
       Terms of Service and Privacy Policy
     </TextLink>
   </Text>
