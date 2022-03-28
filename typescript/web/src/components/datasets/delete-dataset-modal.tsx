@@ -5,7 +5,7 @@ import {
   GetDatasetByIdQueryVariables,
 } from "../../graphql-types/GetDatasetByIdQuery";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
-import { DeleteModal } from "../delete-modal";
+import { DeleteModal } from "../core";
 import {
   GET_DATASET_BY_ID_QUERY,
   useFlushPaginatedDatasetsCache,

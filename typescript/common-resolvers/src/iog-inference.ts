@@ -4,6 +4,7 @@ import {
   RunIogInput,
   MutationCreateIogLabelArgs,
   MutationUpdateIogLabelArgs,
+  UpdateIogInput,
 } from "@labelflow/graphql-types";
 import "isomorphic-fetch";
 
@@ -82,9 +83,7 @@ export const fetchIogServer = async (
   });
   const coordinates = result?.polygons as number[][][];
   if (isEmpty(coordinates)) {
-    const msg = "Auto-Polygon returned an empty array";
-    console.error(msg, result);
-    throw new Error(msg);
+    throw new Error("Auto-Polygon returned an empty array");
   }
   const geometry = { type: "Polygon", coordinates };
   const [x, y, X, Y] = geometry.coordinates.reduce(
@@ -126,21 +125,22 @@ const createIogLabel = async (
     `The image id ${args.data.imageId} doesn't exist.`,
     repository.image.get
   )({ id: args.data.imageId }, user);
-  const dataUrl = await downloadUrlToDataUrl(image.url, repository, req);
+  const base64Image = await downloadUrlToDataUrl(image.url, repository, req);
   const now = new Date();
 
   const xInit = Math.min(image.width, Math.max(0, args.data.x));
   const yInit = Math.min(image.height, Math.max(0, args.data.y));
-  const { geometry, x, y, height, width } = await fetchIogServer({
+  const smartToolInput: Omit<RunIogInput, "imageUrl"> = {
     id: labelId,
-    imageUrl: dataUrl,
     x: xInit,
     y: yInit,
     width: Math.min(image.width, Math.max(0, xInit + args.data.width)) - xInit,
     height:
       Math.min(image.height, Math.max(0, yInit + args.data.height)) - yInit,
     centerPoint: args.data.centerPoint,
-  });
+  };
+  const iogInput: RunIogInput = { ...smartToolInput, imageUrl: base64Image };
+  const { geometry, x, y, height, width } = await fetchIogServer(iogInput);
   const newLabelEntity = {
     id: labelId,
     type: LabelType.Polygon,
@@ -153,7 +153,7 @@ const createIogLabel = async (
     y,
     height,
     width,
-    smartToolInput: args.data,
+    smartToolInput,
   };
   await repository.label.add(newLabelEntity, user);
   return await throwIfResolvesToNil(
@@ -164,17 +164,25 @@ const createIogLabel = async (
 
 const updateIogLabel = async (
   _parent: any,
-  args: MutationUpdateIogLabelArgs,
-  { repository, user }: Context
+  { data }: MutationUpdateIogLabelArgs,
+  { repository, user, req }: Context
 ) => {
-  const { geometry, x, y, height, width } = await fetchIogServer(args.data);
+  const { smartToolInput: oldSmartToolInput, imageId } =
+    await throwIfResolvesToNil("No label with such id", repository.label.get)(
+      { id: data.id },
+      user
+    );
+  const { url } = await throwIfResolvesToNil(
+    `No image with id ${imageId}`,
+    repository.image.get
+  )({ id: imageId }, user);
+  const base64Image = await downloadUrlToDataUrl(url, repository, req);
+  const smartToolInput = { ...oldSmartToolInput, ...data };
+  const iogInput: UpdateIogInput = { ...smartToolInput, imageUrl: base64Image };
+  const { geometry, x, y, height, width } = await fetchIogServer(iogInput);
   const now = new Date();
-  const { smartToolInput } = await throwIfResolvesToNil(
-    "No label with such id",
-    repository.label.get
-  )({ id: args.data.id }, user);
   const newLabelEntity = {
-    smartToolInput: { ...smartToolInput, ...args.data },
+    smartToolInput,
     updatedAt: now.toISOString(),
     geometry,
     x,
@@ -182,11 +190,11 @@ const updateIogLabel = async (
     height,
     width,
   };
-  await repository.label.update({ id: args.data.id }, newLabelEntity, user);
+  await repository.label.update({ id: data.id }, newLabelEntity, user);
   return await throwIfResolvesToNil(
     "No label with such id",
     repository.label.get
-  )({ id: args.data.id }, user);
+  )({ id: data.id }, user);
 };
 
 export default {

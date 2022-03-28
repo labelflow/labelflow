@@ -38,8 +38,7 @@
     "release": "cd ./typescript/web && yarn release"
   },
   "workspaces": [
-    "typescript/*",
-    "typescript/types/*"
+    "typescript/*"
   ],
   "devDependencies": {
     "@apollo/client": "3.4.16",

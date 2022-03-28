@@ -1,22 +1,22 @@
 import { Flex, HStack, Text } from "@chakra-ui/react";
+import { sentenceCase } from "change-case";
 import { v4 as uuid } from "uuid";
 import { ComboBoxItemComponent } from ".";
-import { Tools } from "../../../connectors/labeling-state";
-import { AppIcon, getToolIconName, Icon } from "../icons";
+import { AppIcon, APP_ICONS, Icon, LABELS_ICONS } from "../icons";
 
-export type ToolDefinition = { id: string; tool: Tools; icon: AppIcon };
+export type TestItemDefinition = { id: string; label: string; icon: AppIcon };
 
-export const TestItem: ComboBoxItemComponent<ToolDefinition, "icon"> = ({
-  tool,
+export const TestItem: ComboBoxItemComponent<TestItemDefinition, "icon"> = ({
+  label,
   icon,
 }) => (
   <HStack>
     <Icon name={icon} fontSize="md" />
-    <Text>{tool}</Text>
+    <Text>{label}</Text>
   </HStack>
 );
 
-export const TestListItem: ComboBoxItemComponent<ToolDefinition, "icon"> = (
+export const TestListItem: ComboBoxItemComponent<TestItemDefinition, "icon"> = (
   props
 ) => {
   const { id } = props;
@@ -28,10 +28,19 @@ export const TestListItem: ComboBoxItemComponent<ToolDefinition, "icon"> = (
   );
 };
 
-export const TEST_ITEMS: ToolDefinition[] = Object.values(Tools).map(
-  (tool) => ({
-    id: uuid(),
-    tool,
-    icon: getToolIconName(tool),
-  })
-);
+const createTestItemDefinition = <TIconName extends AppIcon>(
+  iconName: TIconName
+): TestItemDefinition => ({
+  id: uuid(),
+  label: sentenceCase(iconName),
+  icon: iconName,
+});
+
+const createTestItemDefinitions = <TIconName extends AppIcon>(
+  icons: Record<TIconName, unknown>
+): TestItemDefinition[] =>
+  Object.keys(icons).map((icon) => createTestItemDefinition(icon as AppIcon));
+
+export const TEST_ITEMS = createTestItemDefinitions(LABELS_ICONS);
+
+export const TEST_MANY_ITEMS = createTestItemDefinitions(APP_ICONS);

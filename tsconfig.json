@@ -23,7 +23,7 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "../types/change-case/src/index.d.ts"
+    "../utils/src/@types/index.d.ts"
   ],
   "exclude": ["node_modules"]
 }

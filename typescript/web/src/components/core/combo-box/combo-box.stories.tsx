@@ -3,9 +3,10 @@ import { ComboBox, ComboBoxProps } from ".";
 import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 import {
   TestItem,
+  TestItemDefinition,
   TestListItem,
   TEST_ITEMS,
-  ToolDefinition,
+  TEST_MANY_ITEMS,
 } from "./combo-box.fixtures";
 
 export default {
@@ -14,15 +15,16 @@ export default {
   decorators: [chakraDecorator],
 } as ComponentMeta<typeof ComboBox>;
 
-type TemplateProps = ComboBoxProps<ToolDefinition, "tool">;
+type TemplateProps = ComboBoxProps<TestItemDefinition, "label">;
 
-const Template: ComponentStory<(props: TemplateProps) => JSX.Element> = (
-  props
-) => (
+const Template: ComponentStory<(props: TemplateProps) => JSX.Element> = ({
+  items = TEST_ITEMS,
+  ...props
+}) => (
   <ComboBox
     {...props}
-    items={TEST_ITEMS}
-    compareProp="tool"
+    items={items}
+    compareProp="label"
     item={TestItem}
     listItem={TestListItem}
   />
@@ -40,3 +42,9 @@ Opened.args = {
   initialInputValue: "",
   isOpen: true,
 };
+
+export const WithManyItems = Template.bind({});
+WithManyItems.args = { items: TEST_MANY_ITEMS };
+
+export const OpenedWithManyItems = Template.bind({});
+OpenedWithManyItems.args = { ...Opened.args, ...WithManyItems.args };

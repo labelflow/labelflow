@@ -6,7 +6,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   Spacer,
-  Tooltip,
   useColorModeValue,
   useMergeRefs,
 } from "@chakra-ui/react";
@@ -14,6 +13,7 @@ import { isNil } from "lodash/fp";
 import { ForwardedRef, ReactNode, useRef } from "react";
 import { Button, ButtonProps } from "../button";
 import { SearchInput } from "../search-input";
+import { Tooltip } from "../tooltip";
 import {
   ComboBoxItem,
   ComboBoxProvider,
@@ -25,10 +25,16 @@ import {
 const Search = () => {
   const { getInputProps, setInputValue } = useComboBox();
   const ref = useRef<HTMLInputElement | null>(null);
-  const { onChange, ref: inputRef, ...inputProps } = getInputProps({ ref });
+  const {
+    value,
+    onChange,
+    ref: inputRef,
+    ...inputProps
+  } = getInputProps({ ref });
   return (
     <SearchInput
       ref={inputRef}
+      value={value}
       onChange={setInputValue}
       placeholder="Search..."
       inputProps={{
@@ -52,8 +58,8 @@ const ValueItemBody = <
 >({
   value,
 }: ValueItemBodyProps<TValue, TCompareKey>) => {
-  const { item, listItem: Listitem = item } = useComboBox();
-  return <Listitem key={value.id} {...value} />;
+  const { item, listItem: ListItem = item } = useComboBox();
+  return <ListItem key={value.id} {...value} />;
 };
 
 type ValueItemProps<
@@ -73,8 +79,7 @@ const useItemBackground = <
   const currentBg = useColorModeValue("gray.100", "gray.600");
   const selected = valueId === selectedItem?.id;
   if (selected) return selectedBg;
-  const highlighted = index === highlightedIndex;
-  return highlighted ? currentBg : undefined;
+  return index === highlightedIndex ? currentBg : undefined;
 };
 
 const ValueItem = <
@@ -109,7 +114,13 @@ const ValuesList = <
 >() => {
   const { items, getMenuProps } = useComboBox<TValue, TCompareKey>();
   return (
-    <Flex {...getMenuProps()} flexGrow={1} direction="column" overflowY="auto">
+    <Flex
+      {...getMenuProps()}
+      flexGrow={1}
+      direction="column"
+      overflowY="auto"
+      maxH="340"
+    >
       {items.map((item, index) => (
         <ValueItem key={item.id} value={item} index={index} />
       ))}
@@ -149,8 +160,8 @@ const ListPopover = ({ trigger }: ListPopoverProps) => {
       isOpen={isOpen}
       onClose={closeMenu}
       onOpen={openMenu}
-      trigger="click"
       placement="bottom-start"
+      preventOverflow
     >
       <PopoverTrigger>{trigger}</PopoverTrigger>
       <ListPopoverContent />
@@ -172,6 +183,7 @@ const useMainButtonProps = (
     variant: "outline",
     ...downshiftProps,
     ...props,
+    tabIndex: 0,
   };
 };
 
@@ -192,7 +204,9 @@ export type ComboBoxProps<
   TValue extends ComboBoxItem<ObjectKey> = Record<ObjectKey, string>,
   TCompareKey extends keyof TValue = ObjectKey
 > = ComboBoxProviderProps<TValue, TCompareKey> &
-  Pick<ButtonProps, "bg" | "borderWidth" | "borderStyle" | "disabled"> & {
+  Partial<
+    Pick<ButtonProps, "bg" | "borderWidth" | "borderStyle" | "disabled">
+  > & {
     "data-testid"?: string;
   };
 

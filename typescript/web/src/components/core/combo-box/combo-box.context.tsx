@@ -156,8 +156,9 @@ const useDownshiftState = <
   TCompareKey
 >): DownshiftReturnValue<TValue> => {
   const handleInputValueChange = useCallback(
-    ({ inputValue: newValue, isOpen }: DownshiftStateChange<TValue>) =>
-      setInputValue(isOpen ? newValue ?? "" : ""),
+    ({ inputValue: newValue }: DownshiftStateChange<TValue>) => {
+      setInputValue(newValue ?? "");
+    },
     [setInputValue]
   );
   const handleSelectedItemChange = useCallback(
@@ -166,12 +167,20 @@ const useDownshiftState = <
     },
     [onChange]
   );
+  const handleIsOpenChange = useCallback(
+    ({ isOpen }: DownshiftStateChange<TValue>) => {
+      if (!isOpen) return;
+      setInputValue("");
+    },
+    [setInputValue]
+  );
   return useDownshift<TValue>({
     ...props,
     inputValue,
     itemToString: (value: TValue | null) => value?.[compareProp] ?? "",
     onInputValueChange: handleInputValueChange,
     onSelectedItemChange: handleSelectedItemChange,
+    onIsOpenChange: handleIsOpenChange,
   });
 };
 

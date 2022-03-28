@@ -15,12 +15,9 @@ import { RiCloseFill, RiMoreLine } from "react-icons/ri";
 import { CamelCase, PascalCase } from "type-fest";
 import { Tools } from "../../../connectors/labeling-state";
 import {
-  IogAddSvg,
-  IogDeleteSvg,
-  IogInsideSvg,
-  IogOutsideSvg,
-  IogRemoveSvg,
-  IogTargetSvg,
+  ViewModeShowAll,
+  ViewModeHideAll,
+  ViewModeShowGeometry,
 } from "./svg/index-svg";
 
 export type IconType = ReactIconsIconType | SvgComponent;
@@ -63,17 +60,15 @@ export const TOOLS_ICONS: Record<ToolIconName, IconType> = {
   aiAssistantTool: BsLightningFill,
 };
 
-export type IogIconName = `iog${PascalCase<
-  "add" | "delete" | "inside" | "outside" | "remove" | "target"
->}`;
+export type ViewModeIconName = EntityIcon<
+  "ViewMode",
+  "hideAll" | "showAll" | "showGeometry"
+>;
 
-const IOG_ICONS: Record<IogIconName, IconType> = {
-  iogAdd: IogAddSvg,
-  iogDelete: IogDeleteSvg,
-  iogInside: IogInsideSvg,
-  iogOutside: IogOutsideSvg,
-  iogRemove: IogRemoveSvg,
-  iogTarget: IogTargetSvg,
+export const VIEW_MODE_ICONS: Record<ViewModeIconName, IconType> = {
+  hideAllViewMode: ViewModeHideAll,
+  showAllViewMode: ViewModeShowAll,
+  showGeometryViewMode: ViewModeShowGeometry,
 };
 
 export type AppIcon =
@@ -84,12 +79,12 @@ export type AppIcon =
   | "selector"
   | ToolIconName
   | LabelIconName
-  | IogIconName;
+  | ViewModeIconName;
 
 export const APP_ICONS: Record<AppIcon, IconType> = {
   ...TOOLS_ICONS,
   ...LABELS_ICONS,
-  ...IOG_ICONS,
+  ...VIEW_MODE_ICONS,
   announcements: BsMegaphone,
   close: RiCloseFill,
   more: RiMoreLine,

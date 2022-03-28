@@ -1,9 +1,9 @@
-import { isEmpty } from "./is-empty";
+import { isNilOrEmpty } from "./is-nil-or-empty";
 
 type TestCase = [unknown, boolean];
 
 const runTest = ([value, expected]: TestCase) => {
-  expect(isEmpty(value)).toBe(expected);
+  expect(isNilOrEmpty(value)).toBe(expected);
 };
 
 const TEST_CASES: Record<string, TestCase> = {
@@ -14,7 +14,7 @@ const TEST_CASES: Record<string, TestCase> = {
   "returns false if the value is a non-empty string": ["foo", false],
 };
 
-describe(isEmpty, () => {
+describe(isNilOrEmpty, () => {
   it.concurrent.each(Object.entries(TEST_CASES))(
     "%s",
     async (_title, testCase) => runTest(testCase)

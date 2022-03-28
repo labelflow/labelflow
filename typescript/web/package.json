@@ -110,7 +110,6 @@
   },
   "devDependencies": {
     "@labelflow/dev-utils": "workspace:typescript/dev-utils",
-    "@labelflow/types-change-case": "workspace:typescript/types/change-case",
     "@storybook/expect": "27.5.2-0",
     "@storybook/react": "6.4.19",
     "@storybook/testing-library": "0.0.9",

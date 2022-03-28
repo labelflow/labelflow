@@ -312,7 +312,6 @@ export const AiAssistantComboBox = (props: AiAssistantComboBoxProps) => {
       // Labeling view breaks default background
       bg={useColorModeValue("white", "gray.800")}
       borderStyle="none"
-      borderWidth={0}
     />
   );
 };

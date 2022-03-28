@@ -3,6 +3,7 @@ import { Story } from "@storybook/react";
 import React, { useState } from "react";
 import {
   chakraDecorator,
+  modalDecorator,
   queryParamsDecorator,
   storybookTitle,
 } from "../../../utils/stories";
@@ -24,7 +25,7 @@ export default {
       },
     },
   },
-  decorators: [chakraDecorator, queryParamsDecorator],
+  decorators: [chakraDecorator, modalDecorator, queryParamsDecorator],
 };
 
 export const IogAlertDialog: Story = () => {

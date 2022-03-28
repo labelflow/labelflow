@@ -6,7 +6,7 @@ import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 import { Tooltip } from "./tooltip";
 
 export default {
-  title: storybookTitle(Tooltip),
+  title: storybookTitle("Core", Tooltip),
   component: Tooltip,
   decorators: [chakraDecorator],
 } as ComponentMeta<typeof Tooltip>;

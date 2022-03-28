@@ -6,6 +6,7 @@ import {
   Th,
   Thead,
   Tr,
+  useClipboard,
   VStack,
 } from "@chakra-ui/react";
 import { capitalCase } from "change-case";
@@ -19,12 +20,6 @@ import { SearchInput } from "../search-input";
 export default {
   title: storybookTitle("Core", "Icons", "App icons"),
   decorators: [chakraDecorator],
-};
-
-const copyTextToClipboard = (text: string): Promise<void> => {
-  const blob = new Blob([text], { type: "text/plain" });
-  const data = [new ClipboardItem({ "text/plain": blob })];
-  return navigator.clipboard.write(data);
 };
 
 type IconCodeProps = { text: string };
@@ -66,10 +61,11 @@ const IconItem = <TName extends AppIcon>({
   const showToast = useSuccessToast({
     title: "Copied to clipboard",
   });
+  const { onCopy } = useClipboard(name);
   const handleClick = useCallback(async () => {
-    await copyTextToClipboard(name);
+    await onCopy();
     showToast();
-  }, [name, showToast]);
+  }, [onCopy, showToast]);
   return (
     <Tr cursor="pointer" onClick={handleClick}>
       <IconCell name={name} />

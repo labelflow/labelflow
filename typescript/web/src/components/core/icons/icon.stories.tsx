@@ -1,16 +1,17 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { Icon as IconComponent } from ".";
 import { chakraDecorator, storybookTitle } from "../../../utils/stories";
+import { Icon } from "./icon";
 
 export default {
-  title: storybookTitle("Core", "Icons", IconComponent),
-  component: IconComponent,
+  title: storybookTitle("Core", "Icons", Icon),
+  component: Icon,
   decorators: [chakraDecorator],
-} as ComponentMeta<typeof IconComponent>;
+} as ComponentMeta<typeof Icon>;
 
-const Template: ComponentStory<typeof IconComponent> = (args) => (
-  <IconComponent {...args} />
-);
+const Template: ComponentStory<typeof Icon> = (args) => <Icon {...args} />;
 
-export const Icon = Template.bind({});
-Icon.args = { name: "search" };
+export const ReactIcon = Template.bind({});
+ReactIcon.args = { name: "search" };
+
+export const SVG = Template.bind({});
+SVG.args = { name: "showGeometryViewMode" };

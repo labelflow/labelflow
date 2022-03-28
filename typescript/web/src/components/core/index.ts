@@ -1,5 +1,6 @@
 export * from "./beta-badge";
 export * from "./combo-box";
+export * from "./delete-modal";
 export * from "./icons";
 export * from "./button";
 export * from "./image-with-fallback";

@@ -13,10 +13,10 @@ import {
   getSignedImageUrl,
 } from "@labelflow/common-resolvers";
 import {
-  CreateIogLabelInput,
   LabelType,
   MutationRunAiAssistantArgs,
   RunAiAssistantOutput,
+  RunIogInput,
 } from "@labelflow/graphql-types";
 import { getNextClassColor } from "@labelflow/utils";
 import Ajv from "ajv";
@@ -94,9 +94,9 @@ type ParserLabelClass = Required<Pick<DbLabelClass, "id" | "name">> &
 
 type ParserLabel = Pick<
   DbLabel,
-  "type" | "geometry" | "labelClassId" | "smartToolInput"
+  "id" | "type" | "geometry" | "labelClassId" | "smartToolInput"
 > &
-  Partial<Pick<DbLabel, "id" | "x" | "y" | "width" | "height">>;
+  Partial<Pick<DbLabel, "x" | "y" | "width" | "height">>;
 
 const mapLabelClass = (
   existing: ParserLabelClass[],
@@ -109,6 +109,7 @@ const mapLabelClass = (
 };
 
 const constructClassificationLabel = (labelClassId: string): ParserLabel => ({
+  id: uuid(),
   type: LabelType.Classification,
   labelClassId,
   geometry: { type: "none", coordinates: [] },
@@ -133,6 +134,7 @@ const constructObjectDetectionLabel = (
     }
   );
   return {
+    id: uuid(),
     type: LabelType.Box,
     geometry: { type: "Polygon", coordinates: [coordinates] },
     labelClassId,
@@ -244,25 +246,15 @@ const createEntities = async (
   );
   const labelsToAdd = labels.map<
     Omit<DbLabelCreateInput, "labelClassId" | "imageId">
-  >(
-    ({
-      id = uuid(),
-      x = 0,
-      y = 0,
-      width = imageWidth,
-      height = imageHeight,
-      ...label
-    }) => ({
-      id,
-      ...label,
-      x,
-      y,
-      width,
-      height,
-      createdAt,
-      updatedAt: createdAt,
-    })
-  );
+  >(({ x = 0, y = 0, width = imageWidth, height = imageHeight, ...label }) => ({
+    ...label,
+    x,
+    y,
+    width,
+    height,
+    createdAt,
+    updatedAt: createdAt,
+  }));
   const addedLabels = await repository.label.addMany(
     { labels: labelsToAdd, imageId },
     user
@@ -277,13 +269,9 @@ const createEntities = async (
 };
 
 const runIog = async (
+  { url: imageUrl, width: imageWidth, height: imageHeight }: ImageInfo,
   {
-    id: imageId,
-    url: imageUrl,
-    width: imageWidth,
-    height: imageHeight,
-  }: ImageInfo,
-  {
+    id,
     x: labelX = 0,
     y: labelY = 0,
     width: labelWidth = 0,
@@ -293,23 +281,23 @@ const runIog = async (
   }: ParserLabel,
   { repository, req }: Context
 ): Promise<ParserLabel> => {
-  const dataUrl = await downloadUrlToDataUrl(imageUrl, repository, req);
   const x = Math.min(imageWidth, Math.max(0, labelX ?? 0));
   const y = Math.min(imageHeight, Math.max(0, labelY ?? 0));
   const width = Math.min(imageWidth, Math.max(0, x + labelWidth ?? 0)) - x;
   const height = Math.min(imageHeight, Math.max(0, y + labelHeight ?? 0)) - y;
-  const centerPoint = [x + width / 2, y + height / 2];
-  const id = uuid();
-  const input: Omit<CreateIogLabelInput, "imageId" | "labelClassId" | "id"> & {
-    id: string;
-  } = { id, x, y, width, height, centerPoint };
-  const iogLabel = await fetchIogServer({ imageUrl: dataUrl, ...input });
-  const smartToolInput: CreateIogLabelInput = {
-    ...input,
-    imageId,
-    labelClassId,
+  const smartToolInput: Omit<RunIogInput, "imageUrl"> = {
+    id,
+    x,
+    y,
+    width,
+    height,
+    centerPoint: [x + width / 2, y + height / 2],
   };
+  const dataUrl = await downloadUrlToDataUrl(imageUrl, repository, req);
+  const iogInput: RunIogInput = { imageUrl: dataUrl, ...smartToolInput };
+  const iogLabel = await fetchIogServer(iogInput);
   return {
+    id,
     ...label,
     ...iogLabel,
     type: LabelType.Polygon,

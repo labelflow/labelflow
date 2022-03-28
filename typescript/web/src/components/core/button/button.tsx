@@ -5,7 +5,7 @@ import {
   forwardRef,
   PropsOf,
 } from "@chakra-ui/react";
-import { isEmpty } from "@labelflow/utils";
+import { isNilOrEmpty } from "@labelflow/utils";
 import NextLink from "next/link";
 import { OptionalParent } from "../../../utils";
 import { AppIcon, Icon, IconProps } from "../icons";
@@ -24,7 +24,7 @@ const getButtonIconProps = <TKey extends "leftIcon" | "rightIcon">(
   propKey: TKey,
   icon: AppIcon | IconProps | undefined
 ): LinkButtonProps[TKey] => {
-  if (isEmpty(icon)) return undefined;
+  if (isNilOrEmpty(icon)) return undefined;
   const iconProps = typeof icon === "string" ? { name: icon } : icon;
   return { [propKey]: <Icon {...iconProps} /> };
 };
@@ -35,7 +35,7 @@ const getButtonProps = ({
   rightIcon,
   ...buttonProps
 }: ButtonProps): LinkButtonProps | undefined => {
-  const linkProps = isEmpty(href) ? undefined : { href, as: "a" };
+  const linkProps = isNilOrEmpty(href) ? undefined : { href, as: "a" };
   const leftIconProps = getButtonIconProps("leftIcon", leftIcon);
   const rightIconProps = getButtonIconProps("rightIcon", rightIcon);
   return { ...linkProps, ...leftIconProps, ...rightIconProps, ...buttonProps };
@@ -49,7 +49,7 @@ const LinkButton = forwardRef<LinkButtonProps, "button">(
     const buttonProps = getButtonProps(props);
     return (
       <OptionalParent
-        enabled={!isEmpty(href)}
+        enabled={!isNilOrEmpty(href)}
         parent={NextLink}
         parentProps={{ href, passHref: true }}
       >
@@ -65,7 +65,7 @@ const getTooltipProps = (tooltip?: ButtonProps["tooltip"]) =>
 export const Button = forwardRef<ButtonProps, "button">(
   ({ tooltip, ...props }, ref) => (
     <OptionalParent
-      enabled={!isEmpty(tooltip)}
+      enabled={!isNilOrEmpty(tooltip)}
       parent={({ children, ...tooltipProps }) => (
         <Tooltip {...tooltipProps}>{children ?? <></>}</Tooltip>
       )}

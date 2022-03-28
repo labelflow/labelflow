@@ -4,7 +4,7 @@ import {
   GetImageByIdQuery,
   GetImageByIdQueryVariables,
 } from "../../graphql-types/GetImageByIdQuery";
-import { DeleteModal } from "../delete-modal";
+import { DeleteModal } from "../core";
 import { useImagesList } from "./images-list.context";
 
 export const GET_IMAGE_BY_ID_QUERY = gql`
