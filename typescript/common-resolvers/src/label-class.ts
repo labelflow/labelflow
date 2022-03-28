@@ -76,14 +76,6 @@ const createLabelClass = async (
     user,
   });
 
-  if (
-    createdLabelClasses.some(
-      (createdLabelClass) => createdLabelClass.name === name
-    )
-  ) {
-    throw new Error(`A class named ${name} already exists`);
-  }
-
   const labelClassId = id ?? uuidv4();
   const now = new Date();
 
@@ -117,16 +109,6 @@ const createManyLabelClasses = async (
     datasetId,
     user,
   });
-  const existingLabelClassesNames = existingLabelClasses.map(
-    (existingLabelClass) => existingLabelClass.name
-  );
-  if (
-    newLabelClasses.some((newLabelClass) =>
-      existingLabelClassesNames.includes(newLabelClass.name)
-    )
-  ) {
-    throw new Error("One or more classes already exist");
-  }
   const nowIso = new Date().toISOString();
   const { newColors } = newLabelClasses.reduce<{
     existingColors: string[];
