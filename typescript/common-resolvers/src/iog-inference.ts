@@ -7,11 +7,12 @@ import {
 } from "@labelflow/graphql-types";
 import "isomorphic-fetch";
 
+import { isEmpty } from "lodash/fp";
 import { Context, Repository } from "./types";
 
 import { throwIfResolvesToNil } from "./utils/throw-if-resolves-to-nil";
 
-const downloadUrlToDataUrl = async (
+export const downloadUrlToDataUrl = async (
   url: string,
   repository: Repository,
   req: undefined | Request
@@ -23,7 +24,7 @@ const downloadUrlToDataUrl = async (
   )}`;
 };
 
-const fetchIogServer = async (
+export const fetchIogServer = async (
   variables: RunIogInput
 ): Promise<{
   geometry: { type: string; coordinates: number[][][] };
@@ -79,38 +80,13 @@ const fetchIogServer = async (
     }
     return res.json().then((parsedResponse) => parsedResponse.data.runIog);
   });
-  // Uncomment bellow for dummy IOG (test purpose)
-  // Start dummy iog
-  // await new Promise((resolve) => {
-  //   setTimeout(resolve, 2000);
-  // });
-  // const label = await repository.label.get({ id: labelId });
-  // const filledInputs = {
-  //   ...label.smartToolInput,
-  //   ...variables,
-  // };
-  // const [x, y, X, Y] = [
-  //   filledInputs?.x + filledInputs?.width / 4,
-  //   filledInputs?.y + filledInputs?.height / 4,
-  //   filledInputs?.x + (3 * filledInputs?.width) / 4,
-  //   filledInputs?.y + (3 * filledInputs?.height) / 4,
-  // ];
-  // const result = {
-  //   polygons: [
-  //     [
-  //       [x, y],
-  //       [X, y],
-  //       [X, Y],
-  //       [x, Y],
-  //       [x, y],
-  //     ],
-  //   ],
-  // };
-  // End dummy iog
-  const geometry = {
-    type: "Polygon",
-    coordinates: result?.polygons as number[][][],
-  };
+  const coordinates = result?.polygons as number[][][];
+  if (isEmpty(coordinates)) {
+    const msg = "Auto-Polygon returned an empty array";
+    console.error(msg, result);
+    throw new Error(msg);
+  }
+  const geometry = { type: "Polygon", coordinates };
   const [x, y, X, Y] = geometry.coordinates.reduce(
     ([xCurrent, yCurrent, XCurrent, YCurrent], polygon: number[][]) => {
       const [xPolygon, yPolygon, XPolygon, YPolygon] = polygon.reduce(
@@ -134,13 +110,7 @@ const fetchIogServer = async (
     },
     [Infinity, Infinity, 0, 0]
   );
-  return {
-    geometry,
-    x,
-    y,
-    width: X - x,
-    height: Y - y,
-  };
+  return { geometry, x, y, width: X - x, height: Y - y };
 };
 
 const createIogLabel = async (

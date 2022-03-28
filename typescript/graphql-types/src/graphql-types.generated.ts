@@ -365,6 +365,7 @@ export type LabelUpdateInput = {
 
 export type LabelWhereInput = {
   datasetId?: InputMaybe<Scalars['ID']>;
+  id?: InputMaybe<IdInInput>;
   imageId?: InputMaybe<Scalars['ID']>;
   labelClassId?: InputMaybe<Scalars['ID']>;
 };
@@ -442,12 +443,14 @@ export type Mutation = {
   deleteLabel?: Maybe<Label>;
   deleteLabelClass?: Maybe<LabelClass>;
   deleteManyImages: Scalars['Int'];
+  deleteManyLabels: Array<Label>;
   deleteMembership?: Maybe<Membership>;
   deleteWorkspace?: Maybe<Workspace>;
   getUploadTarget: UploadTarget;
   importDataset?: Maybe<ImportStatus>;
   inviteMember?: Maybe<InvitationResult>;
   reorderLabelClass?: Maybe<LabelClass>;
+  runAiAssistant: RunAiAssistantOutput;
   updateDataset?: Maybe<Dataset>;
   updateImage?: Maybe<Image>;
   updateIogLabel?: Maybe<Label>;
@@ -545,6 +548,11 @@ export type MutationDeleteManyImagesArgs = {
 };
 
 
+export type MutationDeleteManyLabelsArgs = {
+  where: LabelWhereInput;
+};
+
+
 export type MutationDeleteMembershipArgs = {
   where: MembershipWhereUniqueInput;
 };
@@ -574,6 +582,11 @@ export type MutationInviteMemberArgs = {
 export type MutationReorderLabelClassArgs = {
   data: LabelClassReorderInput;
   where: LabelClassWhereUniqueInput;
+};
+
+
+export type MutationRunAiAssistantArgs = {
+  data: RunAiAssistantInput;
 };
 
 
@@ -768,6 +781,18 @@ export type QueryWorkspacesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<WorkspaceWhereInput>;
+};
+
+export type RunAiAssistantInput = {
+  aiAssistantId: Scalars['ID'];
+  imageId: Scalars['ID'];
+  useAutoPolygon?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type RunAiAssistantOutput = {
+  __typename?: 'RunAiAssistantOutput';
+  labelClasses: Array<Scalars['ID']>;
+  labels: Array<Label>;
 };
 
 export type RunIogInput = {
@@ -1034,6 +1059,8 @@ export type ResolversTypes = {
   MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  RunAiAssistantInput: RunAiAssistantInput;
+  RunAiAssistantOutput: ResolverTypeWrapper<RunAiAssistantOutput>;
   RunIogInput: RunIogInput;
   String: ResolverTypeWrapper<Scalars['String']>;
   UpdateIogInput: UpdateIogInput;
@@ -1119,6 +1146,8 @@ export type ResolversParentTypes = {
   MembershipWhereUniqueInput: MembershipWhereUniqueInput;
   Mutation: {};
   Query: {};
+  RunAiAssistantInput: RunAiAssistantInput;
+  RunAiAssistantOutput: RunAiAssistantOutput;
   RunIogInput: RunIogInput;
   String: Scalars['String'];
   UpdateIogInput: UpdateIogInput;
@@ -1285,12 +1314,14 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteLabelArgs, 'where'>>;
   deleteLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationDeleteLabelClassArgs, 'where'>>;
   deleteManyImages?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationDeleteManyImagesArgs, 'where'>>;
+  deleteManyLabels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationDeleteManyLabelsArgs, 'where'>>;
   deleteMembership?: Resolver<Maybe<ResolversTypes['Membership']>, ParentType, ContextType, RequireFields<MutationDeleteMembershipArgs, 'where'>>;
   deleteWorkspace?: Resolver<Maybe<ResolversTypes['Workspace']>, ParentType, ContextType, RequireFields<MutationDeleteWorkspaceArgs, 'where'>>;
   getUploadTarget?: Resolver<ResolversTypes['UploadTarget'], ParentType, ContextType, RequireFields<MutationGetUploadTargetArgs, 'data'>>;
   importDataset?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<MutationImportDatasetArgs, 'data' | 'where'>>;
   inviteMember?: Resolver<Maybe<ResolversTypes['InvitationResult']>, ParentType, ContextType, RequireFields<MutationInviteMemberArgs, 'where'>>;
   reorderLabelClass?: Resolver<Maybe<ResolversTypes['LabelClass']>, ParentType, ContextType, RequireFields<MutationReorderLabelClassArgs, 'data' | 'where'>>;
+  runAiAssistant?: Resolver<ResolversTypes['RunAiAssistantOutput'], ParentType, ContextType, RequireFields<MutationRunAiAssistantArgs, 'data'>>;
   updateDataset?: Resolver<Maybe<ResolversTypes['Dataset']>, ParentType, ContextType, RequireFields<MutationUpdateDatasetArgs, 'data' | 'where'>>;
   updateImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationUpdateImageArgs, 'data' | 'where'>>;
   updateIogLabel?: Resolver<Maybe<ResolversTypes['Label']>, ParentType, ContextType, RequireFields<MutationUpdateIogLabelArgs, 'data'>>;
@@ -1327,6 +1358,12 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   workspace?: Resolver<ResolversTypes['Workspace'], ParentType, ContextType, RequireFields<QueryWorkspaceArgs, 'where'>>;
   workspaceExists?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryWorkspaceExistsArgs, 'where'>>;
   workspaces?: Resolver<Array<ResolversTypes['Workspace']>, ParentType, ContextType, Partial<QueryWorkspacesArgs>>;
+};
+
+export type RunAiAssistantOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['RunAiAssistantOutput'] = ResolversParentTypes['RunAiAssistantOutput']> = {
+  labelClasses?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
+  labels?: Resolver<Array<ResolversTypes['Label']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
@@ -1393,6 +1430,7 @@ export type Resolvers<ContextType = any> = {
   Membership?: MembershipResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  RunAiAssistantOutput?: RunAiAssistantOutputResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   UploadTarget?: UploadTargetResolvers<ContextType>;
   UploadTargetDirect?: UploadTargetDirectResolvers<ContextType>;

@@ -1,8 +1,8 @@
 import { Box, Heading, Text, useColorModeValue } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
-import { TextLink } from "../text-link";
 import { Logo } from "../logo";
+import { TextLink } from "../core";
 import { DividerWithText } from "./divider-with-text";
 import { EmailSignIn } from "./email-sign-in";
 import { OAuthSignIn } from "./oauth-sign-in";

@@ -338,6 +338,7 @@ export const typeDefs = [
 
   input LabelWhereInput {
     datasetId: ID
+    id: IdInInput
     imageId: ID
     labelClassId: ID
   }
@@ -412,12 +413,14 @@ export const typeDefs = [
     deleteLabel(where: LabelWhereUniqueInput!): Label
     deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
     deleteManyImages(where: ImageWhereInput!): Int!
+    deleteManyLabels(where: LabelWhereInput!): [Label!]!
     deleteMembership(where: MembershipWhereUniqueInput!): Membership
     deleteWorkspace(where: WorkspaceWhereUniqueInput!): Workspace
     getUploadTarget(data: UploadTargetInput!): UploadTarget!
     importDataset(data: DatasetImportInput!, where: DatasetWhereUniqueInput!): ImportStatus
     inviteMember(where: InviteMemberInput!): InvitationResult
     reorderLabelClass(data: LabelClassReorderInput!, where: LabelClassWhereUniqueInput!): LabelClass
+    runAiAssistant(data: RunAiAssistantInput!): RunAiAssistantOutput!
     updateDataset(data: DatasetUpdateInput!, where: DatasetWhereUniqueInput!): Dataset
     updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
     updateIogLabel(data: UpdateIogInput!): Label
@@ -454,6 +457,17 @@ export const typeDefs = [
     workspace(where: WorkspaceWhereUniqueInput!): Workspace!
     workspaceExists(where: WorkspaceWhereUniqueInput!): Boolean!
     workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
+  }
+
+  input RunAiAssistantInput {
+    aiAssistantId: ID!
+    imageId: ID!
+    useAutoPolygon: Boolean
+  }
+
+  type RunAiAssistantOutput {
+    labelClasses: [ID!]!
+    labels: [Label!]!
   }
 
   input RunIogInput {

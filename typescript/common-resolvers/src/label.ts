@@ -9,6 +9,7 @@ import type {
   MutationUpdateLabelArgs,
   QueryLabelArgs,
   LabelWhereInput,
+  MutationDeleteManyLabelsArgs,
 } from "@labelflow/graphql-types";
 import { LabelType } from "@labelflow/graphql-types";
 
@@ -134,6 +135,19 @@ const deleteLabel = async (
   return labelToDelete;
 };
 
+const deleteManyLabels = async (
+  _: never,
+  { where }: MutationDeleteManyLabelsArgs,
+  { repository, user }: Context
+) => {
+  const labelsToDelete = await throwIfResolvesToNil(
+    "No labels to delete",
+    repository.label.list
+  )({ ...where, user });
+  await repository.label.deleteMany(where, user);
+  return labelsToDelete;
+};
+
 const updateLabel = async (
   _: any,
   args: MutationUpdateLabelArgs,
@@ -222,6 +236,7 @@ export default {
   Mutation: {
     createLabel,
     deleteLabel,
+    deleteManyLabels,
     updateLabel,
   },
   Label: {

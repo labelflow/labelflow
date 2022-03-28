@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useBoolean, useControllableState } from "@chakra-ui/react";
-import { isNil, isEmpty } from "lodash/fp";
+import { isEmpty, isNil } from "lodash/fp";
 import {
   createContext,
   Dispatch,
@@ -22,7 +22,7 @@ import {
   PaginatedImagesQuery_images,
 } from "../../graphql-types/PaginatedImagesQuery";
 import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../shared-queries/dataset-images-page.query";
-import { usePagination } from "../pagination/pagination.context";
+import { usePagination } from "../core";
 import {
   PAGINATED_IMAGES_QUERY,
   useFlushPaginatedImagesCache,

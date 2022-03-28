@@ -1,15 +1,20 @@
 import { Button, useToast } from "@chakra-ui/react";
+import { Story } from "@storybook/react";
 import React, { useState } from "react";
 import {
   chakraDecorator,
   queryParamsDecorator,
   storybookTitle,
 } from "../../../utils/stories";
-import { IogAlertDialog } from "./iog-alert-dialog";
+import { IogAlertDialog as IogAlertDialogComponent } from "./iog-alert-dialog";
 
 export default {
-  title: storybookTitle("Drawing toolbar", IogAlertDialog),
-  component: IogAlertDialog,
+  title: storybookTitle(
+    "Labeling tool",
+    "Drawing toolbar",
+    IogAlertDialogComponent
+  ),
+  component: IogAlertDialogComponent,
   parameters: {
     nextRouter: {
       path: "/images/[id]",
@@ -22,13 +27,12 @@ export default {
   decorators: [chakraDecorator, queryParamsDecorator],
 };
 
-// @ts-ignore
-export const Default = () => {
+export const IogAlertDialog: Story = () => {
   const [isDialogOpened, setIsDialogOpened] = useState(true);
   const toast = useToast();
   return (
     <>
-      <IogAlertDialog
+      <IogAlertDialogComponent
         isOpen={isDialogOpened}
         onAccept={() => toast({ description: "Accepted" })}
         onClose={() => setIsDialogOpened(false)}

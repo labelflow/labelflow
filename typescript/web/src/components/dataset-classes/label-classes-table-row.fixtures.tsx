@@ -1,6 +1,6 @@
 import { StylesProvider, Table } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
-import { ReorderableTableBody } from "../reorderable-table";
+import { ReorderableTableBody } from "../core";
 import { LabelClassesTableRow } from "./label-classes-table-row";
 import {
   DatasetClassesContext,

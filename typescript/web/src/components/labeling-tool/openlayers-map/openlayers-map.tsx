@@ -30,7 +30,7 @@ import { useDatasetImage } from "../../../hooks";
 import { useImagePreFetching } from "../../../hooks/use-image-pre-fetching";
 import { theme } from "../../../theme";
 import { BoolParam } from "../../../utils/query-param-bool";
-import { LayoutSpinner, Spinner } from "../../spinner";
+import { LayoutSpinner, Spinner } from "../../core";
 import { ClassificationContent, ClassificationOverlay } from "./classification";
 import { CursorGuides } from "./cursor-guides";
 import { DrawInteraction } from "./draw-interaction";

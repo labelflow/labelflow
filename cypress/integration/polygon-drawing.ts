@@ -74,14 +74,14 @@ describe("Polygon drawing (online)", () => {
 
     cy.wait(420);
     cy.get('[aria-label="Change Drawing tool"]').click();
-    cy.get('[aria-label="Bounding box tool"]').should(
+    cy.get('[data-testid="box-tool-item"]').should(
       "have.attr",
       "aria-checked",
       "true"
     );
 
     cy.wait(420);
-    cy.get('[aria-label="Polygon tool"]')
+    cy.get('[data-testid="polygon-tool-item"]')
       .should("have.attr", "aria-checked", "false")
       .click();
 
@@ -91,7 +91,7 @@ describe("Polygon drawing (online)", () => {
 
   it("draws a polygon with polygon tool", () => {
     cy.get('[aria-label="Change Drawing tool"]').should("be.visible").click();
-    cy.get('[aria-label="Polygon tool"]').click();
+    cy.get('[data-testid="polygon-tool-item"]').click();
 
     cy.wait(420);
     drawPolygon(EXAMPLE_POLYGON);
@@ -114,7 +114,7 @@ describe("Polygon drawing (online)", () => {
 
   it("draws a polygon with freehand tool", () => {
     cy.get('[aria-label="Change Drawing tool"]').should("be.visible").click();
-    cy.get('[aria-label="Freehand tool"]').click();
+    cy.get('[data-testid="freehand-tool-item"]').click();
 
     cy.wait(420);
     drawFreehand();

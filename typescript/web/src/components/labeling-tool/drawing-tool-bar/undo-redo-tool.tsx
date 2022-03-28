@@ -37,6 +37,7 @@ export const UndoTool = () => {
   return (
     <Tooltip label={`Undo tool [${keymap.undo.key}]`} placement="right">
       <IconButton
+        data-testid="undo-button"
         icon={<BiUndo size="1.3em" />}
         onClick={undo}
         backgroundColor={useColorModeValue("white", "gray.800")}
@@ -69,6 +70,7 @@ export const RedoTool = () => {
   return (
     <Tooltip label={`Redo tool [${keymap.redo.key}]`} placement="right">
       <IconButton
+        data-testid="redo-button"
         icon={<BiRedo size="1.3em" />}
         onClick={redo}
         backgroundColor={useColorModeValue("white", "gray.800")}
