@@ -1,18 +1,36 @@
-import { Box, Center, Heading, SimpleGrid, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Heading,
+  HStack,
+  SimpleGrid,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
+import { IconType } from "react-icons";
+import {
+  BiCheckbox,
+  BiCheckboxChecked,
+  BiCheckboxSquare,
+} from "react-icons/bi";
+import { HiOutlineTrash } from "react-icons/hi";
 import { EmptyStateNoImages } from "../empty-state";
 import { ImportButton } from "../import-button";
 import { PaginationProvider } from "../pagination";
 import { PaginationFooter } from "../pagination/pagination-footer";
 import { LayoutSpinner } from "../spinner";
-import { DeleteImageModal } from "./delete-image-modal";
+import { DeleteSingleImageModal } from "./delete-single-image-modal";
+import { DeleteManyImagesModal } from "./delete-many-images-modal";
 import { ImageCard } from "./image-card";
 import {
   ImagesListProps,
   ImagesListProvider,
   useImagesList,
 } from "./images-list.context";
+import { PaginatedImagesQuery_images } from "../../graphql-types";
 
 const ImportImagesButton = () => {
   const { datasetId } = useImagesList();
@@ -26,6 +44,65 @@ const ImportImagesButton = () => {
     />
   );
 };
+
+const useSelectIcon = (): IconType => {
+  const { images, selected } = useImagesList();
+  if (isEmpty(selected)) return BiCheckbox;
+  return selected.length === images.length
+    ? BiCheckboxChecked
+    : BiCheckboxSquare;
+};
+
+const SelectImageIcon = () => {
+  const Icon = useSelectIcon();
+  return <Icon size="22" />;
+};
+
+const SelectAllButton = () => {
+  const { images, selected, toggleSelectAll } = useImagesList();
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      leftIcon={<SelectImageIcon />}
+      onClick={toggleSelectAll}
+      disabled={isEmpty(images)}
+    >
+      {isEmpty(selected) ? "Select all" : "Deselect all"}
+    </Button>
+  );
+};
+
+const DeleteSelectedButton = () => {
+  const { images, selected, openDeleteSelectedModal } = useImagesList();
+  return (
+    <Button
+      data-testid="delete-selected-images"
+      variant="ghost"
+      size="sm"
+      leftIcon={<HiOutlineTrash />}
+      disabled={isEmpty(images) || isEmpty(selected)}
+      onClick={openDeleteSelectedModal}
+    >
+      Delete selected
+    </Button>
+  );
+};
+
+const Toolbar = () => (
+  <HStack
+    align="center"
+    px={{ base: "2", md: "8" }}
+    py={1}
+    bg={useColorModeValue("white", "gray.800")}
+    borderTop="1px"
+    borderColor={useColorModeValue("gray.100", "gray.700")}
+    boxShadow="sm"
+  >
+    <SelectAllButton />
+    <DeleteSelectedButton />
+  </HStack>
+);
 
 const NoImages = () => (
   <Center h="full">
@@ -48,43 +125,98 @@ const NoImages = () => (
   </Center>
 );
 
-const Gallery = () => {
+const useUpsertSelectedItem = (id: string): ((value: boolean) => void) => {
+  const { selected, setSelected } = useImagesList();
+  return useCallback(
+    (value: boolean) =>
+      setSelected(
+        value
+          ? [...selected, id]
+          : selected.filter((selectedId) => selectedId !== id)
+      ),
+    [id, selected, setSelected]
+  );
+};
+
+const useSelectedItem = (id: string): [boolean, (value: boolean) => void] => {
+  const { selected } = useImagesList();
+  const itemSelected = useMemo(() => selected.includes(id), [selected, id]);
+  const upsertSelectedItem = useUpsertSelectedItem(id);
+  const handleChangeSelected = useCallback(
+    (value: boolean) => {
+      if (itemSelected === value) return;
+      upsertSelectedItem(value);
+    },
+    [itemSelected, upsertSelectedItem]
+  );
+  return [itemSelected, handleChangeSelected];
+};
+
+const ImageItem = ({
+  id,
+  name,
+  thumbnail500Url,
+}: PaginatedImagesQuery_images) => {
+  const { workspaceSlug, datasetSlug, setSingleToDelete } = useImagesList();
+  const [itemSelected, onChangeSelected] = useSelectedItem(id);
+  return (
+    <ImageCard
+      key={id}
+      id={id}
+      name={name}
+      thumbnail={thumbnail500Url}
+      href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
+      onDelete={setSingleToDelete}
+      selected={itemSelected}
+      onChangeSelected={onChangeSelected}
+    />
+  );
+};
+
+const ImageGrid = () => {
+  const { images } = useImagesList();
+  return (
+    <SimpleGrid
+      minChildWidth="312px"
+      spacing={{ base: "2", md: "8" }}
+      padding={{ base: "2", md: "8" }}
+      paddingBottom={{ base: "24", md: "16" }}
+    >
+      {images?.map(({ id, ...image }) => (
+        <ImageItem key={id} id={id} {...image} />
+      ))}
+    </SimpleGrid>
+  );
+};
+
+const DeleteModals = () => {
   const {
-    workspaceSlug,
-    datasetSlug,
-    datasetId,
-    toDelete,
-    setToDelete,
-    images,
+    singleToDelete,
+    setSingleToDelete,
+    displayDeleteSelectedModal,
+    closeDeleteSelectedModal,
   } = useImagesList();
   return (
     <>
-      <DeleteImageModal
-        isOpen={!isEmpty(toDelete)}
-        onClose={() => setToDelete(undefined)}
-        imageId={toDelete}
-        datasetId={datasetId!}
+      <DeleteSingleImageModal
+        isOpen={!isEmpty(singleToDelete)}
+        onClose={() => setSingleToDelete(undefined)}
       />
-      <SimpleGrid
-        minChildWidth="312px"
-        spacing={{ base: "2", md: "8" }}
-        padding={{ base: "2", md: "8" }}
-        paddingBottom={{ base: "24", md: "16" }}
-      >
-        {images?.map(({ id, name, thumbnail500Url }) => (
-          <ImageCard
-            key={id}
-            id={id}
-            name={name}
-            thumbnail={thumbnail500Url}
-            href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
-            onAskImageDelete={setToDelete}
-          />
-        ))}
-      </SimpleGrid>
+      <DeleteManyImagesModal
+        isOpen={displayDeleteSelectedModal}
+        onClose={closeDeleteSelectedModal}
+      />
     </>
   );
 };
+
+const Gallery = () => (
+  <>
+    <Toolbar />
+    <ImageGrid />
+    <DeleteModals />
+  </>
+);
 
 const Content = () => {
   const { images } = useImagesList();
@@ -96,6 +228,12 @@ const Body = () => {
   return <>{loading ? <LayoutSpinner /> : <Content />}</>;
 };
 
+const Footer = () => {
+  const { selected } = useImagesList();
+  const leftLabel = isEmpty(selected) ? "" : `${selected.length} selected`;
+  return <PaginationFooter leftLabel={leftLabel} />;
+};
+
 export const ImagesList = (props: ImagesListProps) => {
   const { imagesTotalCount } = props;
   return (
@@ -105,7 +243,7 @@ export const ImagesList = (props: ImagesListProps) => {
     >
       <ImagesListProvider {...props}>
         <Body />
-        <PaginationFooter />
+        <Footer />
       </ImagesListProvider>
     </PaginationProvider>
   );

@@ -6,7 +6,7 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import * as React from "react";
 import {
@@ -24,7 +24,7 @@ export const Features = () => {
       id="features"
       as="section"
       py={{ md: "12" }}
-      bg={mode("gray.50", "gray.800")}
+      bg={useColorModeValue("gray.50", "gray.800")}
     >
       <Box
         maxW={{ base: "xl", md: "7xl" }}
@@ -41,7 +41,7 @@ export const Features = () => {
               fontSize={{ md: "lg" }}
               mb="6"
               maxW="md"
-              color={mode("gray.600", "gray.400")}
+              color={useColorModeValue("gray.600", "gray.400")}
             >
               Building large and accurate datasets for machine learning
               algorithms has never been that easy

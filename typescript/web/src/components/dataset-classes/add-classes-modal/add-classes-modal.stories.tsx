@@ -1,12 +1,15 @@
 import React from "react";
 import { AddClassesModal as AddClassesModalComponent } from ".";
-import { storybookTitle } from "../../../utils/stories";
-import { getApolloMockDecorator } from "../../../utils/stories/apollo-mock-decorator";
-import { chakraDecorator } from "../../../utils/stories/chakra-decorator";
+import {
+  chakraDecorator,
+  getApolloMockDecorator,
+  modalDecorator,
+  storybookTitle,
+} from "../../../utils/stories";
 
 export default {
   title: storybookTitle(AddClassesModalComponent),
-  decorators: [chakraDecorator, getApolloMockDecorator()],
+  decorators: [chakraDecorator, modalDecorator, getApolloMockDecorator()],
 };
 
 export const AddClassesModal = () => (

@@ -7,7 +7,7 @@ import {
   Text,
   Tooltip,
   useBreakpointValue,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
 import NextLink from "next/link";
@@ -26,8 +26,8 @@ const TeamIcon = chakra(RiGroupFill);
 const SelectorIcon = chakra(HiSelector);
 
 const WorkspaceBreadcrumb = forwardRef<null, {}>((_noProps, ref) => {
-  const avatarBorderColor = mode("gray.200", "gray.700");
-  const avatarBackgroundColor = mode("white", "gray.700");
+  const avatarBorderColor = useColorModeValue("gray.200", "gray.700");
+  const avatarBackgroundColor = useColorModeValue("white", "gray.700");
 
   const { slug, name, image } = useWorkspace();
 
@@ -128,7 +128,7 @@ const WorkspaceSelectionButton = forwardRef<
       px="0"
       mr="-1"
       onClick={toggle}
-      bg={mode("white", "gray.800")}
+      bg={useColorModeValue("white", "gray.800")}
       aria-label="Open workspace selection popover"
     >
       <SelectorIcon fontSize="md" px="0" mx="0" />

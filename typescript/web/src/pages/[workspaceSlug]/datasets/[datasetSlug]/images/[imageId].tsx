@@ -5,7 +5,7 @@ import {
   Flex,
   Skeleton,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import NextLink from "next/link";
@@ -84,6 +84,8 @@ const Body = () => {
   const imageName = imageResult?.image.name;
   const datasetName = datasetResult?.dataset.name;
 
+  const galleryBg = useColorModeValue("white", "gray.800");
+
   const handleError = useErrorHandler();
   if ((errorDataset && !loadingDataset) || (errorImage && !loadingImage)) {
     if (errorDataset && !loadingDataset) {
@@ -157,7 +159,7 @@ const Body = () => {
           <Flex grow={1} direction="column">
             <LabelingTool />
           </Flex>
-          <Box bg={mode("white", "gray.800")} overflow="hidden">
+          <Box bg={galleryBg} overflow="hidden">
             <Gallery />
           </Box>
         </Flex>

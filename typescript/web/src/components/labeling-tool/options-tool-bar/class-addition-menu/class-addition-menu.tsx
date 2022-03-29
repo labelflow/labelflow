@@ -7,7 +7,7 @@ import {
   IconButton,
   chakra,
   useBreakpointValue,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { HiSelector } from "react-icons/hi";
 import { IoMdAddCircleOutline } from "react-icons/io";
@@ -26,6 +26,7 @@ const ClassAdditionButton = React.forwardRef<
     toggle: () => void;
   }
 >(({ toggle }, ref) => {
+  const buttonBg = useColorModeValue("white", "gray.800");
   const largeButton = (
     <Button
       rightIcon={<SelectorIcon fontSize="md" />}
@@ -33,7 +34,7 @@ const ClassAdditionButton = React.forwardRef<
       justifyContent="space-between"
       ref={ref}
       onClick={toggle}
-      bg={mode("white", "gray.800")}
+      bg={buttonBg}
       pointerEvents="initial"
       aria-label="Add a label"
     >
@@ -51,7 +52,7 @@ const ClassAdditionButton = React.forwardRef<
       icon={<AddIcon fontSize="2xl" />}
       ref={ref}
       onClick={toggle}
-      bg={mode("white", "gray.800")}
+      bg={buttonBg}
       pointerEvents="initial"
       aria-label="Add a label"
     />

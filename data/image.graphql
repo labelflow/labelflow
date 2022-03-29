@@ -53,6 +53,7 @@ input ImageUpdateInput {
 }
 
 input ImageWhereInput {
+  id: IdInInput
   datasetId: ID
 }
 

@@ -1,14 +1,8 @@
-import {
-  Box,
-  Link,
-  SimpleGrid,
-  SimpleGridProps,
-  Stack,
-} from "@chakra-ui/react";
+import { Box, SimpleGrid, SimpleGridProps, Stack } from "@chakra-ui/react";
 import * as React from "react";
-import NextLink from "next/link";
-import { FooterHeading } from "./FooterHeading";
 import { DOCUMENTATION_URL } from "../../../constants";
+import { TextLink } from "../../text-link";
+import { FooterHeading } from "./FooterHeading";
 
 interface FooterLink {
   href: string;
@@ -48,9 +42,9 @@ const GridBox = ({ minW, heading, links }: GridBoxProps) => {
       </FooterHeading>
       <Stack align={{ base: "center", md: "start" }}>
         {links.map((link) => (
-          <NextLink key={link.label} href={link.href}>
-            <Link href="/">{link.label}</Link>
-          </NextLink>
+          <TextLink key={link.label} href={link.href}>
+            {link.label}
+          </TextLink>
         ))}
       </Stack>
     </Box>

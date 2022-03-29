@@ -9,7 +9,7 @@ import {
   Thead,
   Tr,
   Link,
-  useColorModeValue as mode,
+  useColorModeValue,
   HStack,
 } from "@chakra-ui/react";
 import { RiGroupFill } from "react-icons/ri";
@@ -21,7 +21,7 @@ import { WorkspacePlanBadge } from "./workspace-plan-badge";
 import { UserWithWorkspacesQuery_user_memberships_workspace } from "../../graphql-types/UserWithWorkspacesQuery";
 
 const TableHead = () => (
-  <Thead bg={mode("gray.50", "gray.800")}>
+  <Thead bg={useColorModeValue("gray.50", "gray.800")}>
     <Tr>
       <Th>Workspace</Th>
       <Th>Plan</Th>
@@ -36,8 +36,8 @@ type WorkspaceRowProps = {
 };
 
 const WorkspaceAvatar = ({ workspace }: WorkspaceRowProps) => {
-  const avatarBackground = mode("white", "gray.700");
-  const avatarBorderColor = mode("gray.200", "gray.700");
+  const avatarBackground = useColorModeValue("white", "gray.700");
+  const avatarBorderColor = useColorModeValue("gray.200", "gray.700");
   return (
     <Avatar
       borderWidth="1px"
@@ -80,7 +80,7 @@ const WorkspaceNameCell = ({ workspace }: WorkspaceRowProps) => {
 const TableBody = () => {
   const { filteredWorkspaces } = useWorkspace();
   return (
-    <Tbody bg={mode("white", "gray.900")}>
+    <Tbody bg={useColorModeValue("white", "gray.900")}>
       {filteredWorkspaces.map((workspace) => (
         <Tr key={workspace.id}>
           <WorkspaceNameCell workspace={workspace} />

@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
-import { Flex, useColorModeValue as mode } from "@chakra-ui/react";
+import { Flex, useColorModeValue } from "@chakra-ui/react";
 import { TopBar } from "./top-bar";
 
-export type Props = {
+export type LayoutProps = {
   breadcrumbs?: ReactNode;
   topBarRightContent?: ReactNode;
   children: ReactNode;
@@ -14,7 +14,7 @@ export const Layout = ({
   breadcrumbs,
   topBarRightContent,
   tabBar,
-}: Props) => {
+}: LayoutProps) => {
   return (
     <Flex grow={1} direction="column">
       <TopBar breadcrumbs={breadcrumbs} rightContent={topBarRightContent} />
@@ -23,7 +23,7 @@ export const Layout = ({
         grow={1}
         direction="column"
         as="main"
-        bg={mode("gray.100", "gray.900")}
+        bg={useColorModeValue("gray.100", "gray.900")}
       >
         {children}
       </Flex>

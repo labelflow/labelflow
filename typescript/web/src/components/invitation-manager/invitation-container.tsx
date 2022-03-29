@@ -2,7 +2,7 @@ import {
   Flex,
   Heading,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
@@ -23,7 +23,7 @@ export const InvitationContainer = ({
       role="dialog"
       p={6}
       spacing={6}
-      bg={mode("white", "gray.800")}
+      bg={useColorModeValue("white", "gray.800")}
       borderRadius="md"
       boxShadow="lg"
       maxW="2xl"
