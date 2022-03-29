@@ -1,16 +1,14 @@
 import {
   Spinner as ChakraSpinner,
   SpinnerProps,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
 
-export const Spinner = (props: SpinnerProps) => {
-  return (
-    <ChakraSpinner
-      aria-label="loading indicator"
-      emptyColor={mode("gray.200", "gray.800")}
-      {...props}
-    />
-  );
-};
+export const Spinner = (props: SpinnerProps) => (
+  <ChakraSpinner
+    aria-label="loading indicator"
+    emptyColor={useColorModeValue("gray.200", "gray.800")}
+    {...props}
+  />
+);

@@ -1,10 +1,5 @@
 import { useEffect, useRef } from "react";
-import {
-  HStack,
-  VStack,
-  useColorModeValue as mode,
-  Flex,
-} from "@chakra-ui/react";
+import { HStack, VStack, useColorModeValue, Flex } from "@chakra-ui/react";
 import { useQueryParam } from "use-query-params";
 import { OpenlayersMap } from "./openlayers-map";
 import { DrawingToolbar } from "./drawing-tool-bar";
@@ -24,7 +19,7 @@ export const LabelingTool = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const containerSx = {
-    backgroundColor: mode("gray.100", "gray.900"),
+    backgroundColor: useColorModeValue("gray.100", "gray.900"),
   };
 
   useEffect(() => {

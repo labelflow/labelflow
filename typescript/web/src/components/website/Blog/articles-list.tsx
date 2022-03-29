@@ -3,7 +3,7 @@ import {
   Heading,
   Link,
   SimpleGrid,
-  useColorModeValue as mode,
+  useColorModeValue,
   Text,
 } from "@chakra-ui/react";
 import * as React from "react";
@@ -18,10 +18,12 @@ export const ArticlesList = ({
   previewArticles: Omit<Article, "content">[];
   preview?: boolean;
 }) => {
+  const discoverColor = useColorModeValue("gray.600", "gray.400");
+  const viewAllArticlesColor = useColorModeValue("brand.600", "brand.400");
   return (
     <Box
       as="section"
-      bg={mode("gray.50", "gray.800")}
+      bg={useColorModeValue("gray.50", "gray.800")}
       py={{ base: "10", sm: "24" }}
     >
       <Box
@@ -38,9 +40,9 @@ export const ArticlesList = ({
             <Heading size="2xl" fontWeight="extrabold" letterSpacing="tight">
               LabelFlow Blog
             </Heading>
-            <Text mt="4" fontSize="lg" color={mode("gray.600", "gray.400")}>
+            <Text mt="4" fontSize="lg" color={discoverColor}>
               Discover the latest news and tech from our team and around
-              artifical intelligence
+              artificial intelligence
             </Text>
           </Box>
         )}
@@ -66,7 +68,7 @@ export const ArticlesList = ({
           <Link
             fontSize="xl"
             fontWeight="bold"
-            color={mode("brand.600", "brand.400")}
+            color={viewAllArticlesColor}
             href="/posts"
           >
             <span>View all articles</span>

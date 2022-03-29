@@ -6,7 +6,7 @@ import {
   Text,
   HStack,
   NumberInput,
-  useColorModeValue as mode,
+  useColorModeValue,
   NumberInputField,
 } from "@chakra-ui/react";
 import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
@@ -111,12 +111,14 @@ export const ImageNavigationTool = () => {
     [goToIndex, currentImageIndex]
   );
 
+  const arrowBackgroundColor = useColorModeValue("white", "gray.800");
+
   return (
     <HStack
       h={10}
       p={0}
       spacing={1}
-      background={mode("white", "gray.800")}
+      background={useColorModeValue("white", "gray.800")}
       rounded={6}
       pointerEvents="initial"
     >
@@ -133,7 +135,7 @@ export const ImageNavigationTool = () => {
             >
               <IconButton
                 aria-label="Previous image"
-                backgroundColor={mode("white", "gray.800")}
+                backgroundColor={arrowBackgroundColor}
                 icon={<RiArrowLeftSLine size="1.5em" />}
               />
             </Tooltip>
@@ -142,7 +144,7 @@ export const ImageNavigationTool = () => {
       ) : (
         <IconButton
           disabled
-          backgroundColor={mode("white", "gray.800")}
+          backgroundColor={arrowBackgroundColor}
           aria-label="No previous image"
           icon={<RiArrowLeftSLine size="1.5em" />}
         />
@@ -199,7 +201,7 @@ export const ImageNavigationTool = () => {
             >
               <IconButton
                 aria-label="Next image"
-                backgroundColor={mode("white", "gray.800")}
+                backgroundColor={arrowBackgroundColor}
                 icon={<RiArrowRightSLine size="1.5em" />}
               />
             </Tooltip>
@@ -208,7 +210,7 @@ export const ImageNavigationTool = () => {
       ) : (
         <IconButton
           disabled
-          backgroundColor={mode("white", "gray.800")}
+          backgroundColor={arrowBackgroundColor}
           aria-label="No next image"
           icon={<RiArrowRightSLine size="1.5em" />}
         />

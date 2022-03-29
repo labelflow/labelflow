@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useCombobox, UseComboboxStateChange } from "downshift";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -193,7 +193,7 @@ export const ClassSelectionPopover = ({
     {},
     [activateShortcuts]
   );
-  const closeCircleIconColor = mode("gray.300", "gray.500");
+  const closeCircleIconColor = useColorModeValue("gray.300", "gray.500");
   return (
     <Popover
       isOpen={isOpen}
@@ -203,7 +203,7 @@ export const ClassSelectionPopover = ({
     >
       <PopoverTrigger>{trigger}</PopoverTrigger>
       <PopoverContent
-        borderColor={mode("gray.200", "gray.600")}
+        borderColor={useColorModeValue("gray.200", "gray.600")}
         cursor="default"
         pointerEvents="initial"
         aria-label={ariaLabel}

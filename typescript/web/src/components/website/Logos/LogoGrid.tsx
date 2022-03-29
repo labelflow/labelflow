@@ -7,7 +7,7 @@ import {
   Text,
   Center,
   SimpleGrid,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import * as React from "react";
 import { DOCUMENTATION_URL } from "../../../constants";
@@ -15,7 +15,7 @@ import * as Logo from "./Brands";
 
 export const LogoGrid = () => {
   return (
-    <Box as="section" py="48" bg={mode("gray.50", "gray.800")}>
+    <Box as="section" py="48" bg={useColorModeValue("gray.50", "gray.800")}>
       <Box
         maxW={{ base: "xl", md: "7xl" }}
         mx="auto"
@@ -54,7 +54,7 @@ export const LogoGrid = () => {
           columns={{ base: 1, sm: 2, md: 4 }}
           mt="24"
           spacing="6"
-          color={mode("inherit", "white")}
+          color={useColorModeValue("inherit", "white")}
         >
           <Stack
             as="a"
@@ -64,7 +64,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -81,7 +81,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -98,7 +98,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -116,7 +116,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -134,7 +134,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -152,7 +152,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -170,7 +170,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -188,7 +188,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -206,7 +206,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -224,7 +224,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -242,7 +242,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -260,7 +260,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -278,7 +278,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -296,7 +296,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -313,7 +313,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"
@@ -330,7 +330,7 @@ export const LogoGrid = () => {
             alignItems="center"
             py="6"
             px="8"
-            bg={mode("white", "gray.900")}
+            bg={useColorModeValue("white", "gray.900")}
             rounded={{ md: "lg" }}
             _hover={{ shadow: "lg" }}
             transitionProperty="box-shadow"

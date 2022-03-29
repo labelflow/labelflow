@@ -1,4 +1,4 @@
-import { Box, HStack, Text, useColorModeValue as mode } from "@chakra-ui/react";
+import { Box, HStack, Text, useColorModeValue } from "@chakra-ui/react";
 import * as React from "react";
 
 interface FeatureProps {
@@ -10,7 +10,7 @@ export const Feature = (props: FeatureProps) => {
   const { icon, title, children } = props;
   return (
     <Box>
-      <HStack spacing="3" color={mode("brand.500", "brand.300")}>
+      <HStack spacing="3" color={useColorModeValue("brand.500", "brand.300")}>
         <Box as={icon} fontSize="xl" />
         <Text fontWeight="extrabold" fontSize="lg">
           {title}

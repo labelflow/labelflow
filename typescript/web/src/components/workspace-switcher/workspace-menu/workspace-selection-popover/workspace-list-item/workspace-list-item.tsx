@@ -5,7 +5,7 @@ import {
   Flex,
   Text,
   Tooltip,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { isEmpty, isNil } from "lodash/fp";
 import { RiAddFill, RiGroupFill } from "react-icons/ri";
@@ -26,6 +26,23 @@ export type WorkspaceListItemProps = {
   itemProps: any;
   isCreateWorkspaceItem?: boolean;
 };
+
+type UseBgColorOptions = Pick<
+  WorkspaceListItemProps,
+  "isCreateWorkspaceItem" | "highlight"
+> & { selected: boolean };
+
+const useBgColors = ({
+  selected,
+  isCreateWorkspaceItem,
+  highlight,
+}: UseBgColorOptions): [string, string] => {
+  if (selected && !isCreateWorkspaceItem) return ["gray.300", "gray.500"];
+  return highlight ? ["gray.100", "gray.600"] : ["transparent", "transparent"];
+};
+
+const useBgColor = (options: UseBgColorOptions) =>
+  useColorModeValue(...useBgColors(options));
 
 /**
  * Represent a LabelClass item with its color as
@@ -49,23 +66,14 @@ export const WorkspaceListItem = ({
   const { name } = item;
   const image = "image" in item ? item.image ?? undefined : undefined;
 
-  // arrow function instead of nested ternaries to avoid eslint error
-  const bgColor = (() => {
-    if (selected && !isCreateWorkspaceItem) {
-      return mode("gray.300", "gray.500");
-    }
-    if (highlight) {
-      return mode("gray.100", "gray.600");
-    }
-    return mode("transparent", "transparent");
-  })();
+  const bgColor = useBgColor({ highlight, isCreateWorkspaceItem, selected });
 
-  const avatarBorderColor = mode("gray.200", "gray.700");
-  const avatarBackgroundColor = mode("white", "gray.600");
+  const avatarBorderColor = useColorModeValue("gray.200", "gray.700");
+  const avatarBackgroundColor = useColorModeValue("white", "gray.600");
   const avatarBackground = isEmpty(image)
     ? randomBackgroundGradient(name)
     : avatarBackgroundColor;
-  const addButtonColor = mode("gray.600", "gray.400");
+  const addButtonColor = useColorModeValue("gray.600", "gray.400");
 
   return (
     <Box

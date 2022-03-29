@@ -1,8 +1,4 @@
-import {
-  chakra,
-  HTMLChakraProps,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { chakra, HTMLChakraProps, useColorModeValue } from "@chakra-ui/react";
 import { HTMLMotionProps, motion, Variants } from "framer-motion";
 import * as React from "react";
 
@@ -43,7 +39,7 @@ export const NavMenu = React.forwardRef<HTMLDivElement, MotionDivProps>(
       variants={variants}
       outline="0"
       opacity="0"
-      bg={mode("white", "gray.700")}
+      bg={useColorModeValue("white", "gray.700")}
       w="full"
       shadow="lg"
       px="4"

@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-import { chakra, Box, useColorModeValue as mode } from "@chakra-ui/react";
+import { chakra, Box, useColorModeValue } from "@chakra-ui/react";
 import * as React from "react";
 import rehypeRaw from "rehype-raw";
 import gfm from "remark-gfm";
@@ -74,7 +74,7 @@ export default function Posts({
                   color: "brand.600",
                   ":hover": { textDecoration: "underline" },
                 },
-                color: mode("gray.800", "gray.200"),
+                color: useColorModeValue("gray.800", "gray.200"),
                 // Youtube player enhancements
                 // For parameters
                 // See https://developers.google.com/youtube/player_parameters

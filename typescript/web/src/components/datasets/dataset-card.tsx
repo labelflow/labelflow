@@ -2,7 +2,7 @@ import {
   Box,
   Text,
   VStack,
-  useColorModeValue as mode,
+  useColorModeValue,
   HStack,
   Flex,
   Spacer,
@@ -54,7 +54,7 @@ export const DatasetCard = (props: {
           borderWidth="0px"
           borderRadius="16px"
           overflow="hidden"
-          bg={mode("white", "gray.700")}
+          bg={useColorModeValue("white", "gray.700")}
           display="block"
           cursor="pointer"
         >

@@ -1,4 +1,4 @@
-import { Flex, Box, useColorModeValue as mode } from "@chakra-ui/react";
+import { Flex, Box, useColorModeValue } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
 import { LayoutSpinner } from ".";
 
@@ -6,7 +6,7 @@ import { LayoutSpinner } from ".";
 // at all and useSession does not seems to have been mocked somewhere yet
 export const Wrapper = ({ children }: PropsWithChildren<{}>) => (
   <Flex direction="column" h="100vh">
-    <Box as="main" bg={mode("gray.100", "gray.900")} flex="1">
+    <Box as="main" bg={useColorModeValue("gray.100", "gray.900")} flex="1">
       {children}
     </Box>
   </Flex>

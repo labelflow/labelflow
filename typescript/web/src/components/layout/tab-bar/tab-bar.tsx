@@ -1,9 +1,4 @@
-import {
-  chakra,
-  Flex,
-  Tooltip,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { chakra, Flex, Tooltip, useColorModeValue } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useWorkspace } from "../../../hooks";
 
@@ -58,7 +53,7 @@ export const TabBarBody = ({ tabs }: TabBarProps) => {
       height="44px"
       flex={0}
       borderTop="1px solid"
-      borderColor={mode("gray.100", "gray.700")}
+      borderColor={useColorModeValue("gray.100", "gray.700")}
       role="tablist"
     >
       {tabs.map(({ name, url, isActive }) => {

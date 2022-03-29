@@ -13,7 +13,7 @@ import {
   Button,
   PopoverBody,
   PopoverTrigger,
-  useColorModeValue as mode,
+  useColorModeValue,
   Box,
   Kbd,
   Flex,
@@ -45,16 +45,49 @@ const ChakraRiArrowDownSLine = chakra(RiArrowDownSLine);
 const ChakraIoColorWandOutline = chakra(IoColorWandOutline);
 const ChakraBiPencil = chakra(BiPencil);
 
-export const ToolSelectionPopoverItem = (props: {
+export type ToolSelectionPopoverItemProps = {
   name: string;
   shortcut: string;
   selected?: boolean;
   onClick: any;
   children: any;
   ariaLabel: string;
-}) => {
-  const { name, shortcut, selected, children, onClick, ariaLabel } = props;
+};
 
+type UseItemColorsOptions = Pick<ToolSelectionPopoverItemProps, "selected">;
+
+const useBackgroundColors = ({
+  selected,
+}: UseItemColorsOptions): [string, string] =>
+  selected ? ["gray.300", "gray.500"] : ["gray.100", "gray.600"];
+
+const useBackgroundColor = (options: UseItemColorsOptions): string =>
+  useColorModeValue(...useBackgroundColors(options));
+
+const useHoverBackgroundColors = ({
+  selected,
+}: UseItemColorsOptions): [string, string] =>
+  selected ? ["gray.300", "gray.500"] : ["transparent", "transparent"];
+
+const useHoverBackgroundColor = (options: UseItemColorsOptions): string =>
+  useColorModeValue(...useHoverBackgroundColors(options));
+
+type UseItemColorsResult = Record<"bgColor" | "hoverBgColor", string>;
+
+const useItemColors = (options: UseItemColorsOptions): UseItemColorsResult => ({
+  bgColor: useBackgroundColor(options),
+  hoverBgColor: useHoverBackgroundColor(options),
+});
+
+export const ToolSelectionPopoverItem = ({
+  name,
+  shortcut,
+  selected,
+  children,
+  onClick,
+  ariaLabel,
+}: ToolSelectionPopoverItemProps) => {
+  const { bgColor, hoverBgColor } = useItemColors({ selected });
   return (
     <Box
       pl="0"
@@ -64,16 +97,8 @@ export const ToolSelectionPopoverItem = (props: {
       role="checkbox"
       aria-label={ariaLabel}
       aria-checked={selected}
-      _hover={{
-        backgroundColor: selected
-          ? mode("gray.300", "gray.500")
-          : mode("gray.100", "gray.600"),
-      }}
-      bgColor={
-        selected
-          ? mode("gray.300", "gray.500")
-          : mode("transparent", "transparent")
-      }
+      _hover={{ backgroundColor: hoverBgColor }}
+      bgColor={bgColor}
       onClick={() => {
         onClick();
       }}
@@ -163,7 +188,7 @@ export const DrawingToolIcon = (props: {
           Tools.IOG,
           Tools.FREEHAND,
         ].includes(selectedTool)}
-        backgroundColor={mode("white", "gray.800")}
+        backgroundColor={useColorModeValue("white", "gray.800")}
         aria-label={`Drawing ${lastTool} tool`}
         pointerEvents="initial"
         onClick={() => setSelectedTool(lastTool)}
@@ -207,7 +232,7 @@ export const DrawingToolIcon = (props: {
             isActive={isActive}
             padding="0"
             textAlign="right"
-            color={mode("gray.800", "gray.200")}
+            color={useColorModeValue("gray.800", "gray.200")}
           >
             <ChakraRiArrowDownSLine
               position="relative"
@@ -328,7 +353,7 @@ export const DrawingTool = () => {
           setSelectedTool={setSelectedTool}
         />
         <PopoverContent
-          borderColor={mode("gray.200", "gray.600")}
+          borderColor={useColorModeValue("gray.200", "gray.600")}
           cursor="default"
           pointerEvents="initial"
           aria-label="Change Drawing Tool"

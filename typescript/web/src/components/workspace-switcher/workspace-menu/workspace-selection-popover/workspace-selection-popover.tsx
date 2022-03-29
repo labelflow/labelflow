@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   Box,
   Popover,
-  useColorModeValue as mode,
+  useColorModeValue,
   PopoverContent,
   PopoverBody,
   PopoverTrigger,
@@ -133,8 +133,8 @@ export const WorkspaceSelectionPopover = ({
   //   }
   // }, [isOpen]);
 
-  const closeCircleIconColor = mode("gray.300", "gray.500");
-  const borderColor = mode("gray.200", "gray.600");
+  const closeCircleIconColor = useColorModeValue("gray.300", "gray.500");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
   return (
     <Popover
       isOpen={isOpen}

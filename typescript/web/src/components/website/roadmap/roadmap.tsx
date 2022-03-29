@@ -5,14 +5,18 @@ import {
   Img,
   SimpleGrid,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { BsArrowRight } from "react-icons/bs";
 import * as React from "react";
 
 export const Roadmap = () => {
   return (
-    <Box as="section" py={{ md: "12" }} bg={mode("white", "gray.900")}>
+    <Box
+      as="section"
+      py={{ md: "12" }}
+      bg={useColorModeValue("white", "gray.900")}
+    >
       <Box
         maxW={{ base: "xl", md: "7xl" }}
         mx="auto"
@@ -28,7 +32,7 @@ export const Roadmap = () => {
               fontSize={{ md: "lg" }}
               mb="6"
               maxW="md"
-              color={mode("gray.600", "gray.400")}
+              color={useColorModeValue("gray.600", "gray.400")}
             >
               We make our roadmap transparent and we value your feedback. We are
               a small passionate team, we want to build the features that matter

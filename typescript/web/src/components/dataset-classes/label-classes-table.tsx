@@ -6,7 +6,7 @@ import {
   Th,
   Thead,
   Tooltip,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
 import { RiInformationLine } from "react-icons/ri";
@@ -43,7 +43,7 @@ const ShortcutHeadCell = () => (
 );
 
 const TableHead = () => (
-  <Thead bg={mode("gray.50", "gray.800")}>
+  <Thead bg={useColorModeValue("gray.50", "gray.800")}>
     <ReorderableTableHeadRow>
       <TableHeadCell {...COMMON_CLASS_TABLE_CELL_PROPS}>Class</TableHeadCell>
       <TableHeadCell>Occurrences</TableHeadCell>

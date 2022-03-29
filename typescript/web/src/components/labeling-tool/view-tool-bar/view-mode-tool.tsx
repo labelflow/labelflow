@@ -1,9 +1,4 @@
-import {
-  Icon,
-  IconButton,
-  Tooltip,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { Icon, IconButton, Tooltip, useColorModeValue } from "@chakra-ui/react";
 import { useCallback } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useLabelingStore } from "../../../connectors/labeling-state";
@@ -24,7 +19,7 @@ const useViewModeIcon = () => {
 const ViewModeIcon = () => {
   const IconSvg = useViewModeIcon();
   return (
-    <Icon fill={mode("black", "white")} boxSize={5}>
+    <Icon fill={useColorModeValue("black", "white")} boxSize={5}>
       <IconSvg />
     </Icon>
   );
@@ -45,7 +40,7 @@ export const ViewModeTool = () => (
   >
     <IconButton
       icon={<ViewModeIcon />}
-      backgroundColor={mode("white", "gray.800")}
+      backgroundColor={useColorModeValue("white", "gray.800")}
       aria-label="Change elements visibility"
       pointerEvents="initial"
       onClick={useToggleViewMode()}

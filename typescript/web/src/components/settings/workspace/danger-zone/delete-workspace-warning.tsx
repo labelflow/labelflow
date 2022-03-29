@@ -4,7 +4,7 @@ import {
   HStack,
   ListItem,
   UnorderedList,
-  useColorModeValue as color,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { RiErrorWarningFill } from "react-icons/ri";
 import { Card } from "../../card";
@@ -13,7 +13,7 @@ import { useWorkspaceSettings } from "../context";
 const WarningSignIcon = chakra(RiErrorWarningFill);
 
 const WarningSign = () => (
-  <Box color={color("orange.400", "light")}>
+  <Box color={useColorModeValue("orange.400", "light")}>
     <WarningSignIcon size="2em" />
   </Box>
 );
@@ -21,7 +21,7 @@ const WarningSign = () => (
 export const DeleteWorkspaceWarning = () => {
   const { name } = useWorkspaceSettings();
   return (
-    <Card bgColor={color("orange.100", "orange.600")}>
+    <Card bgColor={useColorModeValue("orange.100", "orange.600")}>
       <HStack spacing="1em">
         <WarningSign />
         <Box w="full">
