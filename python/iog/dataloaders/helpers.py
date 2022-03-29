@@ -361,7 +361,7 @@ def make_gaussian(size, sigma=10, center=None, d_type=np.float64):
         x0 = center[0]
         y0 = center[1]
 
-    return np.exp(-4 * np.log(2) * ((x - x0) ** 2 + (y - y0) ** 2) / sigma ** 2).astype(
+    return np.exp(-4 * np.log(2) * ((x - x0) ** 2 + (y - y0) ** 2) / sigma**2).astype(
         d_type
     )
 
