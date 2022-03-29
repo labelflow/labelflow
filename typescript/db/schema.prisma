@@ -71,7 +71,7 @@ model LabelClass {
   dataset   Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade)
   labels    Label[]
 
-  @@unique(fields: [name, datasetId], name: "labelclass_name")
+  @@unique(fields: [name, datasetId], name: "labelClass_name")
   @@index([datasetId, createdAt])
   @@index([datasetId, name])
 }
