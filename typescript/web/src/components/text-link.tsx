@@ -1,15 +1,13 @@
-import { Text } from "@chakra-ui/react";
+import { Link, LinkProps } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { PropsWithChildren } from "react";
+import { SetRequired } from "type-fest";
 
-export type TextLinkProps = PropsWithChildren<{
-  href: string;
-}>;
+export type TextLinkProps = SetRequired<LinkProps, "href">;
 
-export const TextLink = ({ children, href }: TextLinkProps) => (
-  <NextLink href={href}>
-    <Text as="u" cursor="pointer">
+export const TextLink = ({ children, href, ...props }: TextLinkProps) => (
+  <NextLink href={href} passHref>
+    <Link href={href} {...props}>
       {children}
-    </Text>
+    </Link>
   </NextLink>
 );
