@@ -13,7 +13,7 @@ export const getPrismaErrorTarget = (error: PrismaClientKnownRequestError) => {
 
 export const isPrismaError = (
   error: unknown,
-  code?: string
+  code: string
 ): error is PrismaClientKnownRequestError =>
   error instanceof PrismaClientKnownRequestError &&
   error.code === code &&

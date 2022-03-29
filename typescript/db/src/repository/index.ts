@@ -39,7 +39,9 @@ const overrideLabelclassExistError: ErrorOverride = (error: unknown) => {
   if (isPrismaError(error, "P2002")) {
     const target = getPrismaErrorTarget(error);
     if (target.includes("datasetId") && target.includes("name")) {
-      throw new Error("One or more label class already exist in this dataset");
+      throw new Error(
+        "One or more class with the same name already exist in this dataset"
+      );
     }
   }
 };
