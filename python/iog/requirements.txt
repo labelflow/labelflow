@@ -1,7 +1,7 @@
 appdirs==1.4.4
 ariadne==0.13.0
 asyncpg==0.22.0
-black==21.5b1
+black==22.3.0
 click==7.1.2
 cycler==0.10.0
 Cython==0.29.23
