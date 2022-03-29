@@ -1,6 +1,6 @@
 import { DocumentNode, useQuery } from "@apollo/client";
 import { isEmpty, isNil } from "lodash/fp";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { PropsWithChildren, useEffect, useMemo } from "react";
 import { useCookies } from "react-cookie";
 import { LAST_WORKSPACE_ID_COOKIE_NAME } from "../constants";
@@ -19,6 +19,7 @@ import {
   USER_QUERY,
   USER_WITH_WORKSPACES_QUERY,
 } from "../shared-queries/user.query";
+import { getApolloErrorMessage } from "../utils/get-apollo-error-message";
 import { createOptionalContext } from "./use-optional-context";
 import { useRouterQueryString } from "./use-router-query-string";
 
@@ -52,10 +53,17 @@ const useUserQuery = <TTypes extends UserTupleTypes>(
 ): TTypes[2] | undefined => {
   const id = useUserId() ?? "";
   const skip = isEmpty(id);
-  const { data } = useQuery<TTypes[0], TTypes[1]>(query, {
+  const { data, error } = useQuery<TTypes[0], TTypes[1]>(query, {
     variables: { id },
     skip,
   });
+
+  if (
+    error &&
+    getApolloErrorMessage(error).match(/Couldn't find an user with id/)
+  ) {
+    signOut({ callbackUrl: "/" });
+  }
   return skip ? undefined : data?.user;
 };
 
