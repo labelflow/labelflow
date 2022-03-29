@@ -1,6 +1,7 @@
 import { DocumentNode, useQuery } from "@apollo/client";
 import { isEmpty, isNil } from "lodash/fp";
 import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect, useMemo } from "react";
 import { useCookies } from "react-cookie";
 import { LAST_WORKSPACE_ID_COOKIE_NAME } from "../constants";
@@ -111,9 +112,9 @@ const useWorkspaceProvider = () => {
     () => workspaces?.find(({ slug }) => slug === workspaceSlug),
     [workspaceSlug, workspaces]
   );
+  const router = useRouter();
   if (!isNil(workspaces) && !isEmpty(workspaceSlug) && isNil(workspace)) {
-    const msg = `Could not find any workspace with slug ${workspaceSlug}`;
-    throw new Error(msg);
+    router.push("/404");
   }
   return workspace;
 };
