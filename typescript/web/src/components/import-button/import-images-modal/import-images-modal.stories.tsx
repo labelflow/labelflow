@@ -1,11 +1,12 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { BASIC_DATASET_DATA, WORKSPACE_DATA } from "../../../utils/fixtures";
 import { createCommonDecorator, storybookTitle } from "../../../utils/stories";
+import { ImportButton } from "../import-button";
 import { IMPORT_BUTTON_MOCKS } from "../import-button.fixtures";
 import { ImportImagesModal } from "./import-images-modal";
 
 export default {
-  title: storybookTitle(ImportImagesModal),
+  title: storybookTitle(ImportButton, ImportImagesModal),
   parameters: {
     nextRouter: {
       path: "/images/[id]",

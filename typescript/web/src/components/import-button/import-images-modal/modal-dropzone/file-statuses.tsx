@@ -114,12 +114,12 @@ const FileStatus = ({ droppedFile, index, uploadInfo }: FileStatusProps) => {
   );
 };
 
-export type UploadInfoProps = {
+export type FilesStatusesProps = {
   files: Array<DroppedFile>;
   uploadInfo: UploadInfoRecord;
 };
 
-export const FilesStatuses = ({ files, uploadInfo }: UploadInfoProps) => (
+export const FilesStatuses = ({ files, uploadInfo }: FilesStatusesProps) => (
   <Flex direction="column" height="100%">
     <Box
       p="2"
