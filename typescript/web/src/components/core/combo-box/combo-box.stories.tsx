@@ -34,7 +34,7 @@ export const Default = Template.bind({});
 Default.args = {};
 
 export const WithSelectedItem = Template.bind({});
-WithSelectedItem.args = { selectedItem: TEST_ITEMS[3] };
+WithSelectedItem.args = { selectedItem: TEST_ITEMS[0] };
 
 export const Opened = Template.bind({});
 Opened.args = {
