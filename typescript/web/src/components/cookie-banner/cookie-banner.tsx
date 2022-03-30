@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { useCookies } from "react-cookie";
 import { isInWindowScope } from "../../utils/detect-scope";
 import { trackEvent } from "../../utils/google-analytics";
-import { TextLink } from "../text-link";
+import { TextLink } from "../core";
 
 export const CookieBanner = () => {
   const [{ consentedCookies }, setConsentedCookies] = useCookies([

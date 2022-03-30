@@ -12,7 +12,7 @@ import {
 import { isEmpty } from "lodash/fp";
 import { IconType } from "react-icons/lib";
 import { OptionalParent } from "../../../utils";
-import { Spinner } from "../../spinner";
+import { Spinner } from "../../core";
 
 export type ExportCardProps = {
   disabled?: boolean;

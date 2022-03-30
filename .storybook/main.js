@@ -54,6 +54,7 @@ module.exports = {
             test: /\.svg$/,
             enforce: "pre",
             loader: require.resolve("@svgr/webpack"),
+            options: { typescript: true, dimensions: false },
           },
         ],
       },

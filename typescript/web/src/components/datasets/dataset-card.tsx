@@ -14,7 +14,7 @@ import {
 import NextLink from "next/link";
 import { HiTrash, HiPencilAlt } from "react-icons/hi";
 import { DatasetCardBox } from "./dataset-card-box";
-import { ImageWithFallback } from "../image";
+import { ImageWithFallback } from "../core";
 import { EmptyStateImageNotFound, EmptyStateNoImages } from "../empty-state";
 
 const EditIcon = chakra(HiPencilAlt);

@@ -155,10 +155,6 @@ type Update<Entity, EntityWhereUniqueInput> = (
   user?: { id: string }
 ) => Promise<boolean>;
 
-export type DbLabelWhereInput = LabelWhereInput & {
-  id?: { in: string[] };
-};
-
 export type Repository = {
   image: {
     add: Add<DbImageCreateInput>;
@@ -182,11 +178,11 @@ export type Repository = {
       },
       user?: { id: string }
     ) => Promise<ID[]>;
-    count: Count<DbLabelWhereInput & { user?: { id: string } }>;
+    count: Count<LabelWhereInput & { user?: { id: string } }>;
     delete: Delete<LabelWhereUniqueInput>;
-    deleteMany: DeleteMany<DbLabelWhereInput>;
+    deleteMany: DeleteMany<LabelWhereInput>;
     get: Get<DbLabel, LabelWhereUniqueInput>;
-    list: List<DbLabel, DbLabelWhereInput & { user?: { id: string } }>;
+    list: List<DbLabel, LabelWhereInput & { user?: { id: string } }>;
     update: Update<DbLabel, LabelWhereUniqueInput>;
   };
   labelClass: {

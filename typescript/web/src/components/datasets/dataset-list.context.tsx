@@ -9,7 +9,7 @@ import {
 } from "../../graphql-types/WorkspaceDatasetsPageDatasetsQuery";
 import { useWorkspace } from "../../hooks";
 import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
-import { usePagination } from "../pagination";
+import { usePagination } from "../core";
 
 type UseQueryParamSetter = (
   value: string,

@@ -2,7 +2,7 @@ import { isEmpty, isNil } from "lodash/fp";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useLastWorkspaceId, useOptionalWorkspaces } from "../../hooks";
-import { LayoutSpinner } from "../spinner";
+import { LayoutSpinner } from "../core";
 import { Workspaces } from "../workspaces";
 
 const useLastWorkspaceIdUrl = (): string | undefined => {
