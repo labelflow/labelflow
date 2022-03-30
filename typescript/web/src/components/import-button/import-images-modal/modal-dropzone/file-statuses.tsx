@@ -93,7 +93,7 @@ const FileStatus = ({ droppedFile, index, uploadInfo }: FileStatusProps) => {
     droppedFile.file,
     !isEmpty(droppedFile.errors)
   );
-  const bg = useColorModeValue("red.500", "red.300");
+  const bg = useColorModeValue("gray.50", "gray.700");
   return (
     <>
       <Flex
