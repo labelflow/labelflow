@@ -1,6 +1,5 @@
 import { Flex, HStack, Text } from "@chakra-ui/react";
 import { sentenceCase } from "change-case";
-import { v4 as uuid } from "uuid";
 import { ComboBoxItemComponent } from ".";
 import { AppIcon, APP_ICONS, Icon, LABELS_ICONS } from "../icons";
 
@@ -31,7 +30,7 @@ export const TestListItem: ComboBoxItemComponent<TestItemDefinition, "icon"> = (
 const createTestItemDefinition = <TIconName extends AppIcon>(
   iconName: TIconName
 ): TestItemDefinition => ({
-  id: uuid(),
+  id: iconName,
   label: sentenceCase(iconName),
   icon: iconName,
 });
