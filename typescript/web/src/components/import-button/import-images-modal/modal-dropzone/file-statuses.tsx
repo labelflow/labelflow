@@ -93,7 +93,7 @@ const FileStatus = ({ droppedFile, index, uploadInfo }: FileStatusProps) => {
     droppedFile.file,
     !isEmpty(droppedFile.errors)
   );
-  const bg = useColorModeValue("red.500", "red.300");
+  const bg = useColorModeValue("gray.50", "gray.700");
   return (
     <>
       <Flex
@@ -114,12 +114,12 @@ const FileStatus = ({ droppedFile, index, uploadInfo }: FileStatusProps) => {
   );
 };
 
-export type UploadInfoProps = {
+export type FilesStatusesProps = {
   files: Array<DroppedFile>;
   uploadInfo: UploadInfoRecord;
 };
 
-export const FilesStatuses = ({ files, uploadInfo }: UploadInfoProps) => (
+export const FilesStatuses = ({ files, uploadInfo }: FilesStatusesProps) => (
   <Flex direction="column" height="100%">
     <Box
       p="2"
