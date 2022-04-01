@@ -8,13 +8,19 @@ import { isNil } from "lodash/fp";
 import { useCallback } from "react";
 import { getApolloErrorMessage } from "../utils/get-apollo-error-message";
 
+const DEFAULT_TOAST_DURATION = 5000;
+
+const CRITICAL_TOAST_DURATION = 10000;
+
 export type ToastFnParameters =
   | [UseChakraToastOptions]
+  // title, description, status
   | [string, string, AlertStatus]
   | [];
 
 export type StatusToastFnParameters =
   | [Omit<UseChakraToastOptions, "status">]
+  // title, description
   | [string, string]
   | [];
 
@@ -37,10 +43,11 @@ const getToastOptions = (
 export const useToast = (...hookArgs: ToastFnParameters) => {
   const toastOptions = getToastOptions(hookArgs);
   const toast = useChakraToast({
-    // Make description actually optional since when title is **not** empty:
+    // Make description actually optional since, when title is **not** empty:
     // * Title is hidden if description is `undefined`
     // * Title is shown if description is an empty string
     description: "",
+    duration: DEFAULT_TOAST_DURATION,
     ...toastOptions,
   });
   return useCallback(
@@ -49,7 +56,6 @@ export const useToast = (...hookArgs: ToastFnParameters) => {
       return toast({
         isClosable: true,
         position: "bottom-right",
-        duration: 10000,
         ...fnOptions,
       });
     },
@@ -59,10 +65,11 @@ export const useToast = (...hookArgs: ToastFnParameters) => {
 
 const useStatusToast = (
   status: AlertStatus,
-  hookArgs: StatusToastFnParameters = [{}]
+  hookArgs: StatusToastFnParameters = [{}],
+  duration?: number
 ) => {
   const hookOptions = getToastOptions(hookArgs);
-  const toast = useToast({ ...hookOptions, status });
+  const toast = useToast({ ...hookOptions, duration, status });
   return useCallback(
     (...args: StatusToastFnParameters) => {
       const fnOptions = getToastOptions(args, { ...hookOptions, status });
@@ -82,11 +89,11 @@ export const useSuccessToast = (...hookArgs: StatusToastFnParameters) =>
 
 /** Returns an error toast reusable across the application */
 export const useErrorToast = (...hookArgs: StatusToastFnParameters) =>
-  useStatusToast("error", hookArgs);
+  useStatusToast("error", hookArgs, CRITICAL_TOAST_DURATION);
 
 /** Returns a warning toast reusable across the application */
 export const useWarningToast = (...hookArgs: StatusToastFnParameters) =>
-  useStatusToast("warning", hookArgs);
+  useStatusToast("warning", hookArgs, CRITICAL_TOAST_DURATION);
 
 /**
  * Returns an apollo error toast reusable across the application
