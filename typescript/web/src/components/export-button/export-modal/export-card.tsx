@@ -5,14 +5,14 @@ import {
   Image,
   Link,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
   useTheme,
   VStack,
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
 import { IconType } from "react-icons/lib";
 import { OptionalParent } from "../../../utils";
-import { Spinner } from "../../spinner";
+import { Spinner } from "../../core";
 
 export type ExportCardProps = {
   disabled?: boolean;
@@ -31,16 +31,45 @@ const ExportLogoIcon = ({
   logoIcon,
 }: Pick<ExportCardProps, "logoSrc" | "logoIcon">) => {
   const LogoIcon = logoIcon ? chakra(logoIcon) : undefined;
+  const logoColor = useColorModeValue("black", "white");
   return LogoIcon ? (
-    <LogoIcon
-      fontSize="64"
-      color={mode("black", "white")}
-      flexGrow={0}
-      flexShrink={0}
-    />
+    <LogoIcon fontSize="64" color={logoColor} flexGrow={0} flexShrink={0} />
   ) : (
     <Image src={logoSrc} w="16" flexGrow={0} flexShrink={0} />
   );
+};
+
+type UseCardColorsOptions = Pick<ExportCardProps, "colorScheme" | "disabled">;
+
+type UseCardColorsResult = Record<
+  | "loadingBackgroundColor"
+  | "hoverBackgroundColor"
+  | "titleColor"
+  | "subtitleColor",
+  string
+>;
+
+const useCardColors = ({
+  colorScheme,
+  disabled,
+}: UseCardColorsOptions): UseCardColorsResult => {
+  const theme = useTheme();
+  const titleColors: [string, string] = disabled
+    ? ["gray.400", "gray.500"]
+    : ["gray.800", "gray.200"];
+  const subtitleColors: [string, string] = disabled
+    ? ["gray.300", "gray.600"]
+    : ["gray.600", "gray.400"];
+  return {
+    loadingBackgroundColor:
+      theme.colors[colorScheme][useColorModeValue(50, 800)],
+    hoverBackgroundColor: useColorModeValue(
+      `${colorScheme}.50`,
+      `${colorScheme}.800`
+    ),
+    titleColor: useColorModeValue(...titleColors),
+    subtitleColor: useColorModeValue(...subtitleColors),
+  };
 };
 
 export const ExportCard = ({
@@ -54,8 +83,12 @@ export const ExportCard = ({
   title,
   subtext,
 }: ExportCardProps) => {
-  const theme = useTheme();
-
+  const {
+    titleColor,
+    subtitleColor,
+    loadingBackgroundColor,
+    hoverBackgroundColor,
+  } = useCardColors({ colorScheme, disabled });
   return (
     <OptionalParent
       enabled={!isEmpty(href)}
@@ -78,12 +111,7 @@ export const ExportCard = ({
         _hover={
           loading || disabled
             ? undefined
-            : {
-                backgroundColor: mode(
-                  `${colorScheme}.50`,
-                  `${colorScheme}.800`
-                ),
-              }
+            : { backgroundColor: hoverBackgroundColor }
         }
         cursor={disabled ? "not-allowed" : "pointer"}
         position="relative"
@@ -99,7 +127,7 @@ export const ExportCard = ({
             bottom="0"
             left="0"
             right="0"
-            backgroundColor={`${theme.colors[colorScheme][mode(50, 800)]}99`}
+            backgroundColor={`${loadingBackgroundColor}99`}
             display="flex"
             justifyContent="center"
             alignItems="center"
@@ -124,11 +152,7 @@ export const ExportCard = ({
           >
             <Text
               as="h3"
-              color={
-                disabled
-                  ? mode("gray.400", "gray.500")
-                  : mode("gray.800", "gray.200")
-              }
+              color={titleColor}
               fontWeight="semibold"
               lineHeight="short"
             >
@@ -139,11 +163,7 @@ export const ExportCard = ({
               fontSize="smaller"
               lineHeight="short"
               letterSpacing="tight"
-              color={
-                disabled
-                  ? mode("gray.300", "gray.600")
-                  : mode("gray.600", "gray.400")
-              }
+              color={subtitleColor}
             >
               {subtext}
             </Text>

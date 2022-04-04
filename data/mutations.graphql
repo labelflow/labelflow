@@ -11,6 +11,7 @@ type Mutation {
   createLabel(data: LabelCreateInput!): Label
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
+  deleteManyLabels(where: LabelWhereInput!): [Label!]!
 
   createLabelClass(data: LabelClassCreateInput!): LabelClass
   createManyLabelClasses(data: LabelClassCreateManyInput!): [LabelClass!]!
@@ -58,4 +59,6 @@ type Mutation {
   declineInvitation(where: MembershipWhereUniqueInput!): Membership
 
   updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
+
+  runAiAssistant(data: RunAiAssistantInput!): RunAiAssistantOutput!
 }

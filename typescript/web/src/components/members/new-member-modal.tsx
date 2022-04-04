@@ -15,7 +15,7 @@ import {
   ModalOverlay,
   Text,
   Textarea,
-  useColorModeValue as mode,
+  useColorModeValue,
   useToast,
   VStack,
 } from "@chakra-ui/react";
@@ -107,7 +107,7 @@ export const NewMemberModal = ({
               </Text>
               <Textarea
                 border="1px"
-                borderColor={mode("gray.200", "gray.400")}
+                borderColor={useColorModeValue("gray.200", "gray.400")}
                 borderRadius="md"
                 bg="transparent"
                 value={value}

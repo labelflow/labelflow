@@ -1,9 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { Flex } from "@chakra-ui/react";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
-import { PaginationProvider } from "../pagination";
-import { PaginationFooter } from "../pagination/pagination-footer";
-import { Spinner } from "../spinner";
+import { PaginationProvider, PaginationFooter, Spinner } from "../core";
 import { DatasetCard } from "./dataset-card";
 import { DatasetCardBox } from "./dataset-card-box";
 import {

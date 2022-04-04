@@ -5,7 +5,7 @@ import {
   IconButton,
   chakra,
   Tooltip,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { RiFullscreenLine, RiFullscreenExitLine } from "react-icons/ri";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -82,6 +82,8 @@ export const FullScreenTool = ({
     [enterFullscreen, exitFullscreen, fullscreenActive]
   );
 
+  const buttonBg = useColorModeValue("white", "gray.800");
+
   if (fullscreenActive) {
     return (
       <Tooltip
@@ -91,7 +93,7 @@ export const FullScreenTool = ({
       >
         <IconButton
           icon={<FullscreenExitIcon fontSize="lg" />}
-          backgroundColor={mode("white", "gray.800")}
+          backgroundColor={buttonBg}
           aria-label="Exit Full Screen"
           pointerEvents="initial"
           isDisabled={false}
@@ -108,7 +110,7 @@ export const FullScreenTool = ({
     >
       <IconButton
         icon={<FullscreenIcon fontSize="lg" />}
-        backgroundColor={mode("white", "gray.800")}
+        backgroundColor={buttonBg}
         aria-label="Enter Full Screen"
         pointerEvents="initial"
         isDisabled={containerRef.current == null || !fullscreenEnabled}

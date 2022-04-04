@@ -1,96 +1,175 @@
 import {
-  useState,
+  Box,
+  Button,
+  chakra,
+  Flex,
+  Kbd,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Text,
+  Tooltip,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { isNil } from "lodash/fp";
+import {
+  MouseEventHandler,
+  Ref,
+  useCallback,
   useEffect,
   useRef,
-  useCallback,
-  Ref,
-  MouseEventHandler,
+  useState,
 } from "react";
-import {
-  Tooltip,
-  Popover,
-  PopoverContent,
-  Button,
-  PopoverBody,
-  PopoverTrigger,
-  useColorModeValue as mode,
-  Box,
-  Kbd,
-  Flex,
-  Text,
-  chakra,
-} from "@chakra-ui/react";
 import { useCookies } from "react-cookie";
-import { RiArrowDownSLine } from "react-icons/ri";
-import {
-  BiShapeSquare,
-  BiPurchaseTagAlt,
-  BiShapePolygon,
-  BiPencil,
-} from "react-icons/bi";
-import { IoColorWandOutline } from "react-icons/io5";
 import { useHotkeys } from "react-hotkeys-hook";
-
-import { useLabelingStore, Tools } from "../../../connectors/labeling-state";
+import { RiArrowDownSLine } from "react-icons/ri";
+import { Tools, useLabelingStore } from "../../../connectors/labeling-state";
+import { keymap } from "../../../keymap";
+import { getToolIconName, Icon } from "../../core";
 import { IogAlertDialog } from "./iog-alert-dialog";
 
-import { keymap } from "../../../keymap";
-
-export type Props = {};
-
-const ChakraBiLabel = chakra(BiPurchaseTagAlt);
-const ChakraBiShapeSquare = chakra(BiShapeSquare);
-const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraRiArrowDownSLine = chakra(RiArrowDownSLine);
-const ChakraIoColorWandOutline = chakra(IoColorWandOutline);
-const ChakraBiPencil = chakra(BiPencil);
 
-export const ToolSelectionPopoverItem = (props: {
+type ToolDefinition = {
   name: string;
   shortcut: string;
-  selected?: boolean;
-  onClick: any;
-  children: any;
-  ariaLabel: string;
-}) => {
-  const { name, shortcut, selected, children, onClick, ariaLabel } = props;
+};
 
+const DRAWING_TOOLS_DEFINITIONS: Partial<Record<Tools, ToolDefinition>> = {
+  [Tools.CLASSIFICATION]: {
+    name: "Classification",
+    shortcut: keymap.toolClassification.key,
+  },
+  [Tools.BOX]: {
+    name: "Bounding Box",
+    shortcut: keymap.toolBoundingBox.key,
+  },
+  [Tools.POLYGON]: {
+    name: "Polygon",
+    shortcut: keymap.toolPolygon.key,
+  },
+  [Tools.FREEHAND]: {
+    name: "Freehand",
+    shortcut: keymap.toolFreehand.key,
+  },
+  [Tools.IOG]: {
+    name: "Auto-Polygon",
+    shortcut: keymap.toolIog.key,
+  },
+  [Tools.AI_ASSISTANT]: {
+    name: "AI Assistant",
+    shortcut: keymap.toolAiAssistant.key,
+  },
+};
+
+// Declared in the actual display order
+const DRAWING_TOOLS = [
+  Tools.CLASSIFICATION,
+  Tools.BOX,
+  Tools.POLYGON,
+  Tools.FREEHAND,
+  Tools.IOG,
+  Tools.AI_ASSISTANT,
+];
+
+type ToolIconProps = { tool: Tools };
+
+const ToolIcon = ({ tool }: ToolIconProps) => (
+  <Box ml="2">
+    <Icon name={getToolIconName(tool)} fontSize="1.3em" />
+  </Box>
+);
+
+type ShortcutProps = { shortcut: string };
+
+const Shortcut = ({ shortcut }: ShortcutProps) => (
+  <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="2">
+    {shortcut}
+  </Kbd>
+);
+
+type ToolSelectionPopoverItemProps = {
+  tool: Tools;
+  selected?: boolean;
+  onClick: () => void;
+};
+
+const getToolDefinition = (tool: Tools): ToolDefinition => {
+  const toolDefinition =
+    DRAWING_TOOLS_DEFINITIONS[tool] ?? DRAWING_TOOLS_DEFINITIONS.box;
+  if (!isNil(toolDefinition)) return toolDefinition;
+  throw new Error(`Cannot find definition for tool ${tool}`);
+};
+
+type UseItemColorsOptions = Pick<ToolSelectionPopoverItemProps, "selected">;
+
+const useBackgroundColors = ({
+  selected,
+}: UseItemColorsOptions): [string, string] =>
+  selected ? ["gray.300", "gray.500"] : ["gray.100", "gray.600"];
+
+const useBackgroundColor = (options: UseItemColorsOptions): string =>
+  useColorModeValue(...useBackgroundColors(options));
+
+const useHoverBackgroundColors = ({
+  selected,
+}: UseItemColorsOptions): [string, string] =>
+  selected ? ["gray.300", "gray.500"] : ["transparent", "transparent"];
+
+const useHoverBackgroundColor = (options: UseItemColorsOptions): string =>
+  useColorModeValue(...useHoverBackgroundColors(options));
+
+type UseItemColorsResult = Record<"bgColor" | "hoverBgColor", string>;
+
+const useItemColors = (options: UseItemColorsOptions): UseItemColorsResult => ({
+  bgColor: useBackgroundColor(options),
+  hoverBgColor: useHoverBackgroundColor(options),
+});
+
+export const ToolSelectionPopoverItem = ({
+  tool,
+  selected,
+  onClick,
+}: ToolSelectionPopoverItemProps) => {
+  const { name, shortcut } = getToolDefinition(tool);
+  const { bgColor, hoverBgColor } = useItemColors({ selected });
+  useHotkeys(shortcut, onClick);
   return (
     <Box
+      data-testid={`${tool}-tool-item`}
       pl="0"
       pr="0"
       pt="1"
       pb="1"
       role="checkbox"
-      aria-label={ariaLabel}
+      aria-label={`${name} tool`}
       aria-checked={selected}
-      _hover={{
-        backgroundColor: selected
-          ? mode("gray.300", "gray.500")
-          : mode("gray.100", "gray.600"),
-      }}
-      bgColor={
-        selected
-          ? mode("gray.300", "gray.500")
-          : mode("transparent", "transparent")
-      }
+      _hover={{ backgroundColor: hoverBgColor }}
+      bgColor={bgColor}
       onClick={() => {
         onClick();
       }}
     >
       <Flex justifyContent="space-between" alignItems="center">
-        {children}
+        <ToolIcon tool={tool} />
         <Text flexGrow={1} whiteSpace="nowrap" ml="2" mr="2">
           {name}
         </Text>
-
-        <Kbd flexShrink={0} flexGrow={0} justifyContent="center" mr="2">
-          {shortcut}
-        </Kbd>
+        <Shortcut shortcut={shortcut} />
       </Flex>
     </Box>
   );
 };
+
+const getTooltipLabel = (lastTool: Tools): string => {
+  const { name, shortcut } = getToolDefinition(lastTool);
+  return `${name} tool [${shortcut}]`;
+};
+
+const LastToolIcon = ({ tool }: ToolIconProps) => (
+  <Icon name={getToolIconName(tool)} fontSize="1.3em" />
+);
 
 export const DrawingToolIcon = (props: {
   isDisabled: boolean;
@@ -107,63 +186,23 @@ export const DrawingToolIcon = (props: {
     buttonRef,
   } = props;
   const [lastTool, setLastTool] = useState(Tools.BOX);
+  const isActive = DRAWING_TOOLS.includes(selectedTool);
   useEffect(() => {
-    if (
-      [
-        Tools.CLASSIFICATION,
-        Tools.BOX,
-        Tools.POLYGON,
-        Tools.IOG,
-        Tools.FREEHAND,
-      ].includes(selectedTool)
-    ) {
-      setLastTool(selectedTool);
-    }
+    if (!isActive) return;
+    setLastTool(selectedTool);
   }, [selectedTool]);
-  const isActive = [
-    Tools.CLASSIFICATION,
-    Tools.BOX,
-    Tools.POLYGON,
-    Tools.IOG,
-    Tools.FREEHAND,
-  ].includes(selectedTool);
-
-  let toolTipLabel;
-  switch (lastTool) {
-    case Tools.CLASSIFICATION:
-      toolTipLabel = `Classification tool [${keymap.toolClassification.key}]`;
-      break;
-    case Tools.BOX:
-      toolTipLabel = `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
-      break;
-    case Tools.POLYGON:
-      toolTipLabel = `Polygon tool [${keymap.toolPolygon.key}]`;
-      break;
-    case Tools.IOG:
-      toolTipLabel = `Auto Polygon tool [${keymap.toolIog.key}]`;
-      break;
-    case Tools.FREEHAND:
-      toolTipLabel = `Freehand tool [${keymap.toolFreehand.key}]`;
-      break;
-    default:
-      toolTipLabel = `Bounding Box tool [${keymap.toolBoundingBox.key}]`;
-      break;
-  }
-
   return (
-    <Tooltip label={toolTipLabel} placement="right" openDelay={300}>
+    <Tooltip
+      label={getTooltipLabel(lastTool)}
+      placement="right"
+      openDelay={300}
+    >
       <Button
         ref={buttonRef}
         isDisabled={isDisabled}
         role="checkbox"
-        aria-checked={[
-          Tools.CLASSIFICATION,
-          Tools.BOX,
-          Tools.POLYGON,
-          Tools.IOG,
-          Tools.FREEHAND,
-        ].includes(selectedTool)}
-        backgroundColor={mode("white", "gray.800")}
+        aria-checked={DRAWING_TOOLS.includes(selectedTool)}
+        backgroundColor={useColorModeValue("white", "gray.800")}
         aria-label={`Drawing ${lastTool} tool`}
         pointerEvents="initial"
         onClick={() => setSelectedTool(lastTool)}
@@ -171,23 +210,7 @@ export const DrawingToolIcon = (props: {
         w="10"
         padding="0"
       >
-        {(() => {
-          switch (lastTool) {
-            case Tools.CLASSIFICATION:
-              return <ChakraBiLabel size="1.3em" />;
-            case Tools.BOX:
-              return <ChakraBiShapeSquare size="1.3em" />;
-            case Tools.POLYGON:
-              return <ChakraBiShapePolygon size="1.3em" />;
-            case Tools.IOG:
-              return <ChakraIoColorWandOutline size="1.3em" />;
-            case Tools.FREEHAND:
-              return <ChakraBiPencil size="1.3em" />;
-            default:
-              return <ChakraBiShapeSquare size="1.3em" />;
-          }
-        })()}
-
+        <LastToolIcon tool={lastTool} />
         <PopoverTrigger>
           <Button
             as="div"
@@ -207,7 +230,7 @@ export const DrawingToolIcon = (props: {
             isActive={isActive}
             padding="0"
             textAlign="right"
-            color={mode("gray.800", "gray.200")}
+            color={useColorModeValue("gray.800", "gray.200")}
           >
             <ChakraRiArrowDownSLine
               position="relative"
@@ -251,47 +274,6 @@ export const DrawingTool = () => {
       }
     }
   }, [selectedTool]);
-
-  useHotkeys(
-    keymap.toolClassification.key,
-    () => {
-      setSelectedTool(Tools.CLASSIFICATION);
-    },
-    {},
-    [setSelectedTool]
-  );
-  useHotkeys(
-    keymap.toolBoundingBox.key,
-    () => {
-      setSelectedTool(Tools.BOX);
-    },
-    {},
-    [setSelectedTool]
-  );
-  useHotkeys(
-    keymap.toolPolygon.key,
-    () => {
-      setSelectedTool(Tools.POLYGON);
-    },
-    {},
-    [setSelectedTool]
-  );
-  useHotkeys(
-    keymap.toolFreehand.key,
-    () => {
-      setSelectedTool(Tools.FREEHAND);
-    },
-    {},
-    [setSelectedTool]
-  );
-  useHotkeys(
-    keymap.toolIog.key,
-    () => {
-      setSelectedTool(Tools.IOG);
-    },
-    {},
-    [setSelectedTool]
-  );
   return (
     <>
       <IogAlertDialog
@@ -328,7 +310,7 @@ export const DrawingTool = () => {
           setSelectedTool={setSelectedTool}
         />
         <PopoverContent
-          borderColor={mode("gray.200", "gray.600")}
+          borderColor={useColorModeValue("gray.200", "gray.600")}
           cursor="default"
           pointerEvents="initial"
           aria-label="Change Drawing Tool"
@@ -336,76 +318,17 @@ export const DrawingTool = () => {
         >
           <PopoverBody pl="0" pr="0">
             <Box>
-              <ToolSelectionPopoverItem
-                name="Classification"
-                shortcut={keymap.toolClassification.key}
-                selected={selectedTool === Tools.CLASSIFICATION}
-                onClick={() => {
-                  setSelectedTool(Tools.CLASSIFICATION);
-                  setIsPopoverOpened(false);
-                }}
-                ariaLabel="Classification tool"
-              >
-                <Box ml="2">
-                  <ChakraBiLabel size="1.3em" />
-                </Box>
-              </ToolSelectionPopoverItem>
-              <ToolSelectionPopoverItem
-                name="Bounding Box"
-                shortcut={keymap.toolBoundingBox.key}
-                selected={selectedTool === Tools.BOX}
-                onClick={() => {
-                  setSelectedTool(Tools.BOX);
-                  setIsPopoverOpened(false);
-                }}
-                ariaLabel="Bounding box tool"
-              >
-                <Box ml="2">
-                  <ChakraBiShapeSquare size="1.3em" />
-                </Box>
-              </ToolSelectionPopoverItem>
-              <ToolSelectionPopoverItem
-                name="Polygon"
-                shortcut={keymap.toolPolygon.key}
-                selected={selectedTool === Tools.POLYGON}
-                onClick={() => {
-                  setSelectedTool(Tools.POLYGON);
-                  setIsPopoverOpened(false);
-                }}
-                ariaLabel="Polygon tool"
-              >
-                <Box ml="2">
-                  <ChakraBiShapePolygon size="1.3em" />
-                </Box>
-              </ToolSelectionPopoverItem>
-              <ToolSelectionPopoverItem
-                name="Freehand"
-                shortcut={keymap.toolFreehand.key}
-                selected={selectedTool === Tools.FREEHAND}
-                onClick={() => {
-                  setSelectedTool(Tools.FREEHAND);
-                  setIsPopoverOpened(false);
-                }}
-                ariaLabel="Freehand tool"
-              >
-                <Box ml="2">
-                  <ChakraBiPencil size="1.3em" />
-                </Box>
-              </ToolSelectionPopoverItem>
-              <ToolSelectionPopoverItem
-                name="Auto Polygon"
-                shortcut={keymap.toolIog.key}
-                selected={selectedTool === Tools.IOG}
-                onClick={() => {
-                  setSelectedTool(Tools.IOG);
-                  setIsPopoverOpened(false);
-                }}
-                ariaLabel="Auto polygon Tool"
-              >
-                <Box ml="2">
-                  <ChakraIoColorWandOutline size="1.3em" />
-                </Box>
-              </ToolSelectionPopoverItem>
+              {DRAWING_TOOLS.map((tool) => (
+                <ToolSelectionPopoverItem
+                  key={tool}
+                  tool={tool}
+                  selected={selectedTool === tool}
+                  onClick={() => {
+                    setSelectedTool(tool);
+                    setIsPopoverOpened(false);
+                  }}
+                />
+              ))}
             </Box>
           </PopoverBody>
         </PopoverContent>

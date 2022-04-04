@@ -34,11 +34,11 @@ export const IogAlertDialog = ({
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader>
-            Auto Polygon automatically converts a bounding box into a polygon
+            Auto-Polygon automatically converts a bounding box into a polygon
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            Images annotated with the Auto Polygon tool are processed on our
+            Images annotated with the Auto-Polygon tool are processed on our
             secured servers. <br />
             Check the documentation{" "}
             <Link
@@ -58,7 +58,7 @@ export const IogAlertDialog = ({
                 onCancel();
                 onClose();
               }}
-              aria-label="Cancel using auto polygon"
+              aria-label="Cancel using Auto-Polygon"
             >
               Cancel
             </Button>
@@ -68,7 +68,7 @@ export const IogAlertDialog = ({
                 onAccept();
                 onClose();
               }}
-              aria-label="Confirm using auto polygon tool"
+              aria-label="Confirm using Auto-Polygon tool"
               ml={3}
             >
               Continue

@@ -5,7 +5,7 @@ import {
   Flex,
   Skeleton,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import NextLink from "next/link";
@@ -21,7 +21,7 @@ import { Layout } from "../../../../../components/layout";
 import { KeymapButton } from "../../../../../components/layout/top-bar/keymap-button";
 import { NavLogo } from "../../../../../components/logo/nav-logo";
 import { Meta } from "../../../../../components/meta";
-import { LayoutSpinner } from "../../../../../components/spinner";
+import { LayoutSpinner } from "../../../../../components";
 import { WorkspaceSwitcher } from "../../../../../components/workspace-switcher";
 import {
   ImageNameQuery,
@@ -83,6 +83,8 @@ const Body = () => {
 
   const imageName = imageResult?.image.name;
   const datasetName = datasetResult?.dataset.name;
+
+  const galleryBg = useColorModeValue("white", "gray.800");
 
   const handleError = useErrorHandler();
   if ((errorDataset && !loadingDataset) || (errorImage && !loadingImage)) {
@@ -157,7 +159,7 @@ const Body = () => {
           <Flex grow={1} direction="column">
             <LabelingTool />
           </Flex>
-          <Box bg={mode("white", "gray.800")} overflow="hidden">
+          <Box bg={galleryBg} overflow="hidden">
             <Gallery />
           </Box>
         </Flex>

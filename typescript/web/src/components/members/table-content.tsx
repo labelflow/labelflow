@@ -8,7 +8,7 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue as mode,
+  useColorModeValue,
   Badge,
   Flex,
 } from "@chakra-ui/react";
@@ -150,7 +150,7 @@ export const TableContent = ({
         onClose={() => setMembershipToDelete(undefined)}
       />
       <Table my="8" borderWidth="1px" fontSize="sm">
-        <Thead bg={mode("gray.50", "gray.800")}>
+        <Thead bg={useColorModeValue("gray.50", "gray.800")}>
           <Tr>
             {columns.map((column, index) => (
               <Th whiteSpace="nowrap" scope="col" key={index}>
@@ -159,7 +159,7 @@ export const TableContent = ({
             ))}
           </Tr>
         </Thead>
-        <Tbody bg={mode("white", "gray.900")}>
+        <Tbody bg={useColorModeValue("white", "gray.900")}>
           {filteredMemberships.map((row, membershipIndex) => (
             <Tr key={membershipIndex}>
               {columns.map((column, index) => (

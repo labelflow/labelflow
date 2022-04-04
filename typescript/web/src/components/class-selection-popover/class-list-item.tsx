@@ -5,46 +5,56 @@ import {
   Flex,
   chakra,
   Tooltip,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
 
 const CircleIcon = chakra(RiCheckboxBlankCircleFill);
 
-/**
- * Represent a LabelClass item with its color as
- * an icon on the left with its name and its shortcut
- * on the right. Accounts for the "create new class"
- * specific items.
- * @param props
- * @returns
- */
-export const ClassListItem = (props: {
+export type ClassListItemProps = {
   item: { name: string; type?: string; color?: string; shortcut?: string };
   highlight?: boolean;
   selected?: boolean;
   index: number;
   itemProps: any;
   isCreateClassItem?: boolean;
-}) => {
-  const { item, highlight, selected, index, itemProps, isCreateClassItem } =
-    props;
+};
+
+type UseBgColorOptions = Pick<
+  ClassListItemProps,
+  "selected" | "isCreateClassItem" | "highlight"
+>;
+
+const useBgColorValues = ({
+  selected,
+  isCreateClassItem,
+  highlight,
+}: UseBgColorOptions): Parameters<typeof useColorModeValue> => {
+  if (selected && !isCreateClassItem) return ["gray.300", "gray.500"];
+  return highlight ? ["gray.100", "gray.600"] : ["transparent", "transparent"];
+};
+
+const useBgColor = (options: UseBgColorOptions) =>
+  useColorModeValue(...useBgColorValues(options));
+
+/**
+ * Represent a LabelClass item with its color as
+ * an icon on the left with its name and its shortcut
+ * on the right. Accounts for the "create new class"
+ * specific items.
+ */
+export const ClassListItem = ({
+  item,
+  selected,
+  index,
+  itemProps,
+  isCreateClassItem,
+  highlight,
+}: ClassListItemProps) => {
   const { color, name, shortcut } = item;
-
-  // arrow function instead of nested ternaries to avoid eslint error
-  const bgColor = (() => {
-    if (selected && !isCreateClassItem) {
-      return mode("gray.300", "gray.500");
-    }
-    if (highlight) {
-      return mode("gray.100", "gray.600");
-    }
-    return mode("transparent", "transparent");
-  })();
-
   return (
     <Box
-      bgColor={bgColor}
+      bgColor={useBgColor({ selected, isCreateClassItem, highlight })}
       key={`${name}${index}`}
       {...itemProps}
       pl="3"

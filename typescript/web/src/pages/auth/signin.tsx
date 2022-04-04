@@ -1,9 +1,4 @@
-import {
-  Flex,
-  Heading,
-  VStack,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { Flex, Heading, VStack, useColorModeValue } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -37,7 +32,7 @@ const Body = ({ redirectUrl }: BodyProps) => {
       <Flex
         direction="column"
         align="center"
-        bg={mode("gray.100", "gray.800")}
+        bg={useColorModeValue("gray.100", "gray.800")}
         flexGrow={1}
         justify="center"
       >
@@ -45,7 +40,7 @@ const Body = ({ redirectUrl }: BodyProps) => {
           mt={10}
           maxW="md"
           spacing={10}
-          bg={mode("white", "gray.700")}
+          bg={useColorModeValue("white", "gray.700")}
           p="8"
           borderRadius="8"
         >

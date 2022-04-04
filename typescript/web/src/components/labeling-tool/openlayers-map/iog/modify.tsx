@@ -81,11 +81,9 @@ export const ModifyIog = ({
     {},
     [setSelectedLabelId]
   );
-
   if (typeof imageId !== "string") {
     return null;
   }
-
   return (
     <>
       <ModifyIogCenterPoint vectorSourceRef={vectorSourceRef} />

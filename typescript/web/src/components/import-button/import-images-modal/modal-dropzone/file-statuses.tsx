@@ -6,7 +6,7 @@ import {
   RiFile3Line,
 } from "react-icons/ri";
 import { isEmpty } from "lodash/fp";
-import { Box, Text, Flex, useColorModeValue as mode } from "@chakra-ui/react";
+import { Box, Text, Flex, useColorModeValue } from "@chakra-ui/react";
 
 import { DroppedFile, UploadInfoRecord, UploadInfo } from "../types";
 import { ImportProgress } from "../import-progress";
@@ -39,7 +39,7 @@ const ImportStatus = ({
   <Box
     whiteSpace="nowrap"
     flex={0}
-    color={mode("gray.400", "gray.600")}
+    color={useColorModeValue("gray.400", "gray.600")}
     fontSize="md"
     textAlign="right"
   >
@@ -66,23 +66,26 @@ const FilePath = ({ droppedFile }: Pick<FileStatusProps, "droppedFile">) => (
 
 type WarningProps = { warnings: string[] | undefined };
 
-const Warnings = ({ warnings }: WarningProps) => (
-  <>
-    {warnings &&
-      warnings.map((warning) => (
-        <Box
-          pr="2"
-          overflow="hidden"
-          textOverflow="ellipsis"
-          fontSize="xs"
-          color={mode("red.500", "red.300")}
-          key={warning}
-        >
-          {warning}
-        </Box>
-      ))}
-  </>
-);
+const Warnings = ({ warnings }: WarningProps) => {
+  const color = useColorModeValue("red.500", "red.300");
+  return (
+    <>
+      {warnings &&
+        warnings.map((warning) => (
+          <Box
+            pr="2"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            fontSize="xs"
+            color={color}
+            key={warning}
+          >
+            {warning}
+          </Box>
+        ))}
+    </>
+  );
+};
 
 const FileStatus = ({ droppedFile, index, uploadInfo }: FileStatusProps) => {
   const warnings = uploadInfo?.warnings;
@@ -90,6 +93,7 @@ const FileStatus = ({ droppedFile, index, uploadInfo }: FileStatusProps) => {
     droppedFile.file,
     !isEmpty(droppedFile.errors)
   );
+  const bg = useColorModeValue("gray.50", "gray.700");
   return (
     <>
       <Flex
@@ -97,7 +101,7 @@ const FileStatus = ({ droppedFile, index, uploadInfo }: FileStatusProps) => {
         w="100%"
         alignItems="center"
         p="2"
-        bg={index % 2 === 0 ? mode("gray.50", "gray.700") : "inherit"}
+        bg={index % 2 === 0 ? bg : "inherit"}
       >
         <Box flex={0} pr="2">
           <FileStatusIcon />
@@ -110,14 +114,19 @@ const FileStatus = ({ droppedFile, index, uploadInfo }: FileStatusProps) => {
   );
 };
 
-export type UploadInfoProps = {
+export type FilesStatusesProps = {
   files: Array<DroppedFile>;
   uploadInfo: UploadInfoRecord;
 };
 
-export const FilesStatuses = ({ files, uploadInfo }: UploadInfoProps) => (
+export const FilesStatuses = ({ files, uploadInfo }: FilesStatusesProps) => (
   <Flex direction="column" height="100%">
-    <Box p="2" bg={mode("gray.200", "gray.600")} borderTopRadius="md" w="100%">
+    <Box
+      p="2"
+      bg={useColorModeValue("gray.200", "gray.600")}
+      borderTopRadius="md"
+      w="100%"
+    >
       <Text>
         Completed{" "}
         {

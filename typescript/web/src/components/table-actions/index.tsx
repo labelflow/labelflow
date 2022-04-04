@@ -10,7 +10,7 @@ import {
   InputGroup,
   InputLeftElement,
   Stack,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { createContext, PropsWithChildren, useContext } from "react";
 import { IconType } from "react-icons/lib";
@@ -33,7 +33,7 @@ const SearchBar = () => {
           <FormLabel srOnly>{searchBarLabel}</FormLabel>
           <InputLeftElement
             pointerEvents="none"
-            color={mode("gray.400", "gray.200")}
+            color={useColorModeValue("gray.400", "gray.200")}
           >
             <SearchIcon />
           </InputLeftElement>
@@ -42,7 +42,7 @@ const SearchBar = () => {
             rounded="base"
             type="search"
             placeholder={searchBarLabel}
-            bgColor={mode("white", "gray.800")}
+            bgColor={useColorModeValue("white", "gray.800")}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
@@ -67,12 +67,13 @@ export const TableActionButton = ({
   ...props
 }: ActionButtonProps) => {
   const Icon = chakra(icon);
+  const outlineBgColor = useColorModeValue("white", "gray.800");
   return (
     <Button
       variant="solid"
       iconSpacing="1"
       colorScheme={variant === "brand" ? "brand" : undefined}
-      bgColor={variant === "outline" ? mode("white", "gray.800") : undefined}
+      bgColor={variant === "outline" ? outlineBgColor : undefined}
       leftIcon={<Icon fontSize="md" />}
       {...props}
     >

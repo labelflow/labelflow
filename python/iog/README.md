@@ -8,13 +8,13 @@ It implements on top of that a graphQL server and the logic and processing neede
 ## Pre-requisites
 
 ### Create a virtual env
-To create the virtual env, run this at the root of the repo
+To create the virtual env, run this at the **root of the repo**
 
 ```bash
 python3 -m venv .venv
 ```
 
-Start using the virtual environment at the root of the repo
+Start using the virtual environment at the **root of the repo**
 
 ```bash
 source '.venv/bin/activate'

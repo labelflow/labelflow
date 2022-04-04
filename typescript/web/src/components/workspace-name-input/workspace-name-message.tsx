@@ -1,6 +1,6 @@
 import { isEmpty } from "lodash/fp";
 import { useMockableLocation } from "../../utils/mockable-location";
-import { OptionalText } from "../optional-text";
+import { OptionalText } from "../core";
 import { useWorkspaceNameInput } from "./workspace-name-input.context";
 
 const useErrorMessage = (

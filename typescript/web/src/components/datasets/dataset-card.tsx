@@ -2,7 +2,7 @@ import {
   Box,
   Text,
   VStack,
-  useColorModeValue as mode,
+  useColorModeValue,
   HStack,
   Flex,
   Spacer,
@@ -14,7 +14,7 @@ import {
 import NextLink from "next/link";
 import { HiTrash, HiPencilAlt } from "react-icons/hi";
 import { DatasetCardBox } from "./dataset-card-box";
-import { ImageWithFallback } from "../image";
+import { ImageWithFallback } from "../core";
 import { EmptyStateImageNotFound, EmptyStateNoImages } from "../empty-state";
 
 const EditIcon = chakra(HiPencilAlt);
@@ -54,7 +54,7 @@ export const DatasetCard = (props: {
           borderWidth="0px"
           borderRadius="16px"
           overflow="hidden"
-          bg={mode("white", "gray.700")}
+          bg={useColorModeValue("white", "gray.700")}
           display="block"
           cursor="pointer"
         >

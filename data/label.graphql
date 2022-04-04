@@ -8,6 +8,7 @@ input LabelCreateInput {
 }
 
 input LabelWhereInput {
+  id: IdInInput
   imageId: ID
   labelClassId: ID
   datasetId: ID

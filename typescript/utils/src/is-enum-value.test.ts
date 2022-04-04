@@ -1,4 +1,4 @@
-import { isEnumValue } from "./isEnumValue";
+import { isEnumValue } from "./is-enum-value";
 
 enum TestEnum {
   Foo = "Foo",

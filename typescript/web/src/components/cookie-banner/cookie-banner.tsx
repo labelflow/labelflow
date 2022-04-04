@@ -1,9 +1,9 @@
+import { Button, HStack, Stack, Text } from "@chakra-ui/react";
 import React, { useCallback } from "react";
-import { Button, HStack, Link, Text, Stack } from "@chakra-ui/react";
-import NextLink from "next/link";
 import { useCookies } from "react-cookie";
 import { isInWindowScope } from "../../utils/detect-scope";
 import { trackEvent } from "../../utils/google-analytics";
+import { TextLink } from "../core";
 
 export const CookieBanner = () => {
   const [{ consentedCookies }, setConsentedCookies] = useCookies([
@@ -51,11 +51,9 @@ export const CookieBanner = () => {
         Like every organization on earth we use cookies. We use cookies to
         analyze our product usage. We don&apos;t use cookies for commercial
         purposes.{" "}
-        <NextLink href="/legal/cookie-policy">
-          <Link href="/legal/cookie-policy" textDecoration="underline">
-            Learn More
-          </Link>
-        </NextLink>
+        <TextLink href="/legal/cookie-policy" textDecoration="underline">
+          Learn More
+        </TextLink>
       </Text>
       <Stack direction={{ base: "column", md: "row" }} spacing={4}>
         <Button

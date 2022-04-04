@@ -1,5 +1,5 @@
 import { isEmpty, isNil } from "lodash/fp";
-import { isEnumValue } from "./isEnumValue";
+import { isEnumValue } from "./is-enum-value";
 
 /**
  * Converts a string to an enum value

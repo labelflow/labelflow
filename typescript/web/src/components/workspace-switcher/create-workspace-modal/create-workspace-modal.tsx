@@ -9,7 +9,7 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers";
 import { WorkspacePlan } from "@labelflow/graphql-types";
@@ -56,7 +56,7 @@ const Title = () => (
     </Heading>
     <Text
       fontSize="lg"
-      color={mode("gray.600", "gray.400")}
+      color={useColorModeValue("gray.600", "gray.400")}
       fontWeight="medium"
     >
       Store your datasets online & start collaborating
@@ -65,7 +65,11 @@ const Title = () => (
 );
 
 const NameLabel = () => (
-  <Text fontSize="sm" fontWeight="medium" color={mode("gray.800", "gray.200")}>
+  <Text
+    fontSize="sm"
+    fontWeight="medium"
+    color={useColorModeValue("gray.800", "gray.200")}
+  >
     Workspace Name
   </Text>
 );

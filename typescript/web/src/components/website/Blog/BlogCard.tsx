@@ -7,7 +7,7 @@ import {
   LinkBox,
   LinkOverlay,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import * as React from "react";
 import { BsClockFill } from "react-icons/bs";
@@ -29,7 +29,7 @@ export const BlogCard = (props: BlogProps) => {
   return (
     <LinkBox
       as="article"
-      bg={{ sm: mode("white", "gray.700") }}
+      bg={{ sm: useColorModeValue("white", "gray.700") }}
       shadow={{ sm: "base" }}
       rounded={{ sm: "md" }}
       overflow="hidden"
@@ -58,14 +58,18 @@ export const BlogCard = (props: BlogProps) => {
           <Heading as="h3" size="sm" mb="2" lineHeight="base">
             <LinkOverlay href={href}>{title}</LinkOverlay>
           </Heading>
-          <Text noOfLines={2} mb="8" color={mode("gray.600", "gray.400")}>
+          <Text
+            noOfLines={2}
+            mb="8"
+            color={useColorModeValue("gray.600", "gray.400")}
+          >
             {description}
           </Text>
           <Flex
             align="baseline"
             justify="space-between"
             fontSize="sm"
-            color={mode("gray.600", "gray.400")}
+            color={useColorModeValue("gray.600", "gray.400")}
           >
             <Box>
               By <Box textDecor="underline">{author?.name}</Box>

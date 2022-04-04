@@ -1,8 +1,4 @@
-import {
-  chakra,
-  HTMLChakraProps,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
+import { chakra, HTMLChakraProps, useColorModeValue } from "@chakra-ui/react";
 import * as React from "react";
 import NextLink from "next/link";
 
@@ -24,7 +20,7 @@ const DesktopNavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
           cursor="pointer"
           fontWeight="semibold"
           aria-current={active ? "page" : undefined}
-          color={mode("gray.600", "gray.400")}
+          color={useColorModeValue("gray.600", "gray.400")}
           transition="all 0.2s"
           target={target}
           {...rest}

@@ -7,7 +7,7 @@ import {
   Stack,
   Text,
   chakra,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaCheck } from "react-icons/fa";
 
@@ -50,7 +50,7 @@ export const Features = () => (
       p={{ base: "10", lg: "0" }}
       columns={1}
       spacing="6"
-      bg={{ base: mode("gray.200", "gray.700"), lg: "unset" }}
+      bg={{ base: useColorModeValue("gray.200", "gray.700"), lg: "unset" }}
     >
       <Feature title="Collaborate Easily">
         Invite your teammates to work together on datasets and share your
