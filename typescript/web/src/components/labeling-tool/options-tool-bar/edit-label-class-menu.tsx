@@ -279,7 +279,9 @@ export const EditLabelClassMenu = () => {
 
   const displayClassSelectionMenu =
     isInDrawingMode ||
-    (selectedTool === Tools.SELECTION && selectedLabelId != null);
+    ((selectedTool === Tools.SELECTION ||
+      selectedTool === Tools.AI_ASSISTANT) &&
+      selectedLabelId != null);
 
   useHotkeys(
     "*", // We have to manually check if the input corresponds to a change class key because otherwise on AZERTY keyboards we can't change classes when pressing numbers

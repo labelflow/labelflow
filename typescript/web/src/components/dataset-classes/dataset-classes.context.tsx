@@ -7,7 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { OnReorderCallback } from "../reorderable-table";
+import { OnReorderCallback } from "../core";
 import { exportDatasetClasses } from "./dataset-classes-export";
 import { useDatasetLabelClassesQuery } from "./dataset-classes.query";
 import { useReorderLabelClassMutation } from "./reorder-label-class.mutation";

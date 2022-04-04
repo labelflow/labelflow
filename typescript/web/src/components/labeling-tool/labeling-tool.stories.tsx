@@ -39,7 +39,7 @@ function inGreyBoxDecorator(
 }
 
 export default {
-  title: storybookTitle(LabelingTool),
+  title: storybookTitle("Labeling tool", LabelingTool),
   component: LabelingTool,
   // FIXME SW Images are not loaded anymore
   // loaders: [mockImagesLoader],

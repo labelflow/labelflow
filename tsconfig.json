@@ -20,6 +20,10 @@
     "module": "esnext",
     "strictNullChecks": true
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "../utils/src/@types/index.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

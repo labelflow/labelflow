@@ -14,15 +14,15 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useCombobox, UseComboboxStateChange } from "downshift";
+import { isNil } from "lodash/fp";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
 import { IoSearch } from "react-icons/io5";
 import { RiCloseCircleFill } from "react-icons/ri";
 import { useVirtual } from "react-virtual";
-import { noneClassColor } from "../../theme";
-import { keymap } from "../../keymap";
-import { ClassListItem } from "./class-list-item";
 import { GetLabelClassesOfDatasetQuery_dataset_labelClasses } from "../../graphql-types/GetLabelClassesOfDatasetQuery";
+import { useSearchHotkeys } from "../../hooks";
+import { noneClassColor } from "../../theme";
+import { ClassListItem } from "./class-list-item";
 
 type CreateClassInput = { name: string; type: string };
 type NoneClass = { name: string; color: string; type: string };
@@ -173,25 +173,10 @@ export const ClassSelectionPopover = ({
   }, [isOpen]);
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
-
-  useHotkeys(
-    // "/" key doesn't seem to be recognized on AZERTY keyboards, so we use "*" to catch any input.
-    "*",
-    (keyboardEvent) => {
-      if (
-        // Manually checks if input is bound in keymap
-        keymap.focusLabelClassSearch.key
-          .split(",")
-          .includes(keyboardEvent.key) &&
-        activateShortcuts &&
-        searchInputRef.current != null
-      ) {
-        searchInputRef.current.focus();
-        keyboardEvent.preventDefault();
-      }
-    },
-    {},
-    [activateShortcuts]
+  useSearchHotkeys(
+    () => searchInputRef.current?.focus(),
+    { enabled: isOpen && activateShortcuts && !isNil(searchInputRef.current) },
+    [isOpen, activateShortcuts, searchInputRef.current]
   );
   const closeCircleIconColor = useColorModeValue("gray.300", "gray.500");
   return (

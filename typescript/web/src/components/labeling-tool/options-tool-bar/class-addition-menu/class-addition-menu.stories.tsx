@@ -4,7 +4,7 @@ import { chakraDecorator, storybookTitle } from "../../../../utils/stories";
 import { ClassAdditionMenu, LabelClassItem } from "./class-addition-menu";
 
 export default {
-  title: storybookTitle(ClassAdditionMenu),
+  title: storybookTitle("Labeling tool", ClassAdditionMenu),
   decorators: [chakraDecorator],
 };
 

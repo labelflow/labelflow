@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { DeleteModal } from "../delete-modal";
+import { DeleteModal } from "../core";
 import { useImagesList } from "./images-list.context";
 
 export type DeleteManyImagesModalProps = {

@@ -10,10 +10,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { RiInformationLine } from "react-icons/ri";
-import {
-  ReorderableTableBody,
-  ReorderableTableHeadRow,
-} from "../reorderable-table";
+import { ReorderableTableBody, ReorderableTableHeadRow } from "../core";
 import { useDatasetClasses } from "./dataset-classes.context";
 import {
   COMMON_CLASS_TABLE_CELL_PROPS,

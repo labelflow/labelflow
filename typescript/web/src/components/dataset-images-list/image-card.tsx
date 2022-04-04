@@ -24,9 +24,8 @@ import {
 } from "react";
 import { HiTrash } from "react-icons/hi";
 import { SetRequired } from "type-fest";
+import { ImageWithFallback, Tooltip } from "../core";
 import { EmptyStateImageNotFound } from "../empty-state";
-import { ImageWithFallback } from "../image";
-import { Tooltip } from "../tooltip";
 
 export type ImageCardProps = {
   id: string;

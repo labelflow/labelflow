@@ -13,7 +13,7 @@ import {
   ApolloMockResponse,
   ApolloMockResponses,
 } from "../../utils/tests/apollo-mock";
-import { PaginationProvider } from "../pagination";
+import { PaginationProvider } from "../core";
 import { GET_IMAGE_BY_ID_QUERY } from "./delete-single-image-modal";
 import {
   ImagesListProvider,

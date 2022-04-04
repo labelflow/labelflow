@@ -1,7 +1,7 @@
 import { Box, SimpleGrid, SimpleGridProps, Stack } from "@chakra-ui/react";
 import * as React from "react";
 import { DOCUMENTATION_URL } from "../../../constants";
-import { TextLink } from "../../text-link";
+import { TextLink } from "../../core";
 import { FooterHeading } from "./FooterHeading";
 
 interface FooterLink {

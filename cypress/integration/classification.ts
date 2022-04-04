@@ -32,12 +32,12 @@ describe("Classification (online)", () => {
     cy.get('[aria-label="Drawing classification tool"]').should("not.exist");
     cy.get('[aria-label="Drawing box tool"]').should("exist").click();
     cy.get('[aria-label="Change Drawing tool"]').click();
-    cy.get('[aria-label="Bounding box tool"]').should(
+    cy.get('[data-testid="box-tool-item"]').should(
       "have.attr",
       "aria-checked",
       "true"
     );
-    cy.get('[aria-label="Classification tool"]')
+    cy.get('[data-testid="classification-tool-item"]')
       .should("have.attr", "aria-checked", "false")
       .click();
 
@@ -54,7 +54,7 @@ describe("Classification (online)", () => {
     // Switch to classification tool
     cy.get('[aria-label="loading indicator"]').should("not.exist");
     cy.get('[aria-label="Change Drawing tool"]').should("exist").click();
-    cy.get('[aria-label="Classification tool"]').click();
+    cy.get('[data-testid="classification-tool-item"]').click();
 
     // Create a classification tag with the existing class "rocket"
     cy.wait(420);

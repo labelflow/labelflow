@@ -17,20 +17,18 @@ import {
   BiCheckboxSquare,
 } from "react-icons/bi";
 import { HiOutlineTrash } from "react-icons/hi";
+import { PaginatedImagesQuery_images } from "../../graphql-types";
+import { PaginationFooter, PaginationProvider, LayoutSpinner } from "../core";
 import { EmptyStateNoImages } from "../empty-state";
 import { ImportButton } from "../import-button";
-import { PaginationProvider } from "../pagination";
-import { PaginationFooter } from "../pagination/pagination-footer";
-import { LayoutSpinner } from "../spinner";
-import { DeleteSingleImageModal } from "./delete-single-image-modal";
 import { DeleteManyImagesModal } from "./delete-many-images-modal";
+import { DeleteSingleImageModal } from "./delete-single-image-modal";
 import { ImageCard } from "./image-card";
 import {
   ImagesListProps,
   ImagesListProvider,
   useImagesList,
 } from "./images-list.context";
-import { PaginatedImagesQuery_images } from "../../graphql-types";
 
 const ImportImagesButton = () => {
   const { datasetId } = useImagesList();
