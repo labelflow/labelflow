@@ -1,4 +1,4 @@
-import React from "react";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { AddClassesModal as AddClassesModalComponent } from ".";
 import {
   chakraDecorator,
@@ -8,10 +8,13 @@ import {
 } from "../../../utils/stories";
 
 export default {
-  title: storybookTitle(AddClassesModalComponent),
+  title: storybookTitle("Dataset classes", AddClassesModalComponent),
+  component: AddClassesModalComponent,
   decorators: [chakraDecorator, modalDecorator, getApolloMockDecorator()],
-};
+} as ComponentMeta<typeof AddClassesModalComponent>;
 
-export const AddClassesModal = () => (
-  <AddClassesModalComponent isOpen onClose={() => {}} />
-);
+const Template: ComponentStory<typeof AddClassesModalComponent> =
+  AddClassesModalComponent;
+
+export const AddClassesModal = Template.bind({});
+AddClassesModal.args = { isOpen: true };

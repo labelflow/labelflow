@@ -1,16 +1,19 @@
 import { pick } from "lodash/fp";
-import { ApolloMockResponse, ApolloMockResponses } from "../../utils/tests";
-import { DATASET_LABEL_CLASSES_QUERY_WITH_COUNT } from "./dataset-classes.query";
-import {
-  BASIC_DATASET_DATA,
-  DEEP_DATASET_WITH_CLASSES_DATA,
-} from "../../utils/fixtures";
-import { GET_LABEL_CLASS_BY_ID_MOCK } from "./delete-label-class-modal.fixtures";
-import { GET_LABEL_CLASS_EXISTS_MOCK } from "./upsert-class-modal/upsert-class-modal.fixtures";
 import {
   GetDatasetLabelClassesWithTotalCountQuery,
   GetDatasetLabelClassesWithTotalCountQueryVariables,
 } from "../../graphql-types/GetDatasetLabelClassesWithTotalCountQuery";
+import {
+  BASIC_DATASET_DATA,
+  DEEP_DATASET_WITH_CLASSES_DATA,
+} from "../../utils/fixtures";
+import {
+  ApolloMockResponse,
+  ApolloMockResponses,
+} from "../../utils/tests/apollo-mock";
+import { DATASET_LABEL_CLASSES_QUERY_WITH_COUNT } from "./dataset-classes.query";
+import { GET_LABEL_CLASS_BY_ID_MOCK } from "./delete-label-class-modal.fixtures";
+import { GET_LABEL_CLASS_EXISTS_MOCK } from "./upsert-class-modal/upsert-class-modal.fixtures";
 
 export const GET_DATASET_WITHOUT_LABEL_CLASSES_MOCK: ApolloMockResponse<
   GetDatasetLabelClassesWithTotalCountQuery,

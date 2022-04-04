@@ -1,3 +1,4 @@
+import { FetchResult } from "@apollo/client";
 import { pick } from "lodash/fp";
 import { v4 as uuid } from "uuid";
 import { MATCH_ANY_PARAMETERS } from "wildcard-mock-link";
@@ -21,7 +22,10 @@ import {
   BASIC_LABEL_CLASS_DATA,
   DEEP_DATASET_WITH_CLASSES_DATA,
 } from "../../../utils/fixtures";
-import { ApolloMockResponse, ApolloMockResponses } from "../../../utils/tests";
+import {
+  ApolloMockResponse,
+  ApolloMockResponses,
+} from "../../../utils/tests/apollo-mock";
 import { CREATE_LABEL_CLASS_MUTATION } from "./create-label-class.mutation";
 import { DATASET_LABEL_CLASSES_QUERY } from "./dataset-label-classes.query";
 import { LABEL_CLASS_EXISTS_QUERY } from "./label-class-exists.query";
@@ -52,6 +56,14 @@ export const GET_DATASET_WITH_LABEL_CLASSES_MOCK: ApolloMockResponse<
   },
 };
 
+export const getCreateLabelClassMockResult = ({
+  id,
+  name,
+  color,
+}: CreateLabelClassMutationVariables): FetchResult<CreateLabelClassMutation> => ({
+  data: { createLabelClass: { id: id ?? uuid(), name, color } },
+});
+
 export const CREATE_LABEL_CLASS_DEFAULT_MOCK: ApolloMockResponse<
   CreateLabelClassMutation,
   CreateLabelClassMutationVariables
@@ -60,16 +72,7 @@ export const CREATE_LABEL_CLASS_DEFAULT_MOCK: ApolloMockResponse<
     query: CREATE_LABEL_CLASS_MUTATION,
     variables: MATCH_ANY_PARAMETERS,
   },
-  result: jest.fn((variables) => ({
-    data: {
-      createLabelClass: {
-        __typename: "LabelClass",
-        id: variables.id ?? uuid(),
-        name: variables.name,
-        color: variables.color,
-      },
-    },
-  })),
+  result: getCreateLabelClassMockResult,
 };
 
 export const GET_LABEL_CLASS_EXISTS_MOCK: ApolloMockResponse<
@@ -89,6 +92,17 @@ export const GET_LABEL_CLASS_EXISTS_MOCK: ApolloMockResponse<
   }),
 };
 
+export const getUpdateLabelClassNameMockResult =
+  (): FetchResult<UpdateLabelClassNameMutation> => ({
+    data: {
+      updateLabelClass: {
+        id: BASIC_LABEL_CLASS_DATA.id,
+        name: UPDATED_LABEL_CLASS_MOCK_NAME,
+        color: BASIC_LABEL_CLASS_DATA.color,
+      },
+    },
+  });
+
 export const UPDATE_LABEL_CLASS_NAME_MOCK: ApolloMockResponse<
   UpdateLabelClassNameMutation,
   UpdateLabelClassNameMutationVariables
@@ -100,16 +114,7 @@ export const UPDATE_LABEL_CLASS_NAME_MOCK: ApolloMockResponse<
       name: UPDATED_LABEL_CLASS_MOCK_NAME,
     },
   },
-  result: jest.fn(() => ({
-    data: {
-      updateLabelClass: {
-        __typename: "LabelClass",
-        id: BASIC_LABEL_CLASS_DATA.id,
-        name: UPDATED_LABEL_CLASS_MOCK_NAME,
-        color: BASIC_LABEL_CLASS_DATA.color,
-      },
-    },
-  })),
+  result: getUpdateLabelClassNameMockResult,
 };
 
 export const APOLLO_MOCKS: ApolloMockResponses = [

@@ -1,19 +1,37 @@
-import React from "react";
-import { DatasetClasses } from ".";
-import { DEEP_DATASET_WITH_CLASSES_DATA } from "../../utils/fixtures";
-import { storybookTitle } from "../../utils/stories";
-import { getApolloMockDecorator } from "../../utils/stories/apollo-mock-decorator";
-import { chakraDecorator } from "../../utils/stories/chakra-decorator";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { DatasetClasses as DatasetClassesComponent } from ".";
+import {
+  BASIC_DATASET_DATA,
+  BASIC_IMAGE_DATA,
+  DEEP_DATASET_WITH_CLASSES_DATA,
+  WORKSPACE_DATA,
+} from "../../utils/fixtures";
+import { createCommonDecorator, storybookTitle } from "../../utils/stories";
 import { APOLLO_MOCKS } from "./dataset-classes.fixtures";
 
 export default {
-  title: storybookTitle("Dataset classes", DatasetClasses),
-  decorators: [chakraDecorator, getApolloMockDecorator(APOLLO_MOCKS)],
-};
+  title: storybookTitle("Dataset classes", DatasetClassesComponent),
+  component: DatasetClassesComponent,
+  decorators: [
+    createCommonDecorator({
+      auth: { withWorkspaces: true },
+      apollo: { extraMocks: APOLLO_MOCKS },
+      router: {
+        query: {
+          workspaceSlug: WORKSPACE_DATA.slug,
+          datasetSlug: BASIC_DATASET_DATA.slug,
+          imageId: BASIC_IMAGE_DATA.id,
+        },
+      },
+    }),
+  ],
+} as ComponentMeta<typeof DatasetClassesComponent>;
 
-export const Default = () => (
-  <DatasetClasses
-    workspaceSlug={DEEP_DATASET_WITH_CLASSES_DATA.workspace.slug}
-    datasetSlug={DEEP_DATASET_WITH_CLASSES_DATA.slug}
-  />
-);
+const Template: ComponentStory<typeof DatasetClassesComponent> =
+  DatasetClassesComponent;
+
+export const DatasetClasses = Template.bind({});
+DatasetClasses.args = {
+  workspaceSlug: DEEP_DATASET_WITH_CLASSES_DATA.workspace.slug,
+  datasetSlug: DEEP_DATASET_WITH_CLASSES_DATA.slug,
+};

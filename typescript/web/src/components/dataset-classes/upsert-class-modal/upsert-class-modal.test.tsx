@@ -11,6 +11,14 @@ mockWorkspace({
 });
 
 import {
+  CreateLabelClassMutation,
+  CreateLabelClassMutationVariables,
+  UpdateLabelClassNameMutation,
+  UpdateLabelClassNameMutationVariables,
+} from "../../../graphql-types";
+import {
+  ApolloMockResponse,
+  ApolloMockResponses,
   renderWithTestWrapper,
   RenderWithWrapperResult,
 } from "../../../utils/tests";
@@ -19,8 +27,11 @@ import {
   DatasetClassesState,
 } from "../dataset-classes.context";
 import {
-  APOLLO_MOCKS,
   CREATE_LABEL_CLASS_DEFAULT_MOCK,
+  GET_DATASET_WITH_LABEL_CLASSES_MOCK,
+  GET_LABEL_CLASS_EXISTS_MOCK,
+  getCreateLabelClassMockResult,
+  getUpdateLabelClassNameMockResult,
   UPDATED_LABEL_CLASS_MOCK_NAME,
   UPDATE_LABEL_CLASS_NAME_MOCK,
 } from "./upsert-class-modal.fixtures";
@@ -33,6 +44,29 @@ jest.mock(
 import { UpsertClassModal } from ".";
 
 const onClose = jest.fn();
+
+const CREATE_LABEL_CLASS_MOCK_WITH_JEST: ApolloMockResponse<
+  CreateLabelClassMutation,
+  CreateLabelClassMutationVariables
+> = {
+  ...CREATE_LABEL_CLASS_DEFAULT_MOCK,
+  result: jest.fn(getCreateLabelClassMockResult),
+};
+
+const UPDATE_LABEL_CLASS_NAME_MOCK_WITH_JEST: ApolloMockResponse<
+  UpdateLabelClassNameMutation,
+  UpdateLabelClassNameMutationVariables
+> = {
+  ...UPDATE_LABEL_CLASS_NAME_MOCK,
+  result: jest.fn(getUpdateLabelClassNameMockResult),
+};
+
+const APOLLO_MOCKS: ApolloMockResponses = [
+  GET_DATASET_WITH_LABEL_CLASSES_MOCK,
+  CREATE_LABEL_CLASS_MOCK_WITH_JEST,
+  GET_LABEL_CLASS_EXISTS_MOCK,
+  UPDATE_LABEL_CLASS_NAME_MOCK_WITH_JEST,
+];
 
 type TestComponentProps = Pick<
   DatasetClassesState,
@@ -105,7 +139,7 @@ describe(UpsertClassModal, () => {
     });
     fireEvent.click(button);
     await waitFor(() => expect(onClose).toHaveBeenCalled());
-    expect(CREATE_LABEL_CLASS_DEFAULT_MOCK.result).toHaveBeenCalled();
+    expect(CREATE_LABEL_CLASS_MOCK_WITH_JEST.result).toHaveBeenCalled();
   });
 
   it("displays an error message if the label class already exists", async () => {
@@ -139,6 +173,6 @@ describe(UpsertClassModal, () => {
     userEvent.click(button);
     await act(() => apolloMockLink.waitForAllResponses());
     await waitFor(() => expect(onClose).toHaveBeenCalled());
-    expect(UPDATE_LABEL_CLASS_NAME_MOCK.result).toHaveBeenCalled();
+    expect(UPDATE_LABEL_CLASS_NAME_MOCK_WITH_JEST.result).toHaveBeenCalled();
   });
 });
