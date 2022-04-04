@@ -48,5 +48,3 @@ export const Bing = () => {
     </>
   );
 };
-
-Bing.parameters = { chromatic: { disableSnapshot: true } };

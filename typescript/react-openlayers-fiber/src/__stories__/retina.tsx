@@ -16,7 +16,3 @@ export const Retina = () => (
     </olLayerTile>
   </Map>
 );
-
-Retina.parameters = {
-  chromatic: { disableSnapshot: true },
-};

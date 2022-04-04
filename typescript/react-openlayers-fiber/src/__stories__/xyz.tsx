@@ -12,7 +12,3 @@ export const XYZ = () => {
     </Map>
   );
 };
-
-XYZ.parameters = {
-  chromatic: { disableSnapshot: true },
-};

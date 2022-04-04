@@ -32,7 +32,3 @@ export const AccessibleMap = () => {
     </div>
   );
 };
-
-AccessibleMap.parameters = {
-  chromatic: { disableSnapshot: true },
-};
