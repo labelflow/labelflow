@@ -71,6 +71,7 @@ const SearchInputValue = forwardRef<InputProps, "input">(
       <Input
         {...props}
         {...inputProps}
+        data-testid="search-input-value"
         ref={ref}
         value={value}
         onChange={useCallback(
