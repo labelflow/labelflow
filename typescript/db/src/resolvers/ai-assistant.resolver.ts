@@ -185,7 +185,7 @@ const getImageInfo = async (imageId: string): Promise<ImageInfo> => {
 
 type ParsedInferenceResult = [ParserLabel[], ParserLabelClass[]];
 
-const parseResponse = (
+const parseHuggingFaceResponse = (
   image: Pick<DbImage, "height">,
   existingLabelClasses: DbLabelClass[],
   result: HuggingFaceResponse
@@ -210,7 +210,69 @@ const parseResponse = (
   return [newLabels, newLabelClasses];
 };
 
+const runHuggingFace = async (
+  { inferenceUrl }: AiAssistant,
+  imageInfo: ImageInfo,
+  ctx: Context
+): Promise<[ParserLabel[], ParserLabelClass[]]> => {
+  const body = await getImageBody(imageInfo.id, ctx);
+  const headers = {
+    Authorization: `Bearer ${process.env.HUGGINGFACE_TOKEN}`,
+  };
+  const response = await fetch(inferenceUrl, {
+    method: "POST",
+    headers,
+    body,
+  });
+  const json = await response.json();
+  const hfLabels = getHuggingFaceResponse(json);
+  return parseHuggingFaceResponse(
+    imageInfo,
+    imageInfo.dataset.labelClasses,
+    hfLabels
+  );
+};
+
+const runIog = async (
+  { url: imageUrl, width: imageWidth, height: imageHeight }: ImageInfo,
+  {
+    id,
+    x: labelX = 0,
+    y: labelY = 0,
+    width: labelWidth = 0,
+    height: labelHeight = 0,
+    labelClassId,
+    ...label
+  }: ParserLabel,
+  { repository, req }: Context
+): Promise<ParserLabel> => {
+  const x = Math.min(imageWidth, Math.max(0, labelX ?? 0));
+  const y = Math.min(imageHeight, Math.max(0, labelY ?? 0));
+  const width = Math.min(imageWidth, Math.max(0, x + labelWidth ?? 0)) - x;
+  const height = Math.min(imageHeight, Math.max(0, y + labelHeight ?? 0)) - y;
+  const smartToolInput: Omit<RunIogInput, "imageUrl"> = {
+    id,
+    x,
+    y,
+    width,
+    height,
+    centerPoint: [x + width / 2, y + height / 2],
+  };
+  const dataUrl = await downloadUrlToDataUrl(imageUrl, repository, req);
+  const iogInput: RunIogInput = { imageUrl: dataUrl, ...smartToolInput };
+  const iogLabel = await fetchIogServer(iogInput);
+  return {
+    id,
+    ...label,
+    ...iogLabel,
+    type: LabelType.Polygon,
+    labelClassId,
+    smartToolInput,
+  };
+};
+
 const createEntities = async (
+  { id: aiAssistantId }: AiAssistant,
   {
     id: imageId,
     width: imageWidth,
@@ -254,6 +316,7 @@ const createEntities = async (
     height,
     createdAt,
     updatedAt: createdAt,
+    aiAssistantId,
   }));
   const addedLabels = await repository.label.addMany(
     { labels: labelsToAdd, imageId },
@@ -268,74 +331,6 @@ const createEntities = async (
   };
 };
 
-const runIog = async (
-  { url: imageUrl, width: imageWidth, height: imageHeight }: ImageInfo,
-  {
-    id,
-    x: labelX = 0,
-    y: labelY = 0,
-    width: labelWidth = 0,
-    height: labelHeight = 0,
-    labelClassId,
-    ...label
-  }: ParserLabel,
-  { repository, req }: Context
-): Promise<ParserLabel> => {
-  const x = Math.min(imageWidth, Math.max(0, labelX ?? 0));
-  const y = Math.min(imageHeight, Math.max(0, labelY ?? 0));
-  const width = Math.min(imageWidth, Math.max(0, x + labelWidth ?? 0)) - x;
-  const height = Math.min(imageHeight, Math.max(0, y + labelHeight ?? 0)) - y;
-  const smartToolInput: Omit<RunIogInput, "imageUrl"> = {
-    id,
-    x,
-    y,
-    width,
-    height,
-    centerPoint: [x + width / 2, y + height / 2],
-  };
-  const dataUrl = await downloadUrlToDataUrl(imageUrl, repository, req);
-  const iogInput: RunIogInput = { imageUrl: dataUrl, ...smartToolInput };
-  const iogLabel = await fetchIogServer(iogInput);
-  return {
-    id,
-    ...label,
-    ...iogLabel,
-    type: LabelType.Polygon,
-    labelClassId,
-    smartToolInput,
-  };
-};
-
-const runInference = async (
-  { inferenceUrl, labelType }: AiAssistant,
-  imageId: string,
-  useAutoPolygon: boolean,
-  ctx: Context
-): Promise<RunAiAssistantOutput> => {
-  const body = await getImageBody(imageId, ctx);
-  const headers = {
-    Authorization: `Bearer ${process.env.HUGGINGFACE_TOKEN}`,
-  };
-  const response = await fetch(inferenceUrl, {
-    method: "POST",
-    headers,
-    body,
-  });
-  const json = await response.json();
-  const hfLabels = getHuggingFaceResponse(json);
-  const imageInfo = await getImageInfo(imageId);
-  const [labels, labelClasses] = parseResponse(
-    imageInfo,
-    imageInfo.dataset.labelClasses,
-    hfLabels
-  );
-  const iogLabels =
-    labelType === LabelType.Box && useAutoPolygon
-      ? await Promise.all(labels.map((label) => runIog(imageInfo, label, ctx)))
-      : labels;
-  return await createEntities(imageInfo, [iogLabels, labelClasses], ctx);
-};
-
 const runAiAssistant = async (
   _: any,
   {
@@ -343,8 +338,23 @@ const runAiAssistant = async (
   }: MutationRunAiAssistantArgs,
   ctx: Context
 ): Promise<RunAiAssistantOutput> => {
-  const assistant = getAiAssistant(aiAssistantId);
-  return await runInference(assistant, imageId, useAutoPolygon ?? false, ctx);
+  const aiAssistant = getAiAssistant(aiAssistantId);
+  const imageInfo = await getImageInfo(imageId);
+  const [labels, labelClasses] = await runHuggingFace(
+    aiAssistant,
+    imageInfo,
+    ctx
+  );
+  const iogLabels =
+    aiAssistant.labelType === LabelType.Box && useAutoPolygon
+      ? await Promise.all(labels.map((label) => runIog(imageInfo, label, ctx)))
+      : labels;
+  return await createEntities(
+    aiAssistant,
+    imageInfo,
+    [iogLabels, labelClasses],
+    ctx
+  );
 };
 
 export default { Mutation: { runAiAssistant } };
