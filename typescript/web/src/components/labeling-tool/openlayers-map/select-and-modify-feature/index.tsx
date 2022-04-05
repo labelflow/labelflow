@@ -47,7 +47,7 @@ const GET_LABEL_QUERY = gql`
 
 export const interactionEnd = async (
   e: TranslateEvent | ModifyEvent | ResizeAndTranslateEvent | null,
-  perform: (effect: Effect<any>) => Promise<void>,
+  perform: (effect: Effect<any>) => Promise<string>,
   client: ApolloClient<Object>,
   imageId: string,
   toast: (options: UseToastOptions) => void

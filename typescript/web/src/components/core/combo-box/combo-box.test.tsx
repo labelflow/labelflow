@@ -1,100 +1,78 @@
-import { Flex, HStack, Text } from "@chakra-ui/react";
 import { fireEvent } from "@storybook/testing-library";
-import { render, waitFor } from "@testing-library/react";
+import { render, RenderResult, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ComboBox } from "./combo-box";
+import { TestItem, TestListItem, TEST_ITEMS } from "./combo-box.fixtures";
 
-type ITEM = {
-  id: string;
-  name: string;
-};
-
-const ITEMS: ITEM[] = [
-  {
-    id: "1",
-    name: "Test item 1",
-  },
-  {
-    id: "2",
-    name: "Test item 2",
-  },
-];
-
-const ComboBoxItem = ({ name }: { name: string }) => (
-  <HStack>
-    <Text>{name}</Text>
-  </HStack>
-);
-
-const ComboBoxListItem = (item: ITEM) => {
-  const { name, id } = item;
-  return (
-    <Flex direction="column" data-testid={`ai-assistant-item-${id}`}>
-      <ComboBoxItem name={name} />
-    </Flex>
-  );
-};
-
-const combo = () => (
+const TestComponent = () => (
   <ComboBox
-    items={ITEMS}
-    compareProp="name"
-    item={ComboBoxItem}
-    listItem={ComboBoxListItem}
+    items={TEST_ITEMS}
+    compareProp="label"
+    item={TestItem}
+    listItem={TestListItem}
     data-testid="combobox-trigger"
   />
 );
 
-describe("ComboBox", () => {
+const [{ label: TEST_ITEM_1_LABEL }, { label: TEST_ITEM_2_LABEL }] = TEST_ITEMS;
+
+type RenderTestResult = RenderResult & {
+  search: (text: string) => void;
+  toggleOpen: () => void;
+  trigger: HTMLElement;
+};
+
+const renderTest = (): RenderTestResult => {
+  const result = render(<TestComponent />);
+  const { getByTestId } = result;
+  const trigger = getByTestId("combobox-trigger");
+  const toggleOpen = () => fireEvent.click(trigger);
+  const search = (text: string) => {
+    const input = getByTestId("search-input-value");
+    userEvent.type(input, text);
+  };
+  return { ...result, trigger, toggleOpen, search };
+};
+
+describe(ComboBox, () => {
   it("does not show elements if the combo box is closed", () => {
-    const { getByText } = render(combo());
-    expect(getByText(/test item 1/i)).toBeInTheDocument();
-    expect(getByText(/test item 2/i)).toBeInTheDocument();
-    expect(getByText(/test item 1/i)).not.toBeVisible();
-    expect(getByText(/test item 2/i)).not.toBeVisible();
+    const { getByText } = renderTest();
+    expect(getByText(TEST_ITEM_1_LABEL)).toBeInTheDocument();
+    expect(getByText(TEST_ITEM_2_LABEL)).toBeInTheDocument();
+    expect(getByText(TEST_ITEM_1_LABEL)).not.toBeVisible();
+    expect(getByText(TEST_ITEM_2_LABEL)).not.toBeVisible();
   });
 
   it("displays the popover when hovered", async () => {
-    const { queryByText, getByTestId } = render(combo());
+    const { queryByText, trigger } = renderTest();
     expect(queryByText(/click to select a value/i)).not.toBeInTheDocument();
-    const trigger = getByTestId("combobox-trigger");
     fireEvent.mouseOver(trigger);
-    await waitFor(
-      () => expect(queryByText(/click to select a value/i)).toBeInTheDocument(),
-      {
-        timeout: 1000,
-      }
+    await waitFor(() =>
+      expect(queryByText(/click to select a value/i)).toBeInTheDocument()
     );
   });
 
   it("opens the combo box when clicked on", async () => {
-    const { getByText, getByTestId } = render(combo());
-    expect(getByText(/test item 1/i)).toBeInTheDocument();
-    expect(getByText(/test item 1/i)).not.toBeVisible();
-    const trigger = getByTestId("combobox-trigger");
-    fireEvent.click(trigger);
-    await waitFor(() => expect(getByText(/test item 1/i)).toBeVisible(), {
-      timeout: 1000,
-    });
+    const { getByText, toggleOpen } = renderTest();
+    expect(getByText(TEST_ITEM_1_LABEL)).toBeInTheDocument();
+    expect(getByText(TEST_ITEM_1_LABEL)).not.toBeVisible();
+    toggleOpen();
+    await waitFor(() => expect(getByText(TEST_ITEM_1_LABEL)).toBeVisible());
   });
 
   it("filters items when input is typed in", async () => {
-    const { queryByText, getByTestId } = render(combo());
-    const trigger = getByTestId("combobox-trigger");
-    fireEvent.click(trigger);
-    expect(queryByText(/test item 2/i)).toBeInTheDocument();
-    const input = getByTestId("search-input-value");
-    userEvent.type(input, "1");
-    expect(queryByText(/test item 2/i)).not.toBeInTheDocument();
+    const { queryByText, toggleOpen, search } = renderTest();
+    toggleOpen();
+    expect(queryByText(TEST_ITEM_2_LABEL)).toBeInTheDocument();
+    search("1");
+    expect(queryByText(TEST_ITEM_2_LABEL)).not.toBeInTheDocument();
   });
 
   it("clears input when closed", async () => {
-    const { queryByText, getByTestId } = render(combo());
-    const trigger = getByTestId("combobox-trigger");
-    fireEvent.click(trigger);
-    const input = getByTestId("search-input-value");
-    userEvent.type(input, "abcdefg");
-    fireEvent.click(trigger);
+    const { queryByText, toggleOpen, search } = renderTest();
+    toggleOpen();
+    search("abcdefg");
+    toggleOpen();
     expect(queryByText(/abcdefg/i)).not.toBeInTheDocument();
   });
 });

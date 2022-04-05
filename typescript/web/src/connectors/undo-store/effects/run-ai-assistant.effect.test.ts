@@ -55,21 +55,24 @@ const APOLLO_MOCKS: ApolloMockResponses = [
 ];
 
 describe("RunAiAssistantEffect", () => {
+  let effectId!: string;
+
   beforeAll(async () => {
+    jest.clearAllMocks();
     const { client } = getApolloMockClient(APOLLO_MOCKS);
-    await perform(
-      createRunAiAssistantEffect(
-        {
-          aiAssistantId: DETR_COCO_AI_ASSISTANT.id,
-          imageId: "",
-        },
-        { client, setSelectedLabelId: () => "" }
-      )
+    const effect = createRunAiAssistantEffect(
+      {
+        aiAssistantId: DETR_COCO_AI_ASSISTANT.id,
+        imageId: "b3ca1416-b85d-4b5d-98c6-892f1a2b26da",
+      },
+      { client, setSelectedLabelId: jest.fn() }
     );
+    effectId = await perform(effect);
   });
 
   it("creates the run ai assistant effect", async () => {
-    expect(useUndoStore.getState().pastEffects).toHaveLength(1);
+    const { pastEffects } = useUndoStore.getState();
+    expect(pastEffects).toHaveLength(1);
   });
 
   it("performs the undo run ai assistant effect", async () => {
@@ -77,13 +80,19 @@ describe("RunAiAssistantEffect", () => {
     await waitFor(() =>
       expect(DELETE_MANY_LABEL_CLASSES_ACTION_MOCK.result).toHaveBeenCalled()
     );
-    expect(useUndoStore.getState().pastEffects).toHaveLength(0);
-    expect(useUndoStore.getState().futureEffects).toHaveLength(1);
+    const { pastEffects, futureEffects } = useUndoStore.getState();
+    expect(pastEffects).toHaveLength(0);
+    expect(futureEffects).toHaveLength(1);
+    const [actualEffect] = futureEffects;
+    expect(actualEffect.id).toBe(effectId);
   });
 
   it("performs the redo run ai assistant effect", async () => {
     await useUndoStore.getState().redo();
-    expect(useUndoStore.getState().pastEffects).toHaveLength(1);
-    expect(useUndoStore.getState().futureEffects).toHaveLength(0);
+    const { pastEffects, futureEffects } = useUndoStore.getState();
+    expect(pastEffects).toHaveLength(1);
+    expect(futureEffects).toHaveLength(0);
+    const [actualEffect] = pastEffects;
+    expect(actualEffect.id).toBe(effectId);
   });
 });

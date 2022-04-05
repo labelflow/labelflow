@@ -98,9 +98,11 @@ const tryRunningAiAssistant = async (
   }
 };
 
-type DeleteManyLabelsOptions = {
+export type SetSelectedLabelIdFn = (labelId: string | null) => void;
+
+export type DeleteManyLabelsOptions = {
   client: ApolloClient<object>;
-  setSelectedLabelId: (labelId: string | null) => void;
+  setSelectedLabelId: SetSelectedLabelIdFn;
 };
 
 const deleteManyLabels = async (
