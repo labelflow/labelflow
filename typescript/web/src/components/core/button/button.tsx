@@ -6,6 +6,7 @@ import {
   PropsOf,
 } from "@chakra-ui/react";
 import { isNilOrEmpty } from "@labelflow/utils";
+import { isNil } from "lodash/fp";
 import NextLink from "next/link";
 import { OptionalParent } from "../../../utils";
 import { AppIcon, Icon, IconProps } from "../icons";
@@ -24,7 +25,7 @@ const getButtonIconProps = <TKey extends "leftIcon" | "rightIcon">(
   propKey: TKey,
   icon: AppIcon | IconProps | undefined
 ): LinkButtonProps[TKey] => {
-  if (isNilOrEmpty(icon)) return undefined;
+  if (isNil(icon)) return undefined;
   const iconProps = typeof icon === "string" ? { name: icon } : icon;
   return { [propKey]: <Icon {...iconProps} /> };
 };
@@ -46,14 +47,14 @@ type LinkButtonProps = Omit<ButtonProps, "tooltip">;
 const LinkButton = forwardRef<LinkButtonProps, "button">(
   (props: LinkButtonProps, ref) => {
     const { href } = props;
-    const buttonProps = getButtonProps(props);
+    const hasHref = !isNilOrEmpty(href);
     return (
       <OptionalParent
-        enabled={!isNilOrEmpty(href)}
+        enabled={hasHref}
         parent={NextLink}
-        parentProps={{ href, passHref: true }}
+        parentProps={{ href, passHref: hasHref ? true : undefined }}
       >
-        <ChakraButton ref={ref} {...buttonProps} />
+        <ChakraButton ref={ref} {...getButtonProps(props)} />
       </OptionalParent>
     );
   }

@@ -4,7 +4,7 @@ import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 import { Button } from "./button";
 
 export default {
-  title: storybookTitle("Core", Button),
+  title: storybookTitle("Core", "Button"),
   component: Button,
   decorators: [chakraDecorator],
 } as ComponentMeta<typeof Button>;

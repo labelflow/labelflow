@@ -1,3 +1,4 @@
+import { FetchResult } from "@apollo/client";
 import { pick } from "lodash/fp";
 import React from "react";
 import {
@@ -64,6 +65,11 @@ export const GET_LABEL_CLASS_BY_ID_MOCK: ApolloMockResponse<
   },
 };
 
+export const getDeleteLabelClassMockResult =
+  (): FetchResult<DeleteLabelClassMutation> => ({
+    data: { deleteLabelClass: { id: BASIC_LABEL_CLASS_DATA.id } },
+  });
+
 export const DELETE_LABEL_CLASS_SIMPLE_MOCK: ApolloMockResponse<
   DeleteLabelClassMutation,
   DeleteLabelClassMutationVariables
@@ -72,16 +78,7 @@ export const DELETE_LABEL_CLASS_SIMPLE_MOCK: ApolloMockResponse<
     query: DELETE_LABEL_CLASS_MUTATION,
     variables: { id: BASIC_LABEL_CLASS_DATA.id },
   },
-  result: jest.fn(() => {
-    return {
-      data: {
-        deleteLabelClass: {
-          __typename: "LabelClass",
-          id: BASIC_LABEL_CLASS_DATA.id,
-        },
-      },
-    };
-  }),
+  result: getDeleteLabelClassMockResult,
 };
 
 export const APOLLO_MOCKS: ApolloMockResponses = [

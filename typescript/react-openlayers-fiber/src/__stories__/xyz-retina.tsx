@@ -27,5 +27,3 @@ export const XYZRetina = () => {
     </Map>
   );
 };
-
-XYZRetina.parameters = { chromatic: { disableSnapshot: true } };

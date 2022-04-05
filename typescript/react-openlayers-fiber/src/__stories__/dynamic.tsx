@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Fill, Stroke } from "ol/style";
+import { Fill, RegularShape, Stroke, Style } from "ol/style";
 
 import { Map } from "../map";
 import { useInterval } from "./hooks";
@@ -7,7 +7,17 @@ import { useInterval } from "./hooks";
 const stroke = new Stroke({ color: "black", width: 2 });
 const fill = new Fill({ color: "red" });
 
-export const DynamicStyle = () => {
+const pointStyle = new Style({
+  image: new RegularShape({
+    fill,
+    stroke,
+    points: 4,
+    radius: 10,
+    angle: Math.PI / 4,
+  }),
+});
+
+export const Dynamic = () => {
   const [location, setLocation] = useState<[number, number]>([0, 6000000]);
 
   useInterval(() => {
@@ -22,29 +32,11 @@ export const DynamicStyle = () => {
       </olLayerTile>
       <olLayerVector>
         <olSourceVector>
-          <olFeature>
-            <olStyleStyle attach="style">
-              <olStyleRegularShape
-                attach="image"
-                args={{
-                  fill,
-                  stroke,
-                  radius: Math.random() * 20,
-                  points: 4,
-                  angle: Math.PI / 4,
-                }}
-              />
-            </olStyleStyle>
+          <olFeature style={pointStyle}>
             <olGeomPoint coordinates={location} />
           </olFeature>
         </olSourceVector>
       </olLayerVector>
     </Map>
   );
-};
-
-DynamicStyle.parameters = {
-  // disables Chromatic's snapshotting on a story level
-  // See https://www.chromatic.com/docs/ignoring-elements
-  chromatic: { disableSnapshot: true },
 };

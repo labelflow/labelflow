@@ -1,3 +1,4 @@
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 import React from "react";
 import {
   chakraDecorator,
@@ -5,19 +6,24 @@ import {
   modalDecorator,
   storybookTitle,
 } from "../../utils/stories";
-import { DeleteLabelClassModal } from "./delete-label-class-modal";
+import { DeleteLabelClassModal as DeleteLabelClassModalComponent } from "./delete-label-class-modal";
 import {
   APOLLO_MOCKS,
   TestComponent,
 } from "./delete-label-class-modal.fixtures";
 
 export default {
-  title: storybookTitle("Dataset classes", DeleteLabelClassModal),
+  title: storybookTitle("Dataset classes", DeleteLabelClassModalComponent),
+  component: DeleteLabelClassModalComponent,
   decorators: [
     chakraDecorator,
     modalDecorator,
     getApolloMockDecorator(APOLLO_MOCKS),
   ],
-};
+} as ComponentMeta<typeof DeleteLabelClassModalComponent>;
 
-export const Default = () => <TestComponent />;
+const Template: ComponentStory<typeof TestComponent> = (args) => (
+  <TestComponent {...args} />
+);
+
+export const DeleteLabelClassModal = Template.bind({});

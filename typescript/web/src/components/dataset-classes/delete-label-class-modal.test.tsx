@@ -1,13 +1,28 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { WildcardMockLink } from "wildcard-mock-link";
 import { BASIC_LABEL_CLASS_DATA } from "../../utils/fixtures";
-import { getApolloMockLink, getApolloMockWrapper } from "../../utils/tests";
+import {
+  ApolloMockResponses,
+  getApolloMockLink,
+  getApolloMockWrapper,
+} from "../../utils/tests";
 import { DeleteLabelClassModal } from "./delete-label-class-modal";
 import {
-  APOLLO_MOCKS,
   DELETE_LABEL_CLASS_SIMPLE_MOCK,
+  GET_LABEL_CLASS_BY_ID_MOCK,
+  getDeleteLabelClassMockResult,
   TestComponent,
 } from "./delete-label-class-modal.fixtures";
+
+const DELETE_LABEL_CLASS_MOCK_WITH_JEST = {
+  ...DELETE_LABEL_CLASS_SIMPLE_MOCK,
+  result: jest.fn(getDeleteLabelClassMockResult),
+};
+
+export const APOLLO_MOCKS: ApolloMockResponses = [
+  GET_LABEL_CLASS_BY_ID_MOCK,
+  DELETE_LABEL_CLASS_MOCK_WITH_JEST,
+];
 
 const setDeleteClassId = jest.fn();
 
@@ -38,7 +53,7 @@ describe(DeleteLabelClassModal, () => {
     fireEvent.click(confirmButton);
     await act(() => mockLink.waitForAllResponses());
     expect(setDeleteClassId).toHaveBeenCalledWith(undefined);
-    expect(DELETE_LABEL_CLASS_SIMPLE_MOCK.result).toHaveBeenCalled();
+    expect(DELETE_LABEL_CLASS_MOCK_WITH_JEST.result).toHaveBeenCalled();
   });
 
   it("does not delete a class when cancel is clicked", async () => {
@@ -48,6 +63,6 @@ describe(DeleteLabelClassModal, () => {
     fireEvent.click(cancelButton);
     await act(() => mockLink.waitForAllResponses());
     expect(setDeleteClassId).toHaveBeenCalledWith(undefined);
-    expect(DELETE_LABEL_CLASS_SIMPLE_MOCK.result).not.toHaveBeenCalled();
+    expect(DELETE_LABEL_CLASS_MOCK_WITH_JEST.result).not.toHaveBeenCalled();
   });
 });
