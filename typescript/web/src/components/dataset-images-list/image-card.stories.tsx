@@ -1,9 +1,11 @@
+import { Box } from "@chakra-ui/react";
 import { sleep } from "@labelflow/utils";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { userEvent, within } from "@storybook/testing-library";
 import { BASIC_DATASET_DATA } from "../../utils/fixtures";
 import { chakraDecorator, storybookTitle } from "../../utils/stories";
 import { ImageCard, ImageCardProps } from "./image-card";
+import { MIN_IMAGE_CARD_WIDTH } from "./image-grid";
 
 const [TEST_IMAGE] = BASIC_DATASET_DATA.images;
 
@@ -14,7 +16,9 @@ export default {
 } as ComponentMeta<typeof ImageCard>;
 
 const Template: ComponentStory<typeof ImageCard> = (args: ImageCardProps) => (
-  <ImageCard {...args} />
+  <Box maxW={MIN_IMAGE_CARD_WIDTH}>
+    <ImageCard {...args} />
+  </Box>
 );
 
 const THUMBNAIL_URL = "https://bit.ly/2Z4KKcF";

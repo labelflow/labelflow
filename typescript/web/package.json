@@ -110,7 +110,7 @@
   },
   "devDependencies": {
     "@labelflow/dev-utils": "workspace:typescript/dev-utils",
-    "@storybook/expect": "27.5.2-0",
+    "@storybook/jest": "0.0.9",
     "@storybook/react": "6.4.19",
     "@storybook/testing-library": "0.0.9",
     "@svgr/webpack": "6.2.1",

@@ -101,7 +101,7 @@ class MyDocument extends Document {
           <style>
             {/* https://github.com/vercel/next.js/issues/4834 */}
             {`
-            #__next { flex-grow: 1; display: flex; flex-direction: column; }
+            #__next { flex-grow: 1; display: flex; flex-direction: column; min-height: 0; }
           `}
           </style>
         </Head>
@@ -111,6 +111,7 @@ class MyDocument extends Document {
             display: "flex",
             flexDirection: "column",
             minHeight: "100vh",
+            maxHeight: "100vh",
           }}
         >
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />

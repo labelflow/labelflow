@@ -7,6 +7,7 @@ export type LayoutProps = {
   topBarRightContent?: ReactNode;
   children: ReactNode;
   tabBar?: ReactNode;
+  fullHeight?: boolean;
 };
 
 export const Layout = ({
@@ -14,19 +15,19 @@ export const Layout = ({
   breadcrumbs,
   topBarRightContent,
   tabBar,
-}: LayoutProps) => {
-  return (
-    <Flex grow={1} direction="column">
-      <TopBar breadcrumbs={breadcrumbs} rightContent={topBarRightContent} />
-      {tabBar}
-      <Flex
-        grow={1}
-        direction="column"
-        as="main"
-        bg={useColorModeValue("gray.100", "gray.900")}
-      >
-        {children}
-      </Flex>
+  fullHeight,
+}: LayoutProps) => (
+  <Flex grow={1} direction="column" minH="0">
+    <TopBar breadcrumbs={breadcrumbs} rightContent={topBarRightContent} />
+    {tabBar}
+    <Flex
+      grow={1}
+      direction="column"
+      as="main"
+      bg={useColorModeValue("gray.100", "gray.900")}
+      minHeight={fullHeight ? "0" : undefined}
+    >
+      {children}
     </Flex>
-  );
-};
+  </Flex>
+);

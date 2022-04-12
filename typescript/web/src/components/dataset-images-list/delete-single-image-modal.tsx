@@ -30,7 +30,7 @@ export const DeleteSingleImageModal = ({
     GET_IMAGE_BY_ID_QUERY,
     {
       variables: { id: singleToDelete ?? "" },
-      skip: !isOpen || isEmpty(singleToDelete),
+      skip: !isOpen || isEmpty(singleToDelete) || deletingSingle,
     }
   );
   const handleDeleteButtonClick = async () => {

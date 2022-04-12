@@ -11,3 +11,4 @@ export * from "./spinner";
 export * from "./text-link";
 export * from "./tooltip";
 export * from "./toggle-button-group";
+export * from "./virtual-grid";

@@ -1,16 +1,20 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import {
   chakraDecorator,
-  modalDecorator,
+  CYPRESS_SCREEN_WIDTH,
+  fixedScreenDecorator,
   storybookTitle,
 } from "../../../utils/stories";
 import { DeleteModal as DeleteModalComponent } from "./delete-modal";
 
-export default {
+const meta: ComponentMeta<typeof DeleteModalComponent> = {
   title: storybookTitle("Core", DeleteModalComponent),
   component: DeleteModalComponent,
-  decorators: [chakraDecorator, modalDecorator],
-} as ComponentMeta<typeof DeleteModalComponent>;
+  decorators: [chakraDecorator, fixedScreenDecorator],
+  parameters: { chromatic: { viewports: [CYPRESS_SCREEN_WIDTH] } },
+};
+
+export default meta;
 
 const Template: ComponentStory<typeof DeleteModalComponent> = (args) => (
   <DeleteModalComponent {...args} />

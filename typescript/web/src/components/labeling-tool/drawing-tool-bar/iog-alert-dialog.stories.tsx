@@ -3,7 +3,8 @@ import { Story } from "@storybook/react";
 import React, { useState } from "react";
 import {
   chakraDecorator,
-  modalDecorator,
+  CYPRESS_SCREEN_WIDTH,
+  fixedScreenDecorator,
   queryParamsDecorator,
   storybookTitle,
 } from "../../../utils/stories";
@@ -16,6 +17,7 @@ export default {
     IogAlertDialogComponent
   ),
   component: IogAlertDialogComponent,
+  decorators: [chakraDecorator, queryParamsDecorator, fixedScreenDecorator],
   parameters: {
     nextRouter: {
       path: "/images/[id]",
@@ -24,8 +26,8 @@ export default {
         id: "mock-image-id",
       },
     },
+    chromatic: { viewports: [CYPRESS_SCREEN_WIDTH] },
   },
-  decorators: [chakraDecorator, modalDecorator, queryParamsDecorator],
 };
 
 export const IogAlertDialog: Story = () => {
