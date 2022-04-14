@@ -16,7 +16,7 @@ import {
 import { Effect } from "../create-undo-store";
 import { deleteManyLabelsMutationUpdate } from "./cache-updates/delete-label-mutation-update";
 
-const RUN_AI_ASSISTANT_MUTATION = gql`
+export const RUN_AI_ASSISTANT_MUTATION = gql`
   mutation RunAiAssistantMutation(
     $aiAssistantId: ID!
     $imageId: ID!
@@ -41,7 +41,7 @@ const RUN_AI_ASSISTANT_MUTATION = gql`
   }
 `;
 
-const DELETE_MANY_LABELS_BY_ID_MUTATION = gql`
+export const DELETE_MANY_LABELS_BY_ID_MUTATION = gql`
   mutation DeleteManyLabelsByIdMutation($id: [ID!]!) {
     deleteManyLabels(where: { id: { in: $id } }) {
       id
@@ -98,9 +98,11 @@ const tryRunningAiAssistant = async (
   }
 };
 
-type DeleteManyLabelsOptions = {
+export type SetSelectedLabelIdFn = (labelId: string | null) => void;
+
+export type DeleteManyLabelsOptions = {
   client: ApolloClient<object>;
-  setSelectedLabelId: (labelId: string | null) => void;
+  setSelectedLabelId: SetSelectedLabelIdFn;
 };
 
 const deleteManyLabels = async (
