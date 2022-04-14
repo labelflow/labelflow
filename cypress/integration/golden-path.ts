@@ -22,7 +22,7 @@ describe("Golden path (online)", () => {
     cy.wait(420);
     cy.contains("cypress dataset").click();
 
-    cy.contains("You don't have any images.").should("be.visible");
+    cy.contains("You don't have any images").should("be.visible");
 
     cy.wait(420);
     cy.get("header").within(() => {

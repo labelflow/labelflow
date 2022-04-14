@@ -1,13 +1,15 @@
 import { Story } from "@storybook/react";
 import React from "react";
-import { ToggleButtonGroup } from ".";
+import { ToggleButtonGroup as ToggleButtonGroupComponent } from ".";
 import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 import { TestComponent } from "./toggle-button-group.fixtures";
 
 export default {
-  title: storybookTitle("Core", "Pagination", ToggleButtonGroup),
-  component: ToggleButtonGroup,
+  title: storybookTitle("Core", ToggleButtonGroupComponent),
+  component: ToggleButtonGroupComponent,
   decorators: [chakraDecorator],
 };
 
-export const Default: Story = () => <TestComponent defaultValue="optionA" />;
+export const ToggleButtonGroup: Story = () => (
+  <TestComponent defaultValue="optionA" />
+);

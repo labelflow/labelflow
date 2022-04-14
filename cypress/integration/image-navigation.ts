@@ -15,7 +15,7 @@ describe("Image Navigation (online)", () => {
     cy.visit(
       `/${WORKSPACE_SLUG}/datasets/${DATASET_SLUG}/images?modal-welcome=closed`
     );
-    cy.contains("You don't have any images.").should("be.visible");
+    cy.contains("You don't have any images").should("be.visible");
     cy.wait(420);
     cy.get("header").within(() => {
       cy.contains("Add images").click();

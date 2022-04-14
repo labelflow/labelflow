@@ -2,7 +2,8 @@ import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { BASIC_DATASET_DATA } from "../../utils/fixtures";
 import {
   createCommonDecorator,
-  modalDecorator,
+  CYPRESS_SCREEN_WIDTH,
+  fixedScreenDecorator,
   storybookTitle,
 } from "../../utils/stories";
 import { DeleteManyImagesModal } from "./delete-many-images-modal";
@@ -22,8 +23,9 @@ export default {
       },
       apollo: { extraMocks: APOLLO_MOCKS },
     }),
-    modalDecorator,
+    fixedScreenDecorator,
   ],
+  parameters: { chromatic: { viewports: [CYPRESS_SCREEN_WIDTH] } },
 } as ComponentMeta<typeof DeleteManyImagesModal>;
 
 export const SingleSelected: ComponentStory<typeof DeleteManyImagesModal> = (

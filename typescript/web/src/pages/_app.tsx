@@ -20,6 +20,7 @@ import { MockableLocationProvider } from "../utils/mockable-location";
 
 interface InitialProps {
   cookie: string;
+  fullHeight?: boolean;
 }
 
 /**

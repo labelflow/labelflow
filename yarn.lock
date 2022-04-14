@@ -8239,7 +8239,7 @@ __metadata:
     "@sentry/nextjs": 6.18.0
     "@sentry/tracing": 6.18.0
     "@sentry/utils": 6.18.0
-    "@storybook/expect": 27.5.2-0
+    "@storybook/jest": 0.0.9
     "@storybook/react": 6.4.19
     "@storybook/testing-library": 0.0.9
     "@stripe/react-stripe-js": 1.6.0
@@ -10552,7 +10552,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/expect@npm:27.5.2-0, @storybook/expect@npm:storybook-jest":
+"@storybook/expect@npm:storybook-jest":
   version: 27.5.2-0
   resolution: "@storybook/expect@npm:27.5.2-0"
   dependencies:
@@ -25832,7 +25832,6 @@ fsevents@^1.2.7:
     "@storybook/client-api": 6.4.19
     "@storybook/components": 6.4.19
     "@storybook/core-events": 6.4.19
-    "@storybook/expect": 27.5.2-0
     "@storybook/jest": 0.0.9
     "@storybook/manager-webpack5": 6.4.19
     "@storybook/react": 6.4.19
