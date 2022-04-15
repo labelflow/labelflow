@@ -12,7 +12,7 @@ type StoredState<Payload extends any = any> = {
 type UndoStoreState = {
   pastEffects: StoredState[];
   futureEffects: StoredState[];
-  perform: (effect: Effect) => Promise<void>;
+  perform: (effect: Effect) => Promise<string>;
   undo: () => Promise<void>;
   redo: () => Promise<void>;
   clear: () => void;
@@ -57,6 +57,7 @@ export const createUndoStore = () => {
 
           throw error;
         }
+        return effectId;
       },
 
       undo: async () => {

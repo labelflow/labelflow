@@ -2,14 +2,14 @@ import {
   Box,
   Button,
   Center,
+  Flex,
   Heading,
   HStack,
-  SimpleGrid,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
-import React, { useCallback, useMemo } from "react";
+import React from "react";
 import { IconType } from "react-icons";
 import {
   BiCheckbox,
@@ -17,13 +17,12 @@ import {
   BiCheckboxSquare,
 } from "react-icons/bi";
 import { HiOutlineTrash } from "react-icons/hi";
-import { PaginatedImagesQuery_images } from "../../graphql-types";
-import { PaginationFooter, PaginationProvider, LayoutSpinner } from "../core";
+import { LayoutSpinner, PaginationProvider, PaginationToolbar } from "../core";
 import { EmptyStateNoImages } from "../empty-state";
 import { ImportButton } from "../import-button";
 import { DeleteManyImagesModal } from "./delete-many-images-modal";
 import { DeleteSingleImageModal } from "./delete-single-image-modal";
-import { ImageCard } from "./image-card";
+import { ImageGrid } from "./image-grid";
 import {
   ImagesListProps,
   ImagesListProvider,
@@ -95,7 +94,7 @@ const Toolbar = () => (
     bg={useColorModeValue("white", "gray.800")}
     borderTop="1px"
     borderColor={useColorModeValue("gray.100", "gray.700")}
-    boxShadow="sm"
+    boxShadow="md"
   >
     <SelectAllButton />
     <DeleteSelectedButton />
@@ -113,79 +112,15 @@ const NoImages = () => (
         textAlign="center"
       >
         <EmptyStateNoImages w="full" />
-        <Heading as="h2">You don&apos;t have any images.</Heading>
+        <Heading as="h2">You don&apos;t have any images</Heading>
         <Text mt="4" fontSize="lg">
-          Fortunately, it’s very easy to add some.
+          Fortunately, it&apos;s very easy to add some!
         </Text>
         <ImportImagesButton />
       </Box>
     </Box>
   </Center>
 );
-
-const useUpsertSelectedItem = (id: string): ((value: boolean) => void) => {
-  const { selected, setSelected } = useImagesList();
-  return useCallback(
-    (value: boolean) =>
-      setSelected(
-        value
-          ? [...selected, id]
-          : selected.filter((selectedId) => selectedId !== id)
-      ),
-    [id, selected, setSelected]
-  );
-};
-
-const useSelectedItem = (id: string): [boolean, (value: boolean) => void] => {
-  const { selected } = useImagesList();
-  const itemSelected = useMemo(() => selected.includes(id), [selected, id]);
-  const upsertSelectedItem = useUpsertSelectedItem(id);
-  const handleChangeSelected = useCallback(
-    (value: boolean) => {
-      if (itemSelected === value) return;
-      upsertSelectedItem(value);
-    },
-    [itemSelected, upsertSelectedItem]
-  );
-  return [itemSelected, handleChangeSelected];
-};
-
-const ImageItem = ({
-  id,
-  name,
-  thumbnail500Url,
-}: PaginatedImagesQuery_images) => {
-  const { workspaceSlug, datasetSlug, setSingleToDelete } = useImagesList();
-  const [itemSelected, onChangeSelected] = useSelectedItem(id);
-  return (
-    <ImageCard
-      key={id}
-      id={id}
-      name={name}
-      thumbnail={thumbnail500Url}
-      href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
-      onDelete={setSingleToDelete}
-      selected={itemSelected}
-      onChangeSelected={onChangeSelected}
-    />
-  );
-};
-
-const ImageGrid = () => {
-  const { images } = useImagesList();
-  return (
-    <SimpleGrid
-      minChildWidth="312px"
-      spacing={{ base: "2", md: "8" }}
-      padding={{ base: "2", md: "8" }}
-      paddingBottom={{ base: "24", md: "16" }}
-    >
-      {images?.map(({ id, ...image }) => (
-        <ImageItem key={id} id={id} {...image} />
-      ))}
-    </SimpleGrid>
-  );
-};
 
 const DeleteModals = () => {
   const {
@@ -208,10 +143,32 @@ const DeleteModals = () => {
   );
 };
 
-const Gallery = () => (
-  <>
+const Footer = () => {
+  const { selected } = useImagesList();
+  const leftLabel = isEmpty(selected) ? "" : `${selected.length} selected`;
+  // Chakra UI shadow md but reversed
+  const shadow = [
+    "0 -4px 6px -1px rgba(0, 0, 0, 0.1)",
+    "0 -2px 4px -1px rgba(0, 0, 0, 0.06)",
+  ].join(",");
+  return (
+    <Box boxShadow={shadow}>
+      <PaginationToolbar leftLabel={leftLabel} />
+    </Box>
+  );
+};
+
+const GalleryBody = () => (
+  <Flex grow={1} direction="column" minH="0">
     <Toolbar />
     <ImageGrid />
+    <Footer />
+  </Flex>
+);
+
+const Gallery = () => (
+  <>
+    <GalleryBody />
     <DeleteModals />
   </>
 );
@@ -226,12 +183,6 @@ const Body = () => {
   return <>{loading ? <LayoutSpinner /> : <Content />}</>;
 };
 
-const Footer = () => {
-  const { selected } = useImagesList();
-  const leftLabel = isEmpty(selected) ? "" : `${selected.length} selected`;
-  return <PaginationFooter leftLabel={leftLabel} />;
-};
-
 export const ImagesList = (props: ImagesListProps) => {
   const { imagesTotalCount } = props;
   return (
@@ -241,7 +192,6 @@ export const ImagesList = (props: ImagesListProps) => {
     >
       <ImagesListProvider {...props}>
         <Body />
-        <Footer />
       </ImagesListProvider>
     </PaginationProvider>
   );

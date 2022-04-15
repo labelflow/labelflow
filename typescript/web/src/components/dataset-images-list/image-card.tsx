@@ -27,6 +27,8 @@ import { SetRequired } from "type-fest";
 import { ImageWithFallback, Tooltip } from "../core";
 import { EmptyStateImageNotFound } from "../empty-state";
 
+export const IMAGE_CARD_HEIGHT = 208;
+
 export type ImageCardProps = {
   id: string;
   name: string;
@@ -203,7 +205,7 @@ const ImageErrorFallback = () => (
   <Flex
     align="center"
     justify="center"
-    h="208px"
+    h={`${IMAGE_CARD_HEIGHT}px`}
     bg={useColorModeValue("gray.400", "gray.600")}
     borderRadius="md"
   >
@@ -218,10 +220,12 @@ const ImageContent = () => {
       borderRadius="md"
       alt={name}
       src={thumbnail ?? undefined}
-      loadingFallback={<Skeleton h="208px" borderRadius="md" />}
+      loadingFallback={
+        <Skeleton h={`${IMAGE_CARD_HEIGHT}px`} borderRadius="md" />
+      }
       errorFallback={<ImageErrorFallback />}
       objectFit="cover"
-      h="208px"
+      h={`${IMAGE_CARD_HEIGHT}px`}
       w="full"
     />
   );
@@ -252,7 +256,6 @@ const ImageCardContent = () => {
       borderRadius="md"
       borderWidth={1}
       borderColor={useColorModeValue("gray.200", "gray.800")}
-      maxW="350px"
     >
       <ImageOverlay />
       <ClickableImageContent />

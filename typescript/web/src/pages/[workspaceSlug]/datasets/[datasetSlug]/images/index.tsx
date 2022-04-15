@@ -61,6 +61,7 @@ const Body = () => {
       <Meta title="LabelFlow | Images" />
       <CookieBanner />
       <Layout
+        fullHeight
         breadcrumbs={[
           <NavLogo key={0} />,
           <WorkspaceSwitcher key={1} />,

@@ -1,6 +1,12 @@
-import { ComponentStory } from "@storybook/react";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { WORKSPACE_DATA } from "../../../utils/fixtures";
-import { chakraDecorator, storybookTitle } from "../../../utils/stories";
+import {
+  chakraDecorator,
+  CYPRESS_SCREEN_WIDTH,
+  MEDIUM_CHROMATIC_VIEWPORT,
+  SMALL_CHROMATIC_VIEWPORT,
+  storybookTitle,
+} from "../../../utils/stories";
 import { Billing } from "./billing";
 import { WorkspaceSettingsContext } from "./context";
 
@@ -8,7 +14,17 @@ export default {
   title: storybookTitle(Billing),
   component: Billing,
   decorators: [chakraDecorator],
-};
+  parameters: {
+    viewport: { defaultViewport: "chakraSizesXl" },
+    chromatic: {
+      viewports: [
+        SMALL_CHROMATIC_VIEWPORT,
+        MEDIUM_CHROMATIC_VIEWPORT,
+        CYPRESS_SCREEN_WIDTH,
+      ],
+    },
+  },
+} as ComponentMeta<typeof Billing>;
 
 type TemplateProps = { totalCount: number };
 

@@ -71,6 +71,7 @@ const SearchInputValue = forwardRef<InputProps, "input">(
       <Input
         {...props}
         {...inputProps}
+        data-testid="search-input-value"
         ref={ref}
         value={value}
         onChange={useCallback(
@@ -87,6 +88,7 @@ const ClearSearchButton = () => {
   const { onChange } = useSearchInput();
   return (
     <IconButton
+      data-testid="search-input-clear-button"
       icon="close"
       label="Clear search"
       fontSize="xl"

@@ -1,8 +1,8 @@
-import { Center, SpinnerProps } from "@chakra-ui/react";
+import { Flex, SpinnerProps } from "@chakra-ui/react";
 import { Spinner } from "./spinner";
 
 export const LayoutSpinner = (props: SpinnerProps) => (
-  <Center flexGrow={1}>
+  <Flex flexGrow={1} align="center" justify="center">
     <Spinner size="xl" {...props} />
-  </Center>
+  </Flex>
 );

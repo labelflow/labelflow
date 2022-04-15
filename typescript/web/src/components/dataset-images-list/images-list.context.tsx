@@ -1,5 +1,4 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { useBoolean, useControllableState } from "@chakra-ui/react";
 import { isEmpty, isNil } from "lodash/fp";
 import {
   createContext,
@@ -8,8 +7,8 @@ import {
   SetStateAction,
   useCallback,
   useContext,
+  useState,
 } from "react";
-import { SetRequired } from "type-fest";
 import {
   DeleteImageMutation,
   DeleteImageMutationVariables,
@@ -22,7 +21,8 @@ import {
   PaginatedImagesQuery_images,
 } from "../../graphql-types/PaginatedImagesQuery";
 import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../shared-queries/dataset-images-page.query";
-import { usePagination } from "../core";
+import { PaginationPayload, usePagination } from "../core";
+import { useApolloErrorToast } from "../toast";
 import {
   PAGINATED_IMAGES_QUERY,
   useFlushPaginatedImagesCache,
@@ -48,48 +48,77 @@ export type ImagesListProps = {
   datasetId: string;
   imagesTotalCount: number;
   selected?: string[];
-  onChangeSelected?: (selected: string[]) => void;
   singleToDelete?: string;
+  onChangeSelected?: (selected: string[]) => void;
   onChangeSingleToDelete?: (value: string | undefined) => void;
 };
 
-export type ImagesListState = SetRequired<
-  Pick<
-    ImagesListProps,
-    | "workspaceSlug"
-    | "datasetSlug"
-    | "datasetId"
-    | "selected"
-    | "singleToDelete"
-  >,
-  "selected"
-> & {
-  loading: boolean;
+export type ImagesListData = {
   images: PaginatedImagesQuery_images[];
-  setSingleToDelete: (value: string | undefined) => void;
-  deleteSingle: () => Promise<void>;
+  selected: string[];
+  singleToDelete?: string;
   deletingSingle: boolean;
-  setSelected: Dispatch<SetStateAction<string[]>>;
-  toggleSelectAll: () => void;
   displayDeleteSelectedModal: boolean;
-  openDeleteSelectedModal: () => void;
-  closeDeleteSelectedModal: () => void;
-  deleteSelected: () => Promise<void>;
   deletingSelected: boolean;
+  pagination: PaginationPayload;
 };
+
+const DEFAULT_DATA: ImagesListData = {
+  images: [],
+  selected: [],
+  singleToDelete: undefined,
+  deletingSelected: false,
+  deletingSingle: false,
+  displayDeleteSelectedModal: false,
+  pagination: { page: 1, perPage: 10 },
+};
+
+export type ImagesListState = Pick<
+  ImagesListProps,
+  "workspaceSlug" | "datasetSlug" | "datasetId"
+> &
+  ImagesListData & {
+    loading: boolean;
+    setSingleToDelete: (value: string | undefined) => void;
+    deleteSingle: () => Promise<void>;
+    setSelected: (selected: string[]) => void;
+    toggleSelectAll: () => void;
+    openDeleteSelectedModal: () => void;
+    closeDeleteSelectedModal: () => void;
+    deleteSelected: () => Promise<void>;
+  };
 
 export const ImagesListContext = createContext({} as ImagesListState);
 
 export type ImagesListProviderProps = PropsWithChildren<ImagesListProps>;
 
-const useImages = ({
-  datasetId,
-}: Pick<ImagesListProps, "datasetId">): Pick<
-  ImagesListState,
-  "images" | "loading"
-> => {
+type SetImagesListData = Dispatch<SetStateAction<ImagesListData>>;
+
+const useImages = (
+  { datasetId }: Pick<ImagesListProps, "datasetId">,
+  {
+    pagination: { page: lastPage, perPage: lastPerPage },
+    selected: lastSelected,
+  }: ImagesListData,
+  setData: SetImagesListData
+): ImagesListState["loading"] => {
   const { page, perPage, itemCount } = usePagination();
-  const { data: imagesResult, loading } = useQuery<
+  const handleCompleted = useCallback(
+    ({ images }: PaginatedImagesQuery) => {
+      const selected =
+        page === lastPage && perPage === lastPerPage
+          ? lastSelected.filter((id) => images.some((image) => image.id === id))
+          : [];
+      setData({
+        ...DEFAULT_DATA,
+        pagination: { page, perPage },
+        images,
+        selected,
+      });
+    },
+    [lastPage, lastPerPage, lastSelected, page, perPage, setData]
+  );
+  const { loading } = useQuery<
     PaginatedImagesQuery,
     PaginatedImagesQueryVariables
   >(PAGINATED_IMAGES_QUERY, {
@@ -98,132 +127,115 @@ const useImages = ({
       first: perPage,
       skip: (page - 1) * perPage,
     },
-    skip: !datasetId || itemCount === 0,
+    skip: isEmpty(datasetId) || itemCount === 0,
+    onCompleted: handleCompleted,
+    // Must be active so that onCompleted is also called with refetchQueries
+    // https://github.com/apollographql/react-apollo/issues/3709
+    notifyOnNetworkStatusChange: true,
   });
-  return {
-    images: imagesResult?.images ?? [],
-    loading: isEmpty(datasetId) || loading,
-  };
+  return isEmpty(datasetId) || loading;
 };
 
-type UseSelectionOptions = Pick<
-  ImagesListProps,
-  "selected" | "onChangeSelected"
-> &
-  Pick<ImagesListState, "images">;
-
-const useSelection = ({
-  images,
-  selected: selectedProp,
-  onChangeSelected,
-}: UseSelectionOptions): Pick<
-  ImagesListState,
-  "selected" | "setSelected" | "toggleSelectAll"
-> => {
-  const [selected, setSelected] = useControllableState<string[]>({
-    defaultValue: [],
-    value: selectedProp,
-    onChange: onChangeSelected,
-  });
-  const toggleSelectAll = useCallback(
-    () => setSelected(isEmpty(selected) ? images.map((image) => image.id) : []),
-    [images, selected, setSelected]
+const useSetSelected = (
+  setData: SetImagesListData
+): ImagesListState["setSelected"] =>
+  useCallback(
+    (selected: string[]) =>
+      setData((prevState) => ({ ...prevState, selected })),
+    [setData]
   );
-  return { selected, setSelected, toggleSelectAll };
-};
 
-type UseDeleteSingleOptions = Pick<
-  ImagesListProps,
-  "singleToDelete" | "onChangeSingleToDelete"
-> &
-  Pick<ImagesListState, "datasetId" | "selected" | "setSelected">;
+const useToggleSelectAll = (
+  setData: SetImagesListData
+): ImagesListState["toggleSelectAll"] =>
+  useCallback(
+    () =>
+      setData((prevState) => ({
+        ...prevState,
+        selected: isEmpty(prevState.selected)
+          ? prevState.images.map((image) => image.id)
+          : [],
+      })),
+    [setData]
+  );
 
 type UseDeleteSingleResult = Pick<
   ImagesListState,
-  "singleToDelete" | "setSingleToDelete" | "deleteSingle" | "deletingSingle"
+  "deleteSingle" | "deletingSingle" | "setSingleToDelete"
 >;
 
-const useDeleteSingle = ({
-  datasetId,
-  selected,
-  setSelected,
-  singleToDelete: singleToDeleteProp,
-  onChangeSingleToDelete,
-}: UseDeleteSingleOptions): UseDeleteSingleResult => {
-  const [singleToDelete, setSingleToDelete] = useControllableState<
-    string | undefined
-  >({
-    defaultValue: undefined,
-    value: singleToDeleteProp,
-    onChange: onChangeSingleToDelete,
-  });
+const useDeleteSingle = (
+  { datasetId }: ImagesListProps,
+  { singleToDelete }: ImagesListData,
+  setData: SetImagesListData
+): UseDeleteSingleResult => {
   const flushPaginatedImagesCache = useFlushPaginatedImagesCache(datasetId);
   const [deleteImage, { loading: deletingSingle }] = useMutation<
     DeleteImageMutation,
     DeleteImageMutationVariables
   >(DELETE_IMAGE_MUTATION, {
-    update: (cache) => cache.evict({ id: `Dataset:${datasetId}` }),
+    update: async (cache) => {
+      await flushPaginatedImagesCache();
+      cache.evict({ id: `Dataset:${datasetId}` });
+    },
+    refetchQueries: [DATASET_IMAGES_PAGE_DATASET_QUERY, PAGINATED_IMAGES_QUERY],
+    awaitRefetchQueries: true,
+    onError: useApolloErrorToast(),
   });
   const deleteSingle = useCallback(async () => {
     if (isNil(singleToDelete) || isEmpty(singleToDelete)) return;
-    await flushPaginatedImagesCache();
-    await deleteImage({
-      variables: { id: singleToDelete },
-      refetchQueries: [
-        DATASET_IMAGES_PAGE_DATASET_QUERY,
-        PAGINATED_IMAGES_QUERY,
-      ],
-      awaitRefetchQueries: true,
-    });
-    setSelected(selected.filter((id) => id !== singleToDelete));
-  }, [
-    deleteImage,
-    flushPaginatedImagesCache,
-    selected,
-    setSelected,
-    singleToDelete,
-  ]);
-  return { deletingSingle, singleToDelete, setSingleToDelete, deleteSingle };
+    await deleteImage({ variables: { id: singleToDelete } });
+  }, [deleteImage, singleToDelete]);
+  const setSingleToDelete = useCallback(
+    (value: string | undefined) =>
+      setData((prevState) => ({ ...prevState, singleToDelete: value })),
+    [setData]
+  );
+  return { deletingSingle, deleteSingle, setSingleToDelete };
 };
 
-const useDeleteSelected = ({
-  datasetId,
-  selected,
-  setSelected,
-}: Pick<ImagesListState, "datasetId" | "selected" | "setSelected">): Pick<
+const useDeleteSelected = (
+  { datasetId }: ImagesListProps,
+  { selected }: ImagesListData,
+  setData: SetImagesListData
+): Pick<
   ImagesListState,
-  | "displayDeleteSelectedModal"
   | "openDeleteSelectedModal"
   | "closeDeleteSelectedModal"
   | "deleteSelected"
   | "deletingSelected"
 > => {
-  const [
-    displayDeleteSelectedModal,
-    { on: openDeleteSelectedModal, off: closeDeleteSelectedModal },
-  ] = useBoolean(false);
   const flushPaginatedImagesCache = useFlushPaginatedImagesCache(datasetId);
-  const [deletedImagesIds, { loading }] = useMutation<
+  const [deleteImages, { loading }] = useMutation<
     DeleteManyImagesMutation,
     DeleteManyImagesMutationVariables
   >(DELETE_MANY_IMAGES_MUTATION, {
     update: (cache) => cache.evict({ id: `Dataset:${datasetId}` }),
+    refetchQueries: [DATASET_IMAGES_PAGE_DATASET_QUERY, PAGINATED_IMAGES_QUERY],
+    awaitRefetchQueries: true,
+    onError: useApolloErrorToast(),
   });
-
+  const openDeleteSelectedModal = useCallback(
+    () =>
+      setData((prevState) => ({
+        ...prevState,
+        displayDeleteSelectedModal: true,
+      })),
+    [setData]
+  );
+  const closeDeleteSelectedModal = useCallback(
+    () =>
+      setData((prevState) => ({
+        ...prevState,
+        displayDeleteSelectedModal: false,
+      })),
+    [setData]
+  );
   const deleteSelected = useCallback(async () => {
     await flushPaginatedImagesCache();
-    await deletedImagesIds({
-      variables: { id: selected },
-      refetchQueries: [
-        DATASET_IMAGES_PAGE_DATASET_QUERY,
-        PAGINATED_IMAGES_QUERY,
-      ],
-      awaitRefetchQueries: true,
-    });
-    setSelected([]);
-  }, [deletedImagesIds, flushPaginatedImagesCache, selected, setSelected]);
+    await deleteImages({ variables: { id: selected } });
+  }, [deleteImages, flushPaginatedImagesCache, selected]);
   return {
-    displayDeleteSelectedModal,
     openDeleteSelectedModal,
     closeDeleteSelectedModal,
     deleteSelected,
@@ -234,25 +246,15 @@ const useDeleteSelected = ({
 const useProvider = (
   props: Omit<ImagesListProviderProps, "children">
 ): ImagesListState => {
-  const { images, loading } = useImages(props);
-  const selectionState = useSelection({ ...props, images });
-  const { deletingSingle, ...deleteSingleState } = useDeleteSingle({
-    ...props,
-    ...selectionState,
-  });
-  const { deletingSelected, ...deleteSelectedState } = useDeleteSelected({
-    ...props,
-    ...selectionState,
-  });
+  const [data, setData] = useState<ImagesListData>(DEFAULT_DATA);
   return {
     ...props,
-    images,
-    ...selectionState,
-    loading,
-    ...deleteSingleState,
-    deletingSingle,
-    ...deleteSelectedState,
-    deletingSelected,
+    ...data,
+    loading: useImages(props, data, setData),
+    toggleSelectAll: useToggleSelectAll(setData),
+    ...useDeleteSingle(props, data, setData),
+    ...useDeleteSelected(props, data, setData),
+    setSelected: useSetSelected(setData),
   };
 };
 

@@ -2,7 +2,8 @@ import { Button, useDisclosure } from "@chakra-ui/react";
 import {
   apolloMockDecorator,
   chakraDecorator,
-  modalDecorator,
+  CYPRESS_SCREEN_WIDTH,
+  fixedScreenDecorator,
   queryParamsDecorator,
   storybookTitle,
 } from "../../utils/stories";
@@ -12,10 +13,11 @@ export default {
   title: storybookTitle(DeleteDatasetModal),
   decorators: [
     chakraDecorator,
-    modalDecorator,
+    fixedScreenDecorator,
     apolloMockDecorator,
     queryParamsDecorator,
   ],
+  parameters: { chromatic: { viewports: [CYPRESS_SCREEN_WIDTH] } },
 };
 
 export const Default = () => {
