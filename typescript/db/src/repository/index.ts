@@ -1,5 +1,6 @@
 import { DbLabel, getSlug, Repository } from "@labelflow/common-resolvers";
 import { Prisma } from "@prisma/client";
+import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
 import { uniq } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";
 import {
@@ -19,7 +20,12 @@ import {
   getUploadTargetHttp,
   putInStorage,
 } from "./upload-s3";
-import { castObjectNullsToUndefined, getWorkspaceFilter } from "./utils";
+import {
+  castObjectNullsToUndefined,
+  getPrismaErrorTarget,
+  getWorkspaceFilter,
+  isPrismaError,
+} from "./utils";
 import {
   addWorkspace,
   deleteWorkspace,
@@ -28,6 +34,38 @@ import {
   updateWorkspace,
   countImages as countWorkspaceImages,
 } from "./workspace";
+
+const overrideLabelclassExistError: ErrorOverride = (error: unknown) => {
+  if (isPrismaError(error, "P2002")) {
+    const target = getPrismaErrorTarget(error);
+    if (target.includes("datasetId") && target.includes("name")) {
+      throw new Error(
+        "One or more class with the same name already exist in this dataset"
+      );
+    }
+  }
+};
+
+const addManyLabelClass: Repository["labelClass"]["addMany"] = async (
+  { labelClasses },
+  user
+) => {
+  const datasetIds = uniq(
+    labelClasses.map((labelClass) => labelClass.datasetId)
+  );
+  await Promise.all(
+    datasetIds.map((datasetId) =>
+      checkUserAccessToDataset({ where: { id: datasetId }, user })
+    )
+  );
+  const db = await getPrismaClient();
+  await db.labelClass.createMany({ data: labelClasses });
+  return labelClasses.map((labelClass) => labelClass.id);
+};
+
+const addManyLabelclassWithError = withErrorOverridesAsync(addManyLabelClass, [
+  overrideLabelclassExistError,
+]);
 
 export const repository: Repository = {
   image: imageRepository,
@@ -98,19 +136,7 @@ export const repository: Repository = {
       });
       return createdLabelClass.id;
     },
-    addMany: async ({ labelClasses }, user) => {
-      const datasetIds = uniq(
-        labelClasses.map((labelClass) => labelClass.datasetId)
-      );
-      await Promise.all(
-        datasetIds.map((datasetId) =>
-          checkUserAccessToDataset({ where: { id: datasetId }, user })
-        )
-      );
-      const db = await getPrismaClient();
-      await db.labelClass.createMany({ data: labelClasses });
-      return labelClasses.map((labelClass) => labelClass.id);
-    },
+    addMany: addManyLabelclassWithError,
     count: async (whereWithUser) => {
       const { user, ...where } = whereWithUser ?? { user: undefined };
       if (user?.id == null) {
