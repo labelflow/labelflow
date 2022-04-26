@@ -4,10 +4,8 @@ import {
   DefaultContext,
   gql,
   MutationTuple,
-  OperationVariables,
   useMutation,
 } from "@apollo/client";
-import { Mutation } from "@labelflow/graphql-types";
 import { isNil } from "lodash/fp";
 import { useRouter } from "next/router";
 import {
@@ -18,18 +16,25 @@ import {
   useState,
 } from "react";
 import { useQueryParam } from "use-query-params";
+import { WorkspacePlan } from "../../../graphql-types";
+import {
+  CreateWorkspaceMutation,
+  CreateWorkspaceMutationVariables,
+} from "../../../graphql-types/CreateWorkspaceMutation";
+import { USER_WITH_WORKSPACES_QUERY } from "../../../shared-queries/user.query";
 import { BoolParam } from "../../../utils/query-param-bool";
 
-export const CREATE_WORKSPACE_MUTATION = gql`
-  mutation createWorkspace($name: String!) {
-    createWorkspace(data: { name: $name }) {
+const CREATE_WORKSPACE_MUTATION = gql`
+  mutation CreateWorkspaceMutation($name: String!, $plan: WorkspacePlan) {
+    createWorkspace(
+      data: { name: $name, plan: $plan }
+      options: { createTutorial: true }
+    ) {
       id
       slug
     }
   }
 `;
-
-export type CreateWorkspaceMutationResult = Pick<Mutation, "createWorkspace">;
 
 const isAuthenticationError = (error: ApolloError) => {
   return (
@@ -80,7 +85,7 @@ const useCreateWorkspaceMutationError = (
 const useCreateWorkspaceMutationCompleted = () => {
   const router = useRouter();
   return useCallback(
-    ({ createWorkspace }: CreateWorkspaceMutationResult) => {
+    ({ createWorkspace }: CreateWorkspaceMutation) => {
       if (!isNil(createWorkspace)) {
         router.push(`/${createWorkspace.slug}`);
       }
@@ -90,24 +95,26 @@ const useCreateWorkspaceMutationCompleted = () => {
 };
 
 export function useCreateWorkspaceMutation(
-  workspaceName: string
+  workspaceName: string,
+  plan?: WorkspacePlan
 ): MutationTuple<
-  CreateWorkspaceMutationResult,
-  OperationVariables,
+  CreateWorkspaceMutation,
+  CreateWorkspaceMutationVariables,
   DefaultContext,
   ApolloCache<unknown>
 > {
   const [onError, isUpToDate] = useCreateWorkspaceMutationError(workspaceName);
   const onCompleted = useCreateWorkspaceMutationCompleted();
-  const [createWorkspace, result] = useMutation<CreateWorkspaceMutationResult>(
-    CREATE_WORKSPACE_MUTATION,
-    {
-      variables: { name: workspaceName },
-      refetchQueries: ["getWorkspaces"],
-      onCompleted,
-      onError,
-    }
-  );
+  const [createWorkspace, result] = useMutation<
+    CreateWorkspaceMutation,
+    CreateWorkspaceMutationVariables
+  >(CREATE_WORKSPACE_MUTATION, {
+    variables: { name: workspaceName, plan },
+    refetchQueries: [USER_WITH_WORKSPACES_QUERY],
+    awaitRefetchQueries: true,
+    onCompleted,
+    onError,
+  });
   return [
     createWorkspace,
     {

@@ -1,15 +1,10 @@
-import {
-  Box,
-  SimpleGrid,
-  useColorModeValue as mode,
-  Heading,
-} from "@chakra-ui/react";
+import { Box, SimpleGrid, useColorModeValue, Heading } from "@chakra-ui/react";
 import * as React from "react";
 import { Testimonial } from "./Testimonial";
 
 export const Testimonials = () => {
   return (
-    <Box as="section" bg={mode("gray.50", "gray.800")} py="48">
+    <Box as="section" bg={useColorModeValue("gray.50", "gray.800")} py="48">
       <Box
         maxW={{ base: "xl", md: "7xl" }}
         mx="auto"

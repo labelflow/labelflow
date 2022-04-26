@@ -1,6 +1,56 @@
 # Changelog
 
-## [1.2.2](https://github.com/labelflow/labelflow/compare/1.2.1...1.2.2)
+## [1.3.0](https://github.com/labelflow/labelflow/compare/1.2.3...1.3.0)
+
+- Update text on workspace list empty state [`#891`](https://github.com/labelflow/labelflow/pull/891)
+- Await refetchQueries when creating a new workspace [`#888`](https://github.com/labelflow/labelflow/pull/888)
+- Update MigrateLocalDatasetsModal expiration date [`#885`](https://github.com/labelflow/labelflow/pull/885)
+- Fix timeout on label export [`#863`](https://github.com/labelflow/labelflow/pull/863)
+- Fix graphiql pages, centered spinners and dark mode spinners [`#875`](https://github.com/labelflow/labelflow/pull/875)
+- Add temporary modal to warn about migrating local datasets [`#871`](https://github.com/labelflow/labelflow/pull/871)
+- Add Jest tests coverage to CodeClimate [`#870`](https://github.com/labelflow/labelflow/pull/870)
+- Use https://docs.labelflow.ai as documentation URL [`#845`](https://github.com/labelflow/labelflow/pull/845)
+- Update texts in import modal [`#859`](https://github.com/labelflow/labelflow/pull/859)
+- Add announcements in the app and website top bars [`#787`](https://github.com/labelflow/labelflow/pull/787)
+- Fix labeling tools tests [`#842`](https://github.com/labelflow/labelflow/pull/842)
+- Only build the working Storybook files until the service worker is fully dropped [`#849`](https://github.com/labelflow/labelflow/pull/849)
+- Rework use-images-navigation hook tests [`#841`](https://github.com/labelflow/labelflow/pull/841)
+- Fix dataset export tests [`#836`](https://github.com/labelflow/labelflow/pull/836)
+- Remove labels without classes info from the export modal [`#830`](https://github.com/labelflow/labelflow/pull/830)
+- Fix tests on import modal [`#838`](https://github.com/labelflow/labelflow/pull/838)
+- Merge #803, #833 and #834 into enhancement/delete-service-worker [`#835`](https://github.com/labelflow/labelflow/pull/835)
+- Generate types for web GraphQL queries and mutations [`#800`](https://github.com/labelflow/labelflow/pull/800)
+- Fix typos in README and update our GitHub project URL [`#820`](https://github.com/labelflow/labelflow/pull/820)
+- In website, use ghost variant on the GitHub button [`#814`](https://github.com/labelflow/labelflow/pull/814)
+- Use exact package versions [`#809`](https://github.com/labelflow/labelflow/pull/809)
+- Improve image upload performance [`#815`](https://github.com/labelflow/labelflow/pull/815)
+- Make pagination footer ignore its parent padding [`#813`](https://github.com/labelflow/labelflow/pull/813)
+- Paginate datasets [`#783`](https://github.com/labelflow/labelflow/pull/783)
+- Fix inverted ternary in user avatar for color selection [`#802`](https://github.com/labelflow/labelflow/pull/802)
+- Fix exports not working from datasets in workspaces [`#790`](https://github.com/labelflow/labelflow/pull/790)
+- Don't redirect to lastVisitedWorkspaceSlug anymore and remove local workspace from the switcher [`#797`](https://github.com/labelflow/labelflow/pull/797)
+- Make sure that the PaginationContext page and total properties are never smaller than 1 [`#795`](https://github.com/labelflow/labelflow/pull/795)
+- Configure the createLabelClass mutation when calling useMutation [`#791`](https://github.com/labelflow/labelflow/pull/791)
+- Fix env variable for sitemap to work correctly [`#792`](https://github.com/labelflow/labelflow/pull/792)
+- Correctly write the GitHub name in its star button [`#788`](https://github.com/labelflow/labelflow/pull/788)
+- Try to make sure that the sign-in modal is actually shown before clicking on its close button [`#784`](https://github.com/labelflow/labelflow/pull/784)
+- Fix export modal loading data before being opened [`#752`](https://github.com/labelflow/labelflow/pull/752)
+- Track click on a sign-in method and on manage billing [`#756`](https://github.com/labelflow/labelflow/pull/756)
+- Add sitemap [`#743`](https://github.com/labelflow/labelflow/pull/743)
+- Update website banner with the new online workspaces and IOG features [`#769`](https://github.com/labelflow/labelflow/pull/769)
+- Fix bad aggregates count for workspace &gt; datasets queries [`#746`](https://github.com/labelflow/labelflow/pull/746)
+- Change website NavBar GitHub link design [`#760`](https://github.com/labelflow/labelflow/pull/760)
+- Paginate dataset image gallery [`#693`](https://github.com/labelflow/labelflow/pull/693)
+- Switch /website footer layout orientation between horizontal on desktop and vertical on mobile [`#755`](https://github.com/labelflow/labelflow/pull/755)
+- Optimise image pre loading on labelling interface [`#745`](https://github.com/labelflow/labelflow/pull/745)
+- Correctly define parameters of the WelcomeWithoutCountDown story [`#750`](https://github.com/labelflow/labelflow/pull/750)
+- Update error message when different signin method is used [`#726`](https://github.com/labelflow/labelflow/pull/726)
+
+## [1.2.3](https://github.com/labelflow/labelflow/compare/1.2.2...1.2.3) - 2022-01-07
+
+- Fix yolo export  [`#739`](https://github.com/labelflow/labelflow/pull/739)
+
+## [1.2.2](https://github.com/labelflow/labelflow/compare/1.2.1...1.2.2) - 2022-01-07
 
 - Increase default Cypress timeout to 60s [`#747`](https://github.com/labelflow/labelflow/pull/747)
 

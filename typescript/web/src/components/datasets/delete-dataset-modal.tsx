@@ -1,26 +1,18 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { isEmpty } from "lodash/fp";
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Button,
-} from "@chakra-ui/react";
-import { useRef } from "react";
-import { useFlushPaginatedDatasetsCache } from "./datasets.query";
+  GetDatasetByIdQuery,
+  GetDatasetByIdQueryVariables,
+} from "../../graphql-types/GetDatasetByIdQuery";
+import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
+import { DeleteModal } from "../core";
+import {
+  GET_DATASET_BY_ID_QUERY,
+  useFlushPaginatedDatasetsCache,
+} from "./datasets.query";
 
-const getDatasetByIdQuery = gql`
-  query getDatasetById($id: ID) {
-    dataset(where: { id: $id }) {
-      name
-    }
-  }
-`;
-
-const deleteDatasetByIdMutation = gql`
-  mutation deleteDatasetById($id: ID!) {
+export const DELETE_DATASET_BY_ID_MUTATION = gql`
+  mutation DeleteDatasetByIdMutation($id: ID!) {
     deleteDataset(where: { id: $id }) {
       id
     }
@@ -41,17 +33,19 @@ export const DeleteDatasetModal = ({
   const flushPaginatedDatasets = useFlushPaginatedDatasetsCache(
     workspaceSlug as string
   );
-  const cancelRef = useRef<HTMLButtonElement>(null);
-  const { data } = useQuery(getDatasetByIdQuery, {
-    variables: { id: datasetId },
-    skip: datasetId == null,
-  });
+  const { data } = useQuery<GetDatasetByIdQuery, GetDatasetByIdQueryVariables>(
+    GET_DATASET_BY_ID_QUERY,
+    {
+      variables: { id: datasetId ?? "" },
+      skip: isEmpty(datasetId),
+    }
+  );
 
   const [deleteDatasetMutate, { loading }] = useMutation(
-    deleteDatasetByIdMutation,
+    DELETE_DATASET_BY_ID_MUTATION,
     {
       variables: { id: datasetId },
-      refetchQueries: ["getDatasets"],
+      refetchQueries: [WORKSPACE_DATASETS_PAGE_DATASETS_QUERY],
       update: (cache) => {
         // Avoid issue https://github.com/labelflow/labelflow/issues/563
         cache.evict({ id: `Dataset:${datasetId}` });
@@ -66,44 +60,13 @@ export const DeleteDatasetModal = ({
   };
 
   return (
-    <AlertDialog
+    <DeleteModal
       isOpen={isOpen}
-      leastDestructiveRef={cancelRef}
       onClose={onClose}
-      isCentered
-    >
-      <AlertDialogOverlay>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            Delete Dataset {data?.dataset?.name}
-          </AlertDialogHeader>
-
-          <AlertDialogBody>
-            Are you sure? Images, Labels and Classes will be deleted. This
-            action cannot be undone.
-          </AlertDialogBody>
-
-          <AlertDialogFooter>
-            <Button
-              ref={cancelRef}
-              onClick={onClose}
-              aria-label="Cancel delete"
-            >
-              Cancel
-            </Button>
-            <Button
-              colorScheme="red"
-              isLoading={loading}
-              loadingText="Deleting..."
-              onClick={deleteDataset}
-              aria-label="Dataset delete"
-              ml={3}
-            >
-              Delete
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialogOverlay>
-    </AlertDialog>
+      header={`Delete Dataset ${data?.dataset?.name}`}
+      body="Are you sure? Images, Labels and Classes will be deleted. This action cannot be undone."
+      deleting={loading}
+      onDelete={deleteDataset}
+    />
   );
 };

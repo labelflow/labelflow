@@ -1,13 +1,13 @@
-import "isomorphic-fetch";
-
 import type {
   MutationCreateImageArgs,
   MutationCreateManyImagesArgs,
+  MutationDeleteImageArgs,
+  MutationDeleteManyImagesArgs,
   MutationUpdateImageArgs,
   QueryImageArgs,
   QueryImagesArgs,
-  MutationDeleteImageArgs,
 } from "@labelflow/graphql-types";
+import "isomorphic-fetch";
 import {
   Context,
   DbImage,
@@ -16,8 +16,8 @@ import {
   ThumbnailSizes,
 } from "../types";
 import { throwIfResolvesToNil } from "../utils/throw-if-resolves-to-nil";
-import { importAndProcessImage } from "./import-and-process-image";
 import { getWorkspaceIdOfDataset } from "./get-workspace-id-of-dataset";
+import { importAndProcessImage } from "./import-and-process-image";
 
 const getImageById = async (
   id: string,
@@ -155,19 +155,25 @@ const deleteImage = async (
     "No image with such id",
     repository.image.get
   )({ id: imageId }, user);
-  const labelsToDelete = await repository.label.list({
-    imageId,
-    user,
-  });
-  await Promise.all(
-    labelsToDelete.map((label) =>
-      repository.label.delete({ id: label.id }, user)
-    )
-  );
   await repository.image.delete({ id: imageId }, user);
   await repository.upload.delete(imageToDelete.url);
-
   return imageToDelete;
+};
+
+const deleteManyImages = async (
+  _: any,
+  { where }: MutationDeleteManyImagesArgs,
+  { repository, user }: Context
+): Promise<number> => {
+  const imagesToDelete = await throwIfResolvesToNil(
+    "No images to delete",
+    repository.image.list
+  )({ ...where, user });
+  const count = await repository.image.deleteMany(where, user);
+  await Promise.all(
+    imagesToDelete.map(({ url }) => repository.upload.delete(url))
+  );
+  return count;
 };
 
 const updateImage = async (
@@ -207,6 +213,9 @@ const totalCount = async (
       user,
     });
   }
+  if (typename === "Workspace") {
+    return await repository.workspace.countImages({ id: parent.id });
+  }
 
   return await repository.image.count({ user });
 };
@@ -223,6 +232,7 @@ export default {
     createManyImages,
     updateImage,
     deleteImage,
+    deleteManyImages,
   },
 
   Image: {
@@ -237,6 +247,10 @@ export default {
   ImagesAggregates: { totalCount },
 
   Dataset: {
+    imagesAggregates,
+  },
+
+  Workspace: {
     imagesAggregates,
   },
 };

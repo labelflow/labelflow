@@ -2,6 +2,11 @@ input WorkspaceCreateInput {
   id: ID
   name: String!
   image: String
+  plan: WorkspacePlan
+}
+
+input WorkspaceCreateOptions {
+  createTutorial: Boolean
 }
 
 input WorkspaceWhereUniqueInput {

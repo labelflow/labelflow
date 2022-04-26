@@ -1,6 +1,5 @@
-import { gql, useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import { useToast } from "@chakra-ui/react";
-import { LabelType } from "@labelflow/graphql-types";
 import GeoJSON, { GeoJSONPolygon } from "ol/format/GeoJSON";
 import GeometryType from "ol/geom/GeometryType";
 import { Draw as OlDraw } from "ol/interaction";
@@ -17,16 +16,8 @@ import { useUndoStore } from "../../../../connectors/undo-store";
 import { createCreateLabelEffect } from "../../../../connectors/undo-store/effects/create-label";
 import { noneClassColor } from "../../../../theme";
 import { keymap } from "../../../../keymap";
-
-const labelClassQuery = gql`
-  query getLabelClass($id: ID!) {
-    labelClass(where: { id: $id }) {
-      id
-      name
-      color
-    }
-  }
-`;
+import { labelClassQuery } from "../queries";
+import { LabelType } from "../../../../graphql-types/globalTypes";
 
 const geometryFunction = createBox();
 
@@ -86,7 +77,7 @@ export const DrawBoundingBoxAndPolygonInteraction = ({
   }, [selectedLabelClass?.color]);
 
   const interactionDrawArguments =
-    selectedTool === Tools.POLYGON
+    selectedTool === Tools.POLYGON || selectedTool === Tools.FREEHAND
       ? {
           type: GeometryType.MULTI_POLYGON,
           style, // Needed here to trigger the rerender of the component when the selected class changes
@@ -108,7 +99,9 @@ export const DrawBoundingBoxAndPolygonInteraction = ({
           selectedLabelClassId,
           geometry,
           labelType:
-            selectedTool === Tools.POLYGON ? LabelType.Polygon : LabelType.Box,
+            selectedTool === Tools.POLYGON || selectedTool === Tools.FREEHAND
+              ? LabelType.Polygon
+              : LabelType.Box,
         },
         {
           setSelectedLabelId,
@@ -135,6 +128,7 @@ export const DrawBoundingBoxAndPolygonInteraction = ({
     <olInteractionDraw
       ref={drawRef}
       args={interactionDrawArguments}
+      freehand={selectedTool === Tools.FREEHAND}
       condition={(e) => {
         // 0 is the main mouse button. See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
         // @ts-ignore

@@ -3,35 +3,35 @@ export const typeDefs = [
   scalar ColorHex
 
   input CreateIogLabelInput {
+    centerPoint: [Float!]!
+    height: Float!
     id: ID
     imageId: String!
+    labelClassId: ID
+    width: Float!
     x: Float!
     y: Float!
-    width: Float!
-    height: Float!
-    centerPoint: [Float!]!
-    labelClassId: ID
   }
 
   enum CurrentUserCanAcceptInvitation {
-    Yes
     AlreadyAccepted
-    AlreadyMemberOfTheWorkspace
     AlreadyDeclined
+    AlreadyMemberOfTheWorkspace
+    Yes
   }
 
   type Dataset {
-    id: ID!
     createdAt: DateTime!
-    updatedAt: DateTime!
+    id: ID!
+    images(first: Int, skip: Int): [Image!]!
+    imagesAggregates: ImagesAggregates!
+    labelClasses: [LabelClass!]!
+    labelClassesAggregates: LabelClassesAggregates!
+    labels: [Label!]!
+    labelsAggregates: LabelsAggregates!
     name: String!
     slug: String!
-    images(first: Int, skip: Int): [Image!]!
-    labels: [Label!]!
-    labelClasses: [LabelClass!]!
-    imagesAggregates: ImagesAggregates!
-    labelsAggregates: LabelsAggregates!
-    labelClassesAggregates: LabelClassesAggregates!
+    updatedAt: DateTime!
     workspace: Workspace!
   }
 
@@ -42,9 +42,9 @@ export const typeDefs = [
   }
 
   input DatasetImportInput {
-    url: String!
     format: ExportFormat!
     options: ImportOptions
+    url: String!
   }
 
   input DatasetUpdateInput {
@@ -63,15 +63,15 @@ export const typeDefs = [
   scalar DateTime
 
   type Example {
-    id: ID
     createdAt: DateTime
-    updatedAt: DateTime
+    id: ID
     name: String
+    updatedAt: DateTime
   }
 
   input ExampleCreateInput {
-    name: String!
     id: ID
+    name: String!
   }
 
   enum ExampleOrderByInput {
@@ -88,26 +88,32 @@ export const typeDefs = [
   }
 
   enum ExportFormat {
-    YOLO
     COCO
+    CSV
+    YOLO
   }
 
   input ExportOptions {
     coco: ExportOptionsCoco
+    csv: ExportOptionsCsv
     yolo: ExportOptionsYolo
   }
 
   input ExportOptionsCoco {
-    name: String
-    exportImages: Boolean
     avoidImageNameCollisions: Boolean
+    exportImages: Boolean
+    name: String
+  }
+
+  input ExportOptionsCsv {
+    name: String
   }
 
   input ExportOptionsYolo {
-    name: String
+    avoidImageNameCollisions: Boolean
     exportImages: Boolean
     includePolygons: Boolean
-    avoidImageNameCollisions: Boolean
+    name: String
   }
 
   input ExportWhereUniqueInput {
@@ -115,79 +121,83 @@ export const typeDefs = [
   }
 
   type Geometry {
-    type: String!
     coordinates: JSON!
+    type: String!
   }
 
   input GeometryInput {
-    type: String!
     coordinates: JSON!
+    type: String!
+  }
+
+  input IdInInput {
+    in: [ID!]!
   }
 
   type Image {
-    id: ID!
     createdAt: DateTime!
-    updatedAt: DateTime!
-    url: String!
+    dataset: Dataset!
     externalUrl: String
+    height: Int!
+    id: ID!
+    labels: [Label!]!
+    metadata: JSON
+    mimetype: String!
+    name: String!
+    path: String!
     thumbnail20Url: String
     thumbnail50Url: String
     thumbnail100Url: String
     thumbnail200Url: String
     thumbnail500Url: String
-    name: String!
-    path: String!
-    mimetype: String!
-    height: Int!
+    updatedAt: DateTime!
+    url: String!
     width: Int!
-    labels: [Label!]!
-    dataset: Dataset!
-    metadata: JSON
   }
 
   input ImageCreateInput {
-    id: ID
-    datasetId: ID!
     createdAt: DateTime
-    name: String
-    path: String
-    mimetype: String
-    height: Int
-    width: Int
-    file: Upload
-    url: String
+    datasetId: ID!
     externalUrl: String
+    file: Upload
+    height: Int
+    id: ID
+    metadata: JSON
+    mimetype: String
+    name: String
     noThumbnails: Boolean
+    path: String
     thumbnail20Url: String
     thumbnail50Url: String
     thumbnail100Url: String
     thumbnail200Url: String
     thumbnail500Url: String
-    metadata: JSON
+    url: String
+    width: Int
   }
 
   input ImageCreateManyInput {
-    images: [ImageCreateManySingleInput!]!
     datasetId: ID!
+    images: [ImageCreateManySingleInput!]!
   }
 
   input ImageCreateManySingleInput {
-    id: ID
     createdAt: DateTime
-    name: String
-    path: String
-    mimetype: String
-    height: Int
-    width: Int
-    file: Upload
-    url: String
     externalUrl: String
+    file: Upload
+    height: Int
+    id: ID
+    mimetype: String
+    name: String
     noThumbnails: Boolean
+    path: String
     thumbnail20Url: String
     thumbnail50Url: String
     thumbnail100Url: String
     thumbnail200Url: String
     thumbnail500Url: String
+    url: String
+    width: Int
   }
 
   input ImageUpdateInput {
@@ -200,6 +210,7 @@ export const typeDefs = [
 
   input ImageWhereInput {
     datasetId: ID
+    id: IdInInput
   }
 
   input ImageWhereUniqueInput {
@@ -220,11 +231,12 @@ export const typeDefs = [
 
   type ImportStatus {
     error: String
+    warnings: [String!]
   }
 
   enum InvitationResult {
-    Sent
     Error
+    Sent
     UserAlreadyIn
   }
 
@@ -237,37 +249,48 @@ export const typeDefs = [
   scalar JSON
 
   type Label {
-    id: ID!
-    type: LabelType!
     createdAt: DateTime!
-    updatedAt: DateTime!
-    imageId: ID!
     geometry: Geometry!
+    height: Float!
+    id: ID!
+    imageId: ID!
     labelClass: LabelClass
+    smartToolInput: JSON
+    type: LabelType!
+    updatedAt: DateTime!
+    width: Float!
     x: Float!
     y: Float!
-    height: Float!
-    width: Float!
-    smartToolInput: JSON
   }
 
   type LabelClass {
+    color: ColorHex!
+    createdAt: DateTime!
+    dataset: Dataset!
     id: ID!
     index: Int!
-    createdAt: DateTime!
-    updatedAt: DateTime!
-    name: String!
-    color: ColorHex!
     labels: [Label!]!
-    dataset: Dataset!
     labelsAggregates: LabelsAggregates!
+    name: String!
+    updatedAt: DateTime!
   }
 
   input LabelClassCreateInput {
-    id: ID
-    name: String!
     color: ColorHex
     datasetId: ID!
+    id: ID
+    name: String!
+  }
+
+  input LabelClassCreateManyInput {
+    datasetId: ID!
+    labelClasses: [LabelClassCreateManySingleInput!]!
+  }
+
+  input LabelClassCreateManySingleInput {
+    color: ColorHex
+    id: ID
+    name: String!
   }
 
   input LabelClassReorderInput {
@@ -275,8 +298,8 @@ export const typeDefs = [
   }
 
   input LabelClassUpdateInput {
-    name: String
     color: ColorHex
+    name: String
   }
 
   input LabelClassWhereInput {
@@ -293,30 +316,31 @@ export const typeDefs = [
   }
 
   input LabelCreateInput {
+    geometry: GeometryInput!
     id: ID
-    type: LabelType
     imageId: ID!
     labelClassId: ID
-    geometry: GeometryInput!
     smartToolInput: JSON
+    type: LabelType
   }
 
   enum LabelType {
+    Box
     Classification
     Polygon
-    Box
   }
 
   input LabelUpdateInput {
-    labelClassId: ID
     geometry: GeometryInput
+    labelClassId: ID
     smartToolInput: JSON
   }
 
   input LabelWhereInput {
+    datasetId: ID
+    id: IdInInput
     imageId: ID
     labelClassId: ID
-    datasetId: ID
   }
 
   input LabelWhereUniqueInput {
@@ -328,16 +352,16 @@ export const typeDefs = [
   }
 
   type Membership {
-    id: ID!
     createdAt: DateTime!
-    updatedAt: DateTime!
+    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation!
     declinedAt: DateTime
+    id: ID!
+    invitationEmailSentTo: String
     role: MembershipRole!
+    status: MembershipStatus!
+    updatedAt: DateTime!
     user: User
     workspace: Workspace!
-    invitationEmailSentTo: String
-    status: MembershipStatus!
-    currentUserCanAcceptInvitation: CurrentUserCanAcceptInvitation!
   }
 
   input MembershipCreateInput {
@@ -348,15 +372,15 @@ export const typeDefs = [
   }
 
   enum MembershipRole {
-    Owner
     Admin
     Member
+    Owner
   }
 
   enum MembershipStatus {
-    Sent
     Active
     Declined
+    Sent
   }
 
   input MembershipUpdateInput {
@@ -372,87 +396,101 @@ export const typeDefs = [
   }
 
   type Mutation {
+    acceptInvitation(where: MembershipWhereUniqueInput!): Membership
+    createDataset(data: DatasetCreateInput!): Dataset
     createExample(data: ExampleCreateInput!): Example
     createImage(data: ImageCreateInput!): Image
-    createManyImages(data: ImageCreateManyInput!): [Image!]!
-    getUploadTarget(data: UploadTargetInput!): UploadTarget!
-    updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
-    deleteImage(where: ImageWhereUniqueInput!): Image
-    createLabel(data: LabelCreateInput!): Label
-    updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
-    deleteLabel(where: LabelWhereUniqueInput!): Label
-    createLabelClass(data: LabelClassCreateInput!): LabelClass
-    updateLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassUpdateInput!): LabelClass
-    reorderLabelClass(where: LabelClassWhereUniqueInput!, data: LabelClassReorderInput!): LabelClass
-    deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
-    updateIogLabel(data: UpdateIogInput!): Label
     createIogLabel(data: CreateIogLabelInput!): Label
-    createDataset(data: DatasetCreateInput!): Dataset
-    createDemoDataset: Dataset
-    updateDataset(where: DatasetWhereUniqueInput!, data: DatasetUpdateInput!): Dataset
-    deleteDataset(where: DatasetWhereUniqueInput!): Dataset
-    importDataset(where: DatasetWhereUniqueInput!, data: DatasetImportInput!): ImportStatus
-    createWorkspace(data: WorkspaceCreateInput!): Workspace
-    updateWorkspace(where: WorkspaceWhereUniqueInput!, data: WorkspaceUpdateInput!): Workspace
-    deleteWorkspace(where: WorkspaceWhereUniqueInput!): Workspace
+    createLabel(data: LabelCreateInput!): Label
+    createLabelClass(data: LabelClassCreateInput!): LabelClass
+    createManyImages(data: ImageCreateManyInput!): [Image!]!
+    createManyLabelClasses(data: LabelClassCreateManyInput!): [LabelClass!]!
     createMembership(data: MembershipCreateInput!): Membership
-    updateMembership(where: MembershipWhereUniqueInput!, data: MembershipUpdateInput!): Membership
-    deleteMembership(where: MembershipWhereUniqueInput!): Membership
-    inviteMember(where: InviteMemberInput!): InvitationResult
-    acceptInvitation(where: MembershipWhereUniqueInput!): Membership
+    createWorkspace(data: WorkspaceCreateInput!, options: WorkspaceCreateOptions): Workspace
     declineInvitation(where: MembershipWhereUniqueInput!): Membership
-    updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
+    deleteDataset(where: DatasetWhereUniqueInput!): Dataset
+    deleteImage(where: ImageWhereUniqueInput!): Image
+    deleteLabel(where: LabelWhereUniqueInput!): Label
+    deleteLabelClass(where: LabelClassWhereUniqueInput!): LabelClass
+    deleteManyImages(where: ImageWhereInput!): Int!
+    deleteManyLabels(where: LabelWhereInput!): [Label!]!
+    deleteMembership(where: MembershipWhereUniqueInput!): Membership
+    deleteWorkspace(where: WorkspaceWhereUniqueInput!): Workspace
+    getUploadTarget(data: UploadTargetInput!): UploadTarget!
+    importDataset(data: DatasetImportInput!, where: DatasetWhereUniqueInput!): ImportStatus
+    inviteMember(where: InviteMemberInput!): InvitationResult
+    reorderLabelClass(data: LabelClassReorderInput!, where: LabelClassWhereUniqueInput!): LabelClass
+    runAiAssistant(data: RunAiAssistantInput!): RunAiAssistantOutput!
+    updateDataset(data: DatasetUpdateInput!, where: DatasetWhereUniqueInput!): Dataset
+    updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
+    updateIogLabel(data: UpdateIogInput!): Label
+    updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
+    updateLabelClass(data: LabelClassUpdateInput!, where: LabelClassWhereUniqueInput!): LabelClass
+    updateMembership(data: MembershipUpdateInput!, where: MembershipWhereUniqueInput!): Membership
+    updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+    updateWorkspace(data: WorkspaceUpdateInput!, where: WorkspaceWhereUniqueInput!): Workspace
   }
 
   type Query {
-    hello: String
-    example(where: ExampleWhereUniqueInput!): Example!
-    examples(where: ExampleWhereInput, first: Int, skip: Int, orderBy: ExampleOrderByInput): [Example!]!
-    image(where: ImageWhereUniqueInput!): Image!
-    images(where: ImageWhereInput, first: Int, skip: Int): [Image!]!
-    imagesAggregates: ImagesAggregates!
-    labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
-    labelClasses(where: LabelClassWhereInput, first: Int, skip: Int): [LabelClass!]!
-    labelClassesAggregates: LabelClassesAggregates!
-    labelClassExists(where: LabelClassWhereInput!): Boolean!
-    labelsAggregates: LabelsAggregates!
-    label(where: LabelWhereUniqueInput!): Label!
-    labels(where: LabelWhereInput, first: Int, skip: Int): [Label!]!
     dataset(where: DatasetWhereUniqueInput!): Dataset!
-    datasets(where: DatasetWhereInput, first: Int, skip: Int): [Dataset!]!
-    searchDataset(where: DatasetWhereUniqueInput!): Dataset
-    workspace(where: WorkspaceWhereUniqueInput!): Workspace!
-    workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
-    workspaceExists(where: WorkspaceWhereUniqueInput!): Boolean!
+    datasets(first: Int, skip: Int, where: DatasetWhereInput): [Dataset!]!
+    debug: JSON!
+    example(where: ExampleWhereUniqueInput!): Example!
+    examples(first: Int, orderBy: ExampleOrderByInput, skip: Int, where: ExampleWhereInput): [Example!]!
+    exportDataset(format: ExportFormat!, options: ExportOptions, where: ExportWhereUniqueInput!): String!
+    hello: String
+    image(where: ImageWhereUniqueInput!): Image!
+    images(first: Int, skip: Int, where: ImageWhereInput): [Image!]!
+    imagesAggregates: ImagesAggregates!
+    label(where: LabelWhereUniqueInput!): Label!
+    labelClass(where: LabelClassWhereUniqueInput!): LabelClass!
+    labelClassExists(where: LabelClassWhereInput!): Boolean!
+    labelClasses(first: Int, skip: Int, where: LabelClassWhereInput): [LabelClass!]!
+    labelClassesAggregates: LabelClassesAggregates!
+    labels(first: Int, skip: Int, where: LabelWhereInput): [Label!]!
+    labelsAggregates: LabelsAggregates!
     membership(where: MembershipWhereUniqueInput!): Membership!
-    memberships(where: MembershipWhereInput, first: Int, skip: Int): [Membership!]!
+    memberships(first: Int, skip: Int, where: MembershipWhereInput): [Membership!]!
+    searchDataset(where: DatasetWhereUniqueInput!): Dataset
     user(where: UserWhereUniqueInput!): User!
     users(first: Int, skip: Int): [User!]!
-    exportDataset(where: ExportWhereUniqueInput!, format: ExportFormat!, options: ExportOptions): String!
-    debug: JSON!
+    workspace(where: WorkspaceWhereUniqueInput!): Workspace!
+    workspaceExists(where: WorkspaceWhereUniqueInput!): Boolean!
+    workspaces(first: Int, skip: Int, where: WorkspaceWhereInput): [Workspace!]!
+  }
+
+  input RunAiAssistantInput {
+    aiAssistantId: ID!
+    imageId: ID!
+    useAutoPolygon: Boolean
+  }
+
+  type RunAiAssistantOutput {
+    labelClasses: [ID!]!
+    labels: [Label!]!
   }
 
   input RunIogInput {
+    centerPoint: [Float!]
+    height: Float
     id: ID!
     imageUrl: String
-    x: Float
-    y: Float
-    width: Float
-    height: Float
     pointsInside: [[Float!]]
     pointsOutside: [[Float!]]
-    centerPoint: [Float!]
+    width: Float
+    x: Float
+    y: Float
   }
 
   input UpdateIogInput {
-    id: ID!
-    x: Float
-    y: Float
-    width: Float
+    centerPoint: [Float!]
     height: Float
+    id: ID!
     pointsInside: [[Float!]]
     pointsOutside: [[Float!]]
-    centerPoint: [Float!]
+    width: Float
+    x: Float
+    y: Float
   }
 
   scalar Upload
@@ -464,8 +502,8 @@ export const typeDefs = [
   }
 
   type UploadTargetHttp {
-    uploadUrl: String!
     downloadUrl: String!
+    uploadUrl: String!
   }
 
   input UploadTargetInput {
@@ -473,18 +511,18 @@ export const typeDefs = [
   }
 
   type User {
-    id: ID!
     createdAt: DateTime!
-    updatedAt: DateTime!
-    name: String
     email: String
+    id: ID!
     image: String
     memberships: [Membership!]!
+    name: String
+    updatedAt: DateTime!
   }
 
   input UserUpdateInput {
-    name: String
     image: String
+    name: String
   }
 
   input UserWhereUniqueInput {
@@ -492,35 +530,51 @@ export const typeDefs = [
   }
 
   type Workspace {
-    id: ID!
     createdAt: DateTime!
-    updatedAt: DateTime!
-    name: String!
-    slug: String!
-    image: String
-    type: WorkspaceType!
-    plan: WorkspacePlan!
     datasets: [Dataset!]!
+    id: ID!
+    image: String
+    imagesAggregates: ImagesAggregates!
     memberships: [Membership!]!
+    name: String!
+    plan: WorkspacePlan!
+    slug: String!
+    status: WorkspaceStatus!
     stripeCustomerPortalUrl: String
+    type: WorkspaceType!
+    updatedAt: DateTime!
   }
 
   input WorkspaceCreateInput {
     id: ID
-    name: String!
     image: String
+    name: String!
+    plan: WorkspacePlan
+  }
+
+  input WorkspaceCreateOptions {
+    createTutorial: Boolean
   }
 
   enum WorkspacePlan {
     Community
-    Starter
     Pro
-    Enterprise
+    Starter
   }
 
   input WorkspaceSlugAndDatasetSlug {
     slug: String!
     workspaceSlug: String!
+  }
+
+  enum WorkspaceStatus {
+    Active
+    Canceled
+    Incomplete
+    IncompleteExpired
+    PastDue
+    Trialing
+    Unpaid
   }
 
   enum WorkspaceType {
@@ -529,8 +583,8 @@ export const typeDefs = [
   }
 
   input WorkspaceUpdateInput {
-    name: String
     image: String
+    name: String
   }
 
   input WorkspaceWhereInput {

@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - "feature/**"
+      - enhancement/delete-service-worker
   push:
     branches:
       - main
@@ -57,6 +58,8 @@ jobs:
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: Generate code
+        run: yarn codegen
       - name: Lint project code
         run: yarn lint:ts
 
@@ -86,7 +89,7 @@ jobs:
         with:
           python-version: 3.8
       - name: Install Black
-        run: pip install black
+        run: pip install black==22.3.0
       - name: Run black --check .
         run: black --check .
       # - name: If needed, commit black changes to the pull request
@@ -155,10 +158,19 @@ jobs:
         run: cd typescript/db && yarn deploy && yarn generate
         env:
           POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
+      - name: Generate code
+        run: yarn codegen
       - name: run tests
-        run: yarn test
+        run: yarn test --coverage
         env:
           POSTGRES_EXTERNAL_URL: postgresql://admin:admin@localhost:5433/labelflow?schema=public
+      - name: Publish code-coverage output to CodeClimate
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        with:
+          coverageLocations: |
+            coverage/lcov.info:lcov
 
   check-codegen-diff:
     name: Check diff after codegen
@@ -173,7 +185,7 @@ jobs:
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
-      - name: run codegen:ci script
+      - name: Generate code and check for uncommitted changes
         run: yarn codegen:ci
       - name: Check for failure
         if: ${{ failure() }}
@@ -286,6 +298,8 @@ jobs:
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: Generate code
+        run: yarn codegen
       - name: Publish to Chromatic
         uses: chromaui/action@v1
         # Chromatic GitHub Action options
@@ -341,44 +355,17 @@ jobs:
   #         deployment_id: ${{ steps.deployment.outputs.deployment_id }}
   #         env_url: ${{steps.vercel.outputs.preview-url}}
 
-  bump-version:
-    name: "Bump version (only on main)"
-    if: contains( github.ref, 'main')
-    runs-on: ubuntu-20.04
-    needs:
-      [
-        lint-typescript,
-        lint-python,
-        test-typescript,
-        check-codegen-diff,
-        e2e-analysis,
-      ]
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.SUPER_GITHUB_TOKEN }}
-      - name: Fetch node_modules from cache
-        uses: actions/cache@v2
-        id: node-modules-cache
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
-      - name: Configure Git
-        run: |
-          git config user.name "Hugo Raynal"
-          git config user.email "hugo.raynal@labelflow.ai"
-      - name: Bump version
-        run: yarn release patch
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   deploy-chromatic-main:
     name: Deploy Storybook production
     if: contains( github.ref, 'main')
     runs-on: ubuntu-20.04
-    needs: bump-version
+    needs: [
+      lint-typescript,
+      lint-python,
+      test-typescript,
+      check-codegen-diff,
+      e2e-analysis,
+    ]
     # Job steps
     steps:
       - uses: actions/checkout@v2
@@ -392,6 +379,8 @@ jobs:
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{secrets.ACTIONS_CACHE_VERSION}}-${{ hashFiles('yarn.lock') }}
+      - name: Generate code
+        run: yarn codegen
       - name: Publish to Chromatic
         uses: chromaui/action@v1
         # Chromatic GitHub Action options
@@ -404,7 +393,13 @@ jobs:
     name: Deploy Strapi on Heroku production
     if: contains( github.ref, 'main')
     runs-on: ubuntu-20.04
-    needs: bump-version
+    needs: [
+      lint-typescript,
+      lint-python,
+      test-typescript,
+      check-codegen-diff,
+      e2e-analysis,
+    ]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2

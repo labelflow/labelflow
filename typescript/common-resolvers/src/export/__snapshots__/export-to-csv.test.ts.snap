@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CSV export Generates proper CSV 1`] = `
+"imageId,imageName,width,height,class,xmin,ymin,xmax,ymax,imageUrl
+9b8fb142-8388-11ec-a8ee-f7dcb0508f86,Image 0,1920,1080,Test Class 0,100,200,200,400,https://localhost:3000/api/downloads/85456e6a-aa57-45e0-949f-5cc853f8d125/8f47e891-3b24-427a-8db0-dab362fbe269/9b8fb142-8388-11ec-a8ee-f7dcb0508f86.jpg
+a552037e-8388-11ec-965b-07327355c580,Image 1,320,240,Test Class 1,100,200,200,300,https://localhost:3000/api/downloads/85456e6a-aa57-45e0-949f-5cc853f8d125/8f47e891-3b24-427a-8db0-dab362fbe269/a552037e-8388-11ec-965b-07327355c580.jpg
+"
+`;

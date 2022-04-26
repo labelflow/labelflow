@@ -19,7 +19,7 @@ export const Proof = () => (
         <Quotee
           name="Sterblue"
           jobTitle="AI-Powered platform for the energy space"
-          imageSrc=" ../static/img/sterblue-logo.png"
+          imageSrc="../static/img/sterblue-logo.png"
           mt="8"
         />
       </Flex>

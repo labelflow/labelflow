@@ -1,7 +1,8 @@
-import * as React from "react";
 import { NextSeo } from "next-seo";
-import Head from "next/head";
 import { OpenGraph } from "next-seo/lib/types";
+import Head from "next/head";
+import * as React from "react";
+import { APP_DESCRIPTION, APP_OFFICIAL_URL, APP_TITLE } from "../constants";
 
 type Props = {
   title?: string;
@@ -27,9 +28,9 @@ const defaultImages = [
 ];
 
 export const Meta = ({
-  title = "LabelFlow: The open standard platform for image labeling.",
-  desc = "The fastest and simplest image labeling tool on the Internet!",
-  canonical = "https://labelflow.ai/",
+  title = APP_TITLE,
+  desc = APP_DESCRIPTION,
+  canonical = APP_OFFICIAL_URL,
   images = defaultImages,
   article,
 }: Props) => (

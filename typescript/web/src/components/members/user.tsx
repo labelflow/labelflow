@@ -1,26 +1,15 @@
 import { Box, Stack, Badge, Flex, Avatar, chakra } from "@chakra-ui/react";
-import { User as UserType } from "@labelflow/graphql-types";
 import { useSession } from "next-auth/react";
 import * as React from "react";
 import { RiUserLine } from "react-icons/ri";
+import { GetMembershipsMembersQuery_memberships_user } from "../../graphql-types/GetMembershipsMembersQuery";
 import { randomBackgroundGradient } from "../../utils/random-background-gradient";
 
 const UserMenuIcon = chakra(RiUserLine);
 
-interface UserProps {
-  data: Pick<UserType, "name" | "email" | "image"> &
-    Partial<Pick<UserType, "id">>;
-}
+export type UserProps = Partial<GetMembershipsMembersQuery_memberships_user>;
 
-export const getDisplayName = ({
-  name,
-  email,
-  id,
-}: {
-  name?: string;
-  email?: string;
-  id?: string;
-}) => {
+export const getDisplayName = ({ name, email, id }: UserProps) => {
   if (name) {
     return name;
   }
@@ -34,17 +23,11 @@ export const getDisplayName = ({
 };
 
 export const User = (props: UserProps) => {
-  const {
-    data: { id, image, name, email },
-  } = props;
+  const { id, image, email } = props;
   const session = useSession({ required: false });
   const loggedInUser = session.data?.user;
   const isLoggedInUser = loggedInUser?.id === id;
-  const displayName = getDisplayName({
-    name: name ?? undefined,
-    email: email ?? undefined,
-    id,
-  });
+  const displayName = getDisplayName(props);
 
   return (
     <Stack direction="row" spacing="4" align="center">

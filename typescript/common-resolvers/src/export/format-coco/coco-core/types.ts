@@ -38,8 +38,8 @@ export type CocoImage = {
   height: number;
   file_name: string;
   license: number;
-  flickr_url: string;
   coco_url: string;
+  labelflow_url?: string;
   date_captured: string;
 };
 

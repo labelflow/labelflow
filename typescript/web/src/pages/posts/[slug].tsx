@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-import { chakra, Box, useColorModeValue as mode } from "@chakra-ui/react";
+import { chakra, Box, useColorModeValue } from "@chakra-ui/react";
 import * as React from "react";
 import rehypeRaw from "rehype-raw";
 import gfm from "remark-gfm";
@@ -14,7 +14,6 @@ import { Meta } from "../../components/meta";
 import { ArticlesList } from "../../components/website/Blog/articles-list";
 import { PostTitle } from "../../components/website/Blog/PostTitle";
 import "github-markdown-css";
-import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
 import { CookieBanner } from "../../components/cookie-banner";
 import { WEB_APP_URL_ORIGIN } from "../../constants";
 
@@ -29,7 +28,6 @@ export default function Posts({
 }) {
   return (
     <>
-      <ServiceWorkerManagerBackground />
       <Meta
         title={`LabelFlow | ${article?.title}`}
         desc={article?.description}
@@ -76,7 +74,7 @@ export default function Posts({
                   color: "brand.600",
                   ":hover": { textDecoration: "underline" },
                 },
-                color: mode("gray.800", "gray.200"),
+                color: useColorModeValue("gray.800", "gray.200"),
                 // Youtube player enhancements
                 // For parameters
                 // See https://developers.google.com/youtube/player_parameters

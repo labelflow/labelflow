@@ -1,14 +1,18 @@
 import { gql, ApolloClient } from "@apollo/client";
+import { Label } from "@labelflow/graphql-types";
 import { omit } from "lodash/fp";
 
-import { Label } from "@labelflow/graphql-types";
 import { Effect } from "..";
+import {
+  DeleteLabelActionMutation,
+  DeleteLabelActionMutationVariables,
+} from "../../../graphql-types/DeleteLabelActionMutation";
 import { createLabelMutationUpdate } from "./cache-updates/create-label-mutation-update";
 import { deleteLabelMutationUpdate } from "./cache-updates/delete-label-mutation-update";
-import { createLabelMutation } from "./shared-queries";
+import { CREATE_LABEL_MUTATION } from "./shared-queries";
 
-const deleteLabelMutation = gql`
-  mutation deleteLabel($id: ID!) {
+const DELETE_LABEL_MUTATION = gql`
+  mutation DeleteLabelInUndoStoreMutation($id: ID!) {
     deleteLabel(where: { id: $id }) {
       id
       x
@@ -39,12 +43,13 @@ export const createDeleteLabelEffect = (
   }
 ): Effect => ({
   do: async () => {
-    const { data } = await client.mutate<{
-      deleteLabel: Label & { __typename: "Label" };
-    }>({
-      mutation: deleteLabelMutation,
+    const { data } = await client.mutate<
+      DeleteLabelActionMutation,
+      DeleteLabelActionMutationVariables
+    >({
+      mutation: DELETE_LABEL_MUTATION,
       variables: { id },
-      refetchQueries: ["countLabelsOfDataset"],
+      refetchQueries: ["CountLabelsOfDatasetQuery"],
       /* Note that there is no optimistic response here, only a cache update.
        * We could add it but it would imply to fetch a lot of data beforehand */
       update: deleteLabelMutationUpdate(),
@@ -80,9 +85,9 @@ export const createDeleteLabelEffect = (
     /* It is important to use the same id for the re-creation when the label
      * was created in the current session to enable the undoing of the creation effect */
     await client.mutate({
-      mutation: createLabelMutation,
-      variables: createLabelInputs,
-      refetchQueries: ["countLabelsOfDataset"],
+      mutation: CREATE_LABEL_MUTATION,
+      variables: { data: createLabelInputs },
+      refetchQueries: ["CountLabelsOfDatasetQuery"],
       optimisticResponse: { createLabel: { id, __typename: "Label" } },
       update: createLabelMutationUpdate(createLabelInputs),
     });

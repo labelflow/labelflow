@@ -9,7 +9,7 @@ import {
   Tooltip,
   MenuItem,
   MenuList,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 
 import { RiArrowRightSLine } from "react-icons/ri";
@@ -42,7 +42,7 @@ const TriggerButton = forwardRef<any, any>((props, ref) => (
       as={IconButton}
       aria-label="Navigate in hidden breadcrumbs"
       icon={<EllipsisIcon fontSize="xl" />}
-      color={mode("gray.700", "gray.300")}
+      color={useColorModeValue("gray.700", "gray.300")}
       variant="ghost"
       {...props}
     />

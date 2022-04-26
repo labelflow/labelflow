@@ -1,7 +1,7 @@
 import {
   Box,
   Center,
-  useColorModeValue as mode,
+  useColorModeValue,
   Text,
   Heading,
 } from "@chakra-ui/react";
@@ -20,7 +20,7 @@ export const Survey = () => {
   }, []);
 
   return (
-    <Box as="section" bg={mode("gray.50", "gray.800")} py="48">
+    <Box as="section" bg={useColorModeValue("gray.50", "gray.800")} py="48">
       <Box
         maxW={{ base: "xl", md: "7xl" }}
         mx="auto"

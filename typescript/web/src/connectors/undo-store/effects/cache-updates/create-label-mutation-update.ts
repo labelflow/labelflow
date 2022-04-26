@@ -1,6 +1,9 @@
 import { ApolloCache } from "@apollo/client";
 import { MutationBaseOptions } from "@apollo/client/core/watchQueryOptions";
-import { GeometryInput, LabelType } from "@labelflow/graphql-types";
+import {
+  GeometryInput,
+  LabelType,
+} from "../../../../graphql-types/globalTypes";
 import {
   getBoundedLabel,
   addLabelToImageCache,

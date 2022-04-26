@@ -6,12 +6,15 @@ type Mutation {
   getUploadTarget(data: UploadTargetInput!): UploadTarget!
   updateImage(where: ImageWhereUniqueInput!, data: ImageUpdateInput!): Image
   deleteImage(where: ImageWhereUniqueInput!): Image
+  deleteManyImages(where: ImageWhereInput!): Int!
 
   createLabel(data: LabelCreateInput!): Label
   updateLabel(where: LabelWhereUniqueInput!, data: LabelUpdateInput!): Label
   deleteLabel(where: LabelWhereUniqueInput!): Label
+  deleteManyLabels(where: LabelWhereInput!): [Label!]!
 
   createLabelClass(data: LabelClassCreateInput!): LabelClass
+  createManyLabelClasses(data: LabelClassCreateManyInput!): [LabelClass!]!
   updateLabelClass(
     where: LabelClassWhereUniqueInput!
     data: LabelClassUpdateInput!
@@ -26,7 +29,6 @@ type Mutation {
   createIogLabel(data: CreateIogLabelInput!): Label
 
   createDataset(data: DatasetCreateInput!): Dataset
-  createDemoDataset: Dataset
   updateDataset(
     where: DatasetWhereUniqueInput!
     data: DatasetUpdateInput!
@@ -36,7 +38,10 @@ type Mutation {
     where: DatasetWhereUniqueInput!
     data: DatasetImportInput!
   ): ImportStatus
-  createWorkspace(data: WorkspaceCreateInput!): Workspace
+  createWorkspace(
+    data: WorkspaceCreateInput!
+    options: WorkspaceCreateOptions
+  ): Workspace
   updateWorkspace(
     where: WorkspaceWhereUniqueInput!
     data: WorkspaceUpdateInput!
@@ -54,4 +59,6 @@ type Mutation {
   declineInvitation(where: MembershipWhereUniqueInput!): Membership
 
   updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
+
+  runAiAssistant(data: RunAiAssistantInput!): RunAiAssistantOutput!
 }

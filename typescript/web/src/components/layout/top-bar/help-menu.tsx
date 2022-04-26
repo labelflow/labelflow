@@ -24,6 +24,7 @@ import { GrGraphQl } from "react-icons/gr";
 
 import { BoolParam } from "../../../utils/query-param-bool";
 import { KeymapModal } from "./keymap-button/keymap-modal";
+import { DOCUMENTATION_URL } from "../../../constants";
 
 const HelpMenuIcon = chakra(RiQuestionLine);
 const WebsiteIcon = chakra(RiGlobalLine);
@@ -57,11 +58,7 @@ export const HelpMenu = () => {
         </Tooltip>
         <MenuList>
           <MenuGroup title="Support">
-            <a
-              href="https://labelflow.gitbook.io/labelflow/"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href={DOCUMENTATION_URL} target="_blank" rel="noreferrer">
               <MenuItem icon={<DocumentationIcon fontSize="lg" />}>
                 Documentation
               </MenuItem>

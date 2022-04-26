@@ -17,9 +17,9 @@ import { useDeleteWorkspace } from "./delete-workspace.state";
 import { WorkspaceNameConfirm } from "./workspace-name-confirm";
 
 const Header = () => {
-  const workspace = useWorkspaceSettings();
+  const { name } = useWorkspaceSettings();
   return (
-    <ModalHeader>{`Are you sure you want to delete the ${workspace?.name} workspace?`}</ModalHeader>
+    <ModalHeader>{`Are you sure you want to delete the ${name} workspace?`}</ModalHeader>
   );
 };
 

@@ -1,11 +1,11 @@
 import {
   Box,
   Button,
+  ButtonProps,
   chakra,
   Flex,
   FlexProps,
   HStack,
-  Link,
   Spacer,
   useDisclosure,
   VisuallyHidden,
@@ -13,7 +13,8 @@ import {
 import NextLink from "next/link";
 import * as React from "react";
 import { RiStarLine } from "react-icons/ri";
-import { Logo } from "../Logo";
+import { Logo } from "../../logo";
+import { APP_GITHUB_URL } from "../../../constants";
 import { NavLink } from "./NavLink";
 import { NavMenu } from "./NavMenu";
 import { Submenu } from "./Submenu";
@@ -22,26 +23,42 @@ import { links } from "./_data";
 
 const StarIcon = chakra(RiStarLine);
 
-const GitHubButton = ({ isMobile }: { isMobile?: boolean }) => {
+type GitHubButtonProps = ButtonProps & { isMobile?: boolean };
+
+const GitHubButton = ({ isMobile, ...props }: GitHubButtonProps) => {
   const label = "Star us on GitHub";
   const mobileProps = isMobile ? { w: "full", size: "lg", mt: "5" } : {};
   return (
-    <Link
-      href="https://github.com/labelflow/labelflow"
-      target="_blank"
-      rel="noreferrer"
-    >
+    <NextLink href={APP_GITHUB_URL} passHref>
       <Button
-        variant={isMobile ? "outline" : "link"}
+        as="a"
+        target="_blank"
+        rel="noreferrer"
+        variant={isMobile ? "outline" : "ghost"}
         aria-label={label}
         leftIcon={<StarIcon fontSize="2xl" />}
         {...mobileProps}
+        {...props}
       >
         {label}
       </Button>
-    </Link>
+    </NextLink>
   );
 };
+
+const SignInButton = ({ children = "Sign in", ...props }: ButtonProps) => (
+  <NextLink href="/auth/signin">
+    <Button as="a" href="#" colorScheme="brand" variant="outline" {...props}>
+      {children}
+    </Button>
+  </NextLink>
+);
+
+const TryItNowButton = (props: ButtonProps) => (
+  <SignInButton variant="solid" fontWeight="bold" {...props}>
+    Try it now
+  </SignInButton>
+);
 
 const MobileNavContext = (props: FlexProps) => {
   const { isOpen, onToggle } = useDisclosure();
@@ -53,16 +70,12 @@ const MobileNavContext = (props: FlexProps) => {
         </Box>
         <NextLink href="/website">
           <Box as="a" rel="home" mx="auto" cursor="pointer">
-            <Logo h="24px" iconColor="brand.400" />
+            <Logo h="6" />
           </Box>
         </NextLink>
         <Spacer />
         <Box display={{ base: "none", sm: "block" }}>
-          <NextLink href="/local/datasets">
-            <Button colorScheme="brand" variant="outline" ml="3">
-              Try it now
-            </Button>
-          </NextLink>
+          <SignInButton ml="3" />
         </Box>
       </Flex>
       <NavMenu animate={isOpen ? "open" : "closed"}>
@@ -80,11 +93,10 @@ const MobileNavContext = (props: FlexProps) => {
             </NavLink.Mobile>
           )
         )}
-        <NextLink href="/local/datasets">
-          <Button colorScheme="brand" w="full" size="lg" mt="5">
-            Try it now
-          </Button>
-        </NextLink>
+        <HStack mt="5">
+          <SignInButton w="full" size="lg" />
+          <TryItNowButton w="full" size="lg" />
+        </HStack>
         <GitHubButton isMobile />
       </NavMenu>
     </>
@@ -102,7 +114,7 @@ const DesktopNavContent = (props: FlexProps) => {
       <NextLink href="/website">
         <Box as="a" rel="home" cursor="pointer">
           <VisuallyHidden>LabelFlow</VisuallyHidden>
-          <Logo h="6" iconColor="brand.500" />
+          <Logo h="6" />
         </Box>
       </NextLink>
       <HStack
@@ -127,23 +139,10 @@ const DesktopNavContent = (props: FlexProps) => {
           </Box>
         ))}
       </HStack>
-      <HStack
-        spacing="4"
-        //  minW="240px"
-        justify="space-between"
-      >
+      <HStack spacing="3" justify="space-between" align="center">
         <GitHubButton />
-        <NextLink href="/local/datasets">
-          <Button
-            as="a"
-            href="#"
-            colorScheme="brand"
-            fontWeight="bold"
-            variant="outline"
-          >
-            Try it now
-          </Button>
-        </NextLink>
+        <SignInButton />
+        <TryItNowButton display={{ base: "none", xl: "inherit" }} />
       </HStack>
     </Flex>
   );

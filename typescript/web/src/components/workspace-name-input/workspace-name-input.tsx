@@ -24,7 +24,6 @@ export const WorkspaceNameInput: FC<WorkspaceNameInputProps> = ({
       {...props}
       aria-label="workspace name input"
       focusBorderColor={invalidate ? "red.500" : focusBorderColor}
-      placeholder="My online workspace name"
       value={name}
       onChange={handleChangeName}
       isInvalid={invalidate}

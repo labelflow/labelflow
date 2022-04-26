@@ -1,25 +1,22 @@
-import React, { useEffect } from "react";
 import {
-  Heading,
-  Text,
-  Code,
-  Center,
   Box,
-  chakra,
   Button,
+  Center,
+  chakra,
+  Code,
+  Heading,
   HStack,
+  Text,
 } from "@chakra-ui/react";
-import { FallbackProps } from "react-error-boundary";
 import { NextPageContext } from "next";
-
 import { useRouter } from "next/router";
-import { Meta } from "../components/meta";
-import { Layout } from "../components/layout";
+import React, { useEffect } from "react";
+import { FallbackProps } from "react-error-boundary";
 import { EmptyStateError } from "../components/empty-state";
-import { NavLogo } from "../components/logo/nav-logo";
-import { AuthManager } from "../components/auth-manager";
 import BrowserLock from "../components/graphics/browser-lock";
-import { SigninButton } from "../components/auth-manager/signin-button";
+import { Layout } from "../components/layout";
+import { NavLogo } from "../components/logo/nav-logo";
+import { Meta } from "../components/meta";
 
 export const EmptyStateLock = chakra(BrowserLock, {
   baseStyle: {
@@ -58,7 +55,6 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
     return (
       <>
         <Meta title="LabelFlow | Authentication required" />
-        <AuthManager />
         <Layout breadcrumbs={[<NavLogo key={0} />]}>
           <Center h="full">
             <Box as="section">
@@ -88,8 +84,6 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
                   <Button as="a" href="/">
                     Go back to safety
                   </Button>
-
-                  <SigninButton />
                 </HStack>
               </Box>
             </Box>
@@ -101,7 +95,6 @@ const ErrorPage = ({ statusCode, error, resetErrorBoundary }: Props) => {
   return (
     <>
       <Meta title="LabelFlow | Error" />
-      <AuthManager />
       <Layout breadcrumbs={[<NavLogo key={0} />]}>
         <Center h="full">
           <Box as="section">

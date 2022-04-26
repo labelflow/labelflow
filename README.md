@@ -11,10 +11,10 @@
   <p align="center">
     The open platform for image labeling
     <br />
-    <a href="https://labelflow.ai/local"><strong>Try it now »</strong></a>
+    <a href="https://labelflow.ai/"><strong>Try it now »</strong></a>
     <br />
     <br />
-    <a href="https://labelflow.gitbook.io/labelflow/">Explore docs</a>
+    <a href="https://docs.labelflow.ai/">Explore docs</a>
     ·
     <a href="https://github.com/labelflow/labelflow/issues/new?assignees=&labels=bug&template=bug_report.md&title=">Report Bug</a>
     ·
@@ -28,7 +28,7 @@
 
 ## About
 
-<img width="100%" alt="LabelFlow Screenshot" src="https://github.com/labelflow/labelflow/raw/main/typescript/web/public/static/img/home-screenshot5.png">
+<img width="100%" alt="LabelFlow Screenshot" src="https://czeqiukmkichqmwlshce.supabase.in/storage/v1/object/public/labelflow-images/hero-image.jpg">
 
 # Visual Data for absolutely everyone
 
@@ -47,7 +47,7 @@ You can build LabelFlow from source, and serve it from your machine. Read how to
 - [TypeScript](https://www.typescriptlang.org/): Main programming language of the web app
 - [ReactJS](https://reactjs.org/): View library of the web app
 - [NextJS](https://nextjs.org/): Web framework of the web app
-- [GraphQL](https://graphql.org/): API, communication between client and server, and service worker
+- [GraphQL](https://graphql.org/): API, communication between client and server
 - [NodeJS](https://nodejs.org/en/): Javascript runtime for development and production on docker
 - [Python](https://www.python.org/) for the machine learning server
 - [PyTorch](https://pytorch.org/) for the machine learning server
@@ -64,7 +64,7 @@ LabelFlow officially launched as v.0.1 on 7th of September, however a lot of new
 
 ### LabelFlow.ai hosted version
 
-You can use our hsoted version now for free, at [labeflow.ai](https://labelflow.ai).
+You can use our hosted version now for free, at [labeflow.ai](https://labelflow.ai).
 
 ### Serving your own LabelFlow
 
@@ -126,14 +126,14 @@ You can find the full list of environment variables needed for a fully featured 
 
 ## Roadmap
 
-- The short term road map is on Github https://github.com/labelflow/labelflow/projects/1
-- The longer term feature road map is on Canny https://labelflow.canny.io/
+- The short term roadmap is on Github https://github.com/orgs/labelflow/projects/5
+- The longer term feature roadmap is on Canny https://labelflow.canny.io/
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## License
 
-LabelFlow sources is entirely available on Github, and LabelFlow is primarily distributed under the terms of the Business Source License (BSL), like our friends at [MariaDB](https://mariadb.com/bsl11/), [Sentry](https://blog.sentry.io/2019/11/06/relicensing-sentry) and [CockroachDB](https://www.cockroachlabs.com/blog/oss-relicensing-cockroachdb/).
+LabelFlow sources are entirely available on Github, and LabelFlow is primarily distributed under the terms of the Business Source License (BSL), like our friends at [MariaDB](https://mariadb.com/bsl11/), [Sentry](https://blog.sentry.io/2019/11/06/relicensing-sentry) and [CockroachDB](https://www.cockroachlabs.com/blog/oss-relicensing-cockroachdb/).
 
 As they explain very well, the BSL is the closest thing to open source that we can do without being threatened by external companies. LabelFlow source is available on this repository, you can deploy LabelFlow entirely on premises, and you can contribute to LabelFlow here!
 

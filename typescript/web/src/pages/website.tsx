@@ -1,42 +1,37 @@
 import { Box } from "@chakra-ui/react";
 import * as React from "react";
-
-import { NavBar } from "../components/website/Navbar/NavBar";
-import { Why } from "../components/website/Why/Why";
-import { Hero } from "../components/website/Hero/Hero";
-import { Features } from "../components/website/Features/Features";
-import { LogoGrid } from "../components/website/Logos/LogoGrid";
-import { Footer } from "../components/website/Footer/Footer";
-import { Pricing } from "../components/website/Pricing/Pricing";
-import { ArticlesList } from "../components/website/Blog/articles-list";
-import { getAllArticles, Article } from "../connectors/strapi";
-import { Roadmap } from "../components/website/roadmap/roadmap";
+import { CookieBanner } from "../components/cookie-banner";
 import { Meta } from "../components/meta";
 import { Banner } from "../components/website/banner";
+import { ArticlesList } from "../components/website/Blog/articles-list";
+import { Features } from "../components/website/Features/Features";
+import { Footer } from "../components/website/Footer/Footer";
+import { Hero } from "../components/website/hero";
+import { LogoGrid } from "../components/website/Logos/LogoGrid";
+import { NavBar } from "../components/website/Navbar/NavBar";
+import { Pricing } from "../components/website/pricing";
 import { Proof } from "../components/website/proof";
-import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
-import { CookieBanner } from "../components/cookie-banner";
+import { IntroVideo } from "../components/website/intro-video";
+import { Roadmap } from "../components/website/roadmap/roadmap";
+import { Why } from "../components/website/Why/Why";
+import { APP_TITLE } from "../constants";
+import { getHomeStaticProps, HomeProps } from "../utils/get-home-static-props";
 
-export default function Website({
-  previewArticles,
-}: {
-  previewArticles: Omit<Article, "content">[];
-}) {
+export default function Website({ previewArticles }: HomeProps) {
   return (
     <>
-      <ServiceWorkerManagerBackground />
-      <Meta title="LabelFlow: The open standard platform for image labeling." />
+      <Meta title={APP_TITLE} />
       <CookieBanner />
       <Box minH="640px">
         <NavBar />
         <Hero />
         <Banner />
+        <IntroVideo />
         <Features />
         <Proof />
         <Why />
         <LogoGrid />
         <Roadmap />
-        {/* <Testimonials /> */}
         <Pricing />
         <ArticlesList preview previewArticles={previewArticles} />
         <Footer />
@@ -45,11 +40,4 @@ export default function Website({
   );
 }
 
-export async function getStaticProps(): Promise<{
-  props: { previewArticles: Omit<Article, "content">[] };
-}> {
-  const previewArticles = (await getAllArticles({ limit: 3 })) || [];
-  return {
-    props: { previewArticles },
-  };
-}
+export const getStaticProps = getHomeStaticProps;

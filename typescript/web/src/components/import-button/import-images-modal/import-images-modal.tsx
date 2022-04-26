@@ -1,30 +1,35 @@
-import { useCallback, useEffect, useState } from "react";
+import { useApolloClient } from "@apollo/client";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-  ModalFooter,
   Button,
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalOverlay,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useQueryParam, StringParam, withDefault } from "use-query-params";
-import { useApolloClient } from "@apollo/client";
+import { useCallback, useEffect, useState } from "react";
+import { StringParam, useQueryParam, withDefault } from "use-query-params";
+import { GET_ALL_IMAGES_OF_A_DATASET_QUERY } from "../../../hooks/use-images-navigation.query";
+import { DATASET_IMAGES_PAGE_DATASET_QUERY } from "../../../shared-queries/dataset-images-page.query";
+import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../../shared-queries/workspace-datasets-page.query";
+import { PAGINATED_IMAGES_QUERY } from "../../dataset-images-list";
 import { ImportImagesModalDropzone } from "./modal-dropzone/modal-dropzone";
 import { ImportImagesModalUrlList } from "./modal-url-list/modal-url-list";
-import { datasetDataQuery } from "../../../pages/[workspaceSlug]/datasets/[datasetSlug]/images";
-import { getDatasetsQuery } from "../../../pages/[workspaceSlug]/datasets";
+
+export type ImportImagesModalProps = {
+  datasetId?: string;
+  isOpen?: boolean;
+  onClose?: () => void;
+};
 
 export const ImportImagesModal = ({
   isOpen = false,
   onClose = () => {},
-}: {
-  isOpen?: boolean;
-  onClose?: () => void;
-}) => {
+  datasetId,
+}: ImportImagesModalProps) => {
   const client = useApolloClient();
-  const router = useRouter();
-  const { datasetSlug, workspaceSlug } = router?.query;
+  const { isReady } = useRouter();
 
   const [isCloseable, setCloseable] = useState(true);
   const [hasUploaded, setHasUploaded] = useState(false);
@@ -34,24 +39,22 @@ export const ImportImagesModal = ({
   );
 
   useEffect(() => {
-    if (router?.isReady && !isOpen) {
+    if (isReady && !isOpen) {
       setMode(undefined, "replaceIn");
     }
-  }, [isOpen, router?.isReady]);
+  }, [isOpen, isReady]);
 
   useEffect(() => {
-    // Manually refetch
     if (hasUploaded) {
-      client.query({
-        query: datasetDataQuery,
-        variables: {
-          slug: datasetSlug,
-          workspaceSlug,
-        },
-        fetchPolicy: "network-only",
+      client.cache.evict({ id: `Dataset:${datasetId}` });
+      client.refetchQueries({
+        include: [
+          WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
+          PAGINATED_IMAGES_QUERY,
+          GET_ALL_IMAGES_OF_A_DATASET_QUERY,
+          DATASET_IMAGES_PAGE_DATASET_QUERY,
+        ],
       });
-      client.query({ query: getDatasetsQuery, fetchPolicy: "network-only" });
-      client.refetchQueries({ include: ["paginatedImagesQuery"] });
     }
   }, [hasUploaded]);
 
@@ -77,7 +80,7 @@ export const ImportImagesModal = ({
       isCentered
     >
       <ModalOverlay />
-      <ModalContent height="80vh">
+      <ModalContent height="80vh" data-testid="import-images-modal-content">
         <ModalCloseButton disabled={!isCloseable} />
         {mode !== "url-list" && (
           <ImportImagesModalDropzone
@@ -94,16 +97,19 @@ export const ImportImagesModal = ({
           />
         )}
 
-        <ModalFooter visibility={hasUploaded ? "visible" : "hidden"}>
-          <Button
-            colorScheme="brand"
-            onClick={() => {
-              onClose();
-              setHasUploaded(false);
-            }}
-          >
-            Start labeling
-          </Button>
+        <ModalFooter>
+          {hasUploaded && (
+            <Button
+              data-testid="start-labeling-button"
+              colorScheme="brand"
+              onClick={() => {
+                onClose();
+                setHasUploaded(false);
+              }}
+            >
+              Start labeling
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

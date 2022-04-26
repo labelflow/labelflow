@@ -4,11 +4,11 @@ const bundlewatchConfig = {
     // Next JS client files
     {
       path: "./.next/static/chunks/**/*-*.js",
-      maxSize: "300kb",
+      maxSize: "400kb",
     },
     {
       path: "./.next/static/chunks/**/*.*.js",
-      maxSize: "300kb",
+      maxSize: "400kb",
     },
     {
       path: "./.next/static/*/_buildManifest.js",
@@ -18,11 +18,6 @@ const bundlewatchConfig = {
       path: "./.next/static/*/_ssgManifest.js",
       maxSize: "4kb",
     },
-    // Service worker files
-    {
-      path: "./public/sw.js",
-      maxSize: "1100kb",
-    }
   ],
   ci: {
     trackBranches: ["refs/heads/main"],

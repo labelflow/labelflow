@@ -1,18 +1,105 @@
-import { Box, Center, Heading, SimpleGrid, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  Heading,
+  HStack,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { isEmpty } from "lodash/fp";
 import React from "react";
+import { IconType } from "react-icons";
+import {
+  BiCheckbox,
+  BiCheckboxChecked,
+  BiCheckboxSquare,
+} from "react-icons/bi";
+import { HiOutlineTrash } from "react-icons/hi";
+import { LayoutSpinner, PaginationProvider, PaginationToolbar } from "../core";
 import { EmptyStateNoImages } from "../empty-state";
 import { ImportButton } from "../import-button";
-import { PaginationProvider } from "../pagination";
-import { PaginationFooter } from "../pagination/pagination-footer";
-import { LayoutSpinner } from "../spinner";
-import { DeleteImageModal } from "./delete-image-modal";
-import { ImageCard } from "./image-card";
+import { DeleteManyImagesModal } from "./delete-many-images-modal";
+import { DeleteSingleImageModal } from "./delete-single-image-modal";
+import { ImageGrid } from "./image-grid";
 import {
   ImagesListProps,
   ImagesListProvider,
   useImagesList,
 } from "./images-list.context";
+
+const ImportImagesButton = () => {
+  const { datasetId } = useImagesList();
+  return (
+    <ImportButton
+      colorScheme="brand"
+      variant="solid"
+      mt="8"
+      showModal={false}
+      datasetId={datasetId}
+    />
+  );
+};
+
+const useSelectIcon = (): IconType => {
+  const { images, selected } = useImagesList();
+  if (isEmpty(selected)) return BiCheckbox;
+  return selected.length === images.length
+    ? BiCheckboxChecked
+    : BiCheckboxSquare;
+};
+
+const SelectImageIcon = () => {
+  const Icon = useSelectIcon();
+  return <Icon size="22" />;
+};
+
+const SelectAllButton = () => {
+  const { images, selected, toggleSelectAll } = useImagesList();
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      leftIcon={<SelectImageIcon />}
+      onClick={toggleSelectAll}
+      disabled={isEmpty(images)}
+    >
+      {isEmpty(selected) ? "Select all" : "Deselect all"}
+    </Button>
+  );
+};
+
+const DeleteSelectedButton = () => {
+  const { images, selected, openDeleteSelectedModal } = useImagesList();
+  return (
+    <Button
+      data-testid="delete-selected-images"
+      variant="ghost"
+      size="sm"
+      leftIcon={<HiOutlineTrash />}
+      disabled={isEmpty(images) || isEmpty(selected)}
+      onClick={openDeleteSelectedModal}
+    >
+      Delete selected
+    </Button>
+  );
+};
+
+const Toolbar = () => (
+  <HStack
+    align="center"
+    px={{ base: "2", md: "8" }}
+    py={1}
+    bg={useColorModeValue("white", "gray.800")}
+    borderTop="1px"
+    borderColor={useColorModeValue("gray.100", "gray.700")}
+    boxShadow="md"
+  >
+    <SelectAllButton />
+    <DeleteSelectedButton />
+  </HStack>
+);
 
 const NoImages = () => (
   <Center h="full">
@@ -25,59 +112,66 @@ const NoImages = () => (
         textAlign="center"
       >
         <EmptyStateNoImages w="full" />
-        <Heading as="h2">You don&apos;t have any images.</Heading>
+        <Heading as="h2">You don&apos;t have any images</Heading>
         <Text mt="4" fontSize="lg">
-          Fortunately, it’s very easy to add some.
+          Fortunately, it&apos;s very easy to add some!
         </Text>
-
-        <ImportButton
-          colorScheme="brand"
-          variant="solid"
-          mt="8"
-          showModal={false}
-        />
+        <ImportImagesButton />
       </Box>
     </Box>
   </Center>
 );
 
-const Gallery = () => {
+const DeleteModals = () => {
   const {
-    workspaceSlug,
-    datasetSlug,
-    datasetId,
-    toDelete,
-    setToDelete,
-    images,
+    singleToDelete,
+    setSingleToDelete,
+    displayDeleteSelectedModal,
+    closeDeleteSelectedModal,
   } = useImagesList();
   return (
     <>
-      <DeleteImageModal
-        isOpen={!isEmpty(toDelete)}
-        onClose={() => setToDelete(undefined)}
-        imageId={toDelete}
-        datasetId={datasetId!}
+      <DeleteSingleImageModal
+        isOpen={!isEmpty(singleToDelete)}
+        onClose={() => setSingleToDelete(undefined)}
       />
-      <SimpleGrid
-        minChildWidth="240px"
-        spacing={{ base: "2", md: "8" }}
-        padding={{ base: "2", md: "8" }}
-        paddingBottom={{ base: "24", md: "16" }}
-      >
-        {images?.map(({ id, name, thumbnail500Url }) => (
-          <ImageCard
-            key={id}
-            id={id}
-            name={name}
-            thumbnail={thumbnail500Url}
-            href={`/${workspaceSlug}/datasets/${datasetSlug}/images/${id}`}
-            onAskImageDelete={setToDelete}
-          />
-        ))}
-      </SimpleGrid>
+      <DeleteManyImagesModal
+        isOpen={displayDeleteSelectedModal}
+        onClose={closeDeleteSelectedModal}
+      />
     </>
   );
 };
+
+const Footer = () => {
+  const { selected } = useImagesList();
+  const leftLabel = isEmpty(selected) ? "" : `${selected.length} selected`;
+  // Chakra UI shadow md but reversed
+  const shadow = [
+    "0 -4px 6px -1px rgba(0, 0, 0, 0.1)",
+    "0 -2px 4px -1px rgba(0, 0, 0, 0.06)",
+  ].join(",");
+  return (
+    <Box boxShadow={shadow}>
+      <PaginationToolbar leftLabel={leftLabel} />
+    </Box>
+  );
+};
+
+const GalleryBody = () => (
+  <Flex grow={1} direction="column" minH="0">
+    <Toolbar />
+    <ImageGrid />
+    <Footer />
+  </Flex>
+);
+
+const Gallery = () => (
+  <>
+    <GalleryBody />
+    <DeleteModals />
+  </>
+);
 
 const Content = () => {
   const { images } = useImagesList();
@@ -98,7 +192,6 @@ export const ImagesList = (props: ImagesListProps) => {
     >
       <ImagesListProvider {...props}>
         <Body />
-        <PaginationFooter />
       </ImagesListProvider>
     </PaginationProvider>
   );

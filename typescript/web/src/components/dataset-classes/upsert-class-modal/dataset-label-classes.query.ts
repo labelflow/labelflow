@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const DATASET_LABEL_CLASSES_QUERY = gql`
-  query getDatasetLabelClasses($slug: String!, $workspaceSlug: String!) {
+  query GetDatasetLabelClassesQuery($slug: String!, $workspaceSlug: String!) {
     dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
       id
       name

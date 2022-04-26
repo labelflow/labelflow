@@ -1,32 +1,68 @@
+import { Flex, Heading, VStack, useColorModeValue } from "@chakra-ui/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React, { useCallback } from "react";
-import {
-  SignInModal,
-  SignInModalProvider,
-} from "../../components/auth-manager/signin-modal";
-import { CookieBanner } from "../../components/cookie-banner";
-import { Layout } from "../../components/layout";
-import { NavLogo } from "../../components/logo/nav-logo";
+import React, { useEffect } from "react";
+import { StringParam, useQueryParam } from "use-query-params";
+import { SignIn, SignInProvider } from "../../components/auth";
 import { Meta } from "../../components/meta";
-import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
 
-const LocalDatasetsIndexPage = () => {
+const useRedirectIfAuthenticated = (redirectUrl?: string) => {
+  const { status } = useSession();
   const router = useRouter();
-  const exitSignIn = useCallback(async () => {
-    await router.replace({ pathname: `/local/datasets`, query: router.query });
-  }, [router]);
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace(redirectUrl || "/");
+    }
+  });
+};
+
+const MustLogInMessage = () => (
+  <Heading as="h3" textAlign="center" fontSize="3xl">
+    Please sign-in to continue
+  </Heading>
+);
+
+type BodyProps = {
+  redirectUrl?: string;
+};
+
+const Body = ({ redirectUrl }: BodyProps) => {
+  return (
+    <SignInProvider>
+      <Flex
+        direction="column"
+        align="center"
+        bg={useColorModeValue("gray.100", "gray.800")}
+        flexGrow={1}
+        justify="center"
+      >
+        <VStack
+          mt={10}
+          maxW="md"
+          spacing={10}
+          bg={useColorModeValue("white", "gray.700")}
+          p="8"
+          borderRadius="8"
+        >
+          {redirectUrl && <MustLogInMessage />}
+          <SignIn />
+        </VStack>
+      </Flex>
+    </SignInProvider>
+  );
+};
+
+const SignInPage = () => {
+  const [redirect] = useQueryParam("redirect", StringParam);
+  const redirectUrl = redirect ?? undefined;
+  const { status } = useSession();
+  useRedirectIfAuthenticated(redirectUrl);
   return (
     <>
-      <ServiceWorkerManagerBackground />
       <Meta title="LabelFlow | Sign in" />
-      <CookieBanner />
-      <Layout breadcrumbs={[<NavLogo key={0} />]}>
-        <SignInModalProvider onClose={exitSignIn}>
-          <SignInModal />
-        </SignInModalProvider>
-      </Layout>
+      {status === "unauthenticated" && <Body redirectUrl={redirectUrl} />}
     </>
   );
 };
 
-export default LocalDatasetsIndexPage;
+export default SignInPage;

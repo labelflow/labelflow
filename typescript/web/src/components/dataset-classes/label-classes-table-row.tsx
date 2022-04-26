@@ -8,14 +8,11 @@ import {
   TableCellProps,
   Text,
   Tooltip,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { createContext, useCallback, useContext } from "react";
 import { RiCheckboxBlankCircleFill } from "react-icons/ri";
-import {
-  ReorderableTableCell,
-  ReorderableTableRow,
-} from "../reorderable-table";
+import { ReorderableTableCell, ReorderableTableRow } from "../core";
 import { useDatasetClasses } from "./dataset-classes.context";
 import { LabelClassWithShortcut } from "./types";
 
@@ -150,7 +147,7 @@ export const LabelClassesTableRow = (props: LabelClassWithShortcut) => {
     <ReorderableTableRow
       draggableId={id}
       index={index}
-      bgColor={mode("white", "gray.900")}
+      bgColor={useColorModeValue("white", "gray.900")}
     >
       <RowContext.Provider value={props}>
         <RowBody />

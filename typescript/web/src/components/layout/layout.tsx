@@ -1,12 +1,13 @@
 import { ReactNode } from "react";
-import { Flex, Box, useColorModeValue as mode } from "@chakra-ui/react";
+import { Flex, useColorModeValue } from "@chakra-ui/react";
 import { TopBar } from "./top-bar";
 
-export type Props = {
+export type LayoutProps = {
   breadcrumbs?: ReactNode;
   topBarRightContent?: ReactNode;
   children: ReactNode;
   tabBar?: ReactNode;
+  fullHeight?: boolean;
 };
 
 export const Layout = ({
@@ -14,14 +15,19 @@ export const Layout = ({
   breadcrumbs,
   topBarRightContent,
   tabBar,
-}: Props) => {
-  return (
-    <Flex direction="column" h="100vh">
-      <TopBar breadcrumbs={breadcrumbs} rightContent={topBarRightContent} />
-      {tabBar}
-      <Box as="main" bg={mode("gray.100", "gray.900")} flex="1">
-        {children}
-      </Box>
+  fullHeight,
+}: LayoutProps) => (
+  <Flex grow={1} direction="column" minH="0">
+    <TopBar breadcrumbs={breadcrumbs} rightContent={topBarRightContent} />
+    {tabBar}
+    <Flex
+      grow={1}
+      direction="column"
+      as="main"
+      bg={useColorModeValue("gray.100", "gray.900")}
+      minHeight={fullHeight ? "0" : undefined}
+    >
+      {children}
     </Flex>
-  );
-};
+  </Flex>
+);

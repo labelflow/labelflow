@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import type {
   LabelClass,
   MutationCreateLabelClassArgs,
+  MutationCreateManyLabelClassesArgs,
   MutationUpdateLabelClassArgs,
   MutationReorderLabelClassArgs,
   MutationDeleteLabelClassArgs,
@@ -75,14 +76,6 @@ const createLabelClass = async (
     user,
   });
 
-  // Since we don't have any constraint checks with Dexie
-  // we need to ensure that the datasetId matches some
-  // entity before being able to continue.
-  await throwIfResolvesToNil(
-    `The dataset id ${datasetId} doesn't exist.`,
-    repository.dataset.get
-  )({ id: datasetId }, user);
-
   const labelClassId = id ?? uuidv4();
   const now = new Date();
 
@@ -104,6 +97,53 @@ const createLabelClass = async (
     "No labelClass with such id",
     repository.labelClass.get
   )({ id: newLabelClassEntity.id }, user);
+};
+
+const createManyLabelClasses = async (
+  _: any,
+  args: MutationCreateManyLabelClassesArgs,
+  { repository, user }: Context
+): Promise<DbLabelClass[]> => {
+  const { labelClasses: newLabelClasses, datasetId } = args.data;
+  const existingLabelClasses = await repository.labelClass.list({
+    datasetId,
+    user,
+  });
+  const nowIso = new Date().toISOString();
+  const { newColors } = newLabelClasses.reduce<{
+    existingColors: string[];
+    newColors: string[];
+  }>(
+    (colors) => {
+      const newColor = getNextClassColor(colors.existingColors);
+      colors.existingColors.push(newColor);
+      colors.newColors.push(newColor);
+      return colors;
+    },
+    {
+      existingColors: existingLabelClasses.map((item) => item.color),
+      newColors: [],
+    }
+  );
+  const newLabelClassesEntities = newLabelClasses.map(
+    (newLabelClass, index) => ({
+      id: newLabelClass.id ?? uuidv4(),
+      index: existingLabelClasses.length + index,
+      createdAt: nowIso,
+      updatedAt: nowIso,
+      name: newLabelClass.name,
+      color: newColors[index],
+      datasetId,
+    })
+  );
+  const labelClassesIds = await repository.labelClass.addMany(
+    { labelClasses: newLabelClassesEntities },
+    user
+  );
+  return await repository.labelClass.list({
+    id: { in: labelClassesIds },
+    user,
+  });
 };
 
 const reorderLabelClass = async (
@@ -261,6 +301,7 @@ export default {
 
   Mutation: {
     createLabelClass,
+    createManyLabelClasses,
     updateLabelClass,
     deleteLabelClass,
     reorderLabelClass,

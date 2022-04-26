@@ -1,6 +1,7 @@
 import {
   DbWorkspace,
   DbWorkspaceWithType,
+  DEFAULT_WORKSPACE_PLAN,
   getSlug,
   INVALID_WORKSPACE_NAME_MESSAGES,
   PartialWithNullAllowed,
@@ -9,7 +10,7 @@ import {
 } from "@labelflow/common-resolvers";
 import { WorkspaceType } from "@labelflow/graphql-types";
 import { ErrorOverride, withErrorOverridesAsync } from "@labelflow/utils";
-import { Prisma, UserRole, WorkspacePlan } from "@prisma/client";
+import { Prisma, UserRole } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { isNil } from "lodash";
 import { getPrismaClient } from "../prisma-client";
@@ -46,17 +47,17 @@ export const addWorkspaceImpl: Repository["workspace"]["add"] = async (
   if (typeof user?.id !== "string") {
     throw new Error("Couldn't create workspace: No user id");
   }
-  const plan = WorkspacePlan.Community;
   const slug = getSlug(workspace.name);
   validWorkspaceName(workspace.name, slug);
-  const stripeCustomerId = await stripe.tryCreateCustomer(workspace.name, slug);
+  const plan = workspace.plan ?? DEFAULT_WORKSPACE_PLAN;
+  const stripeInfo = await stripe.tryCreateCustomer(workspace.name, slug, plan);
   const db = await getPrismaClient();
   const createdWorkspace = await db.workspace.create({
     data: castObjectNullsToUndefined({
-      plan,
       ...workspace,
+      ...stripeInfo,
+      plan,
       slug,
-      stripeCustomerId,
       memberships: {
         create: {
           user: { connect: { id: user?.id } },
@@ -179,4 +180,13 @@ export const deleteWorkspace: Repository["workspace"]["delete"] = async (
   if (stripeCustomerId) {
     await stripe.tryDeleteCustomer(stripeCustomerId);
   }
+};
+
+export const countImages: Repository["workspace"]["countImages"] = async (
+  where
+) => {
+  const db = await getPrismaClient();
+  return await db.image.count({
+    where: { dataset: { workspace: castObjectNullsToUndefined(where) } },
+  });
 };

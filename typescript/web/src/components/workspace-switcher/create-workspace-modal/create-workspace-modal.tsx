@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Heading,
   Modal,
   ModalBody,
@@ -10,12 +9,15 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
+import { DEFAULT_WORKSPACE_PLAN } from "@labelflow/common-resolvers";
+import { WorkspacePlan } from "@labelflow/graphql-types";
+import { toEnumValue } from "@labelflow/utils";
+import { pascalCase } from "change-case";
 import { isEmpty, isNil } from "lodash/fp";
 import React, {
   createContext,
-  FC,
   FormEvent,
   useCallback,
   useContext,
@@ -24,7 +26,7 @@ import React, {
 } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
 import { getApolloErrorMessage } from "../../../utils/get-apollo-error-message";
-import { Features } from "../../auth-manager/signin-modal/features";
+import { Features } from "../../auth/features";
 import { Logo } from "../../logo";
 import {
   useWorkspaceNameInput,
@@ -32,6 +34,7 @@ import {
   WorkspaceNameInputProvider,
   WorkspaceNameMessage,
 } from "../../workspace-name-input";
+import { CreateWorkspaceButton } from "./create-workspace-button";
 import { useCreateWorkspaceMutation } from "./create-workspace.mutation";
 
 const ModalIsOpenContext = createContext(false);
@@ -53,7 +56,7 @@ const Title = () => (
     </Heading>
     <Text
       fontSize="lg"
-      color={mode("gray.600", "gray.400")}
+      color={useColorModeValue("gray.600", "gray.400")}
       fontWeight="medium"
     >
       Store your datasets online & start collaborating
@@ -62,7 +65,11 @@ const Title = () => (
 );
 
 const NameLabel = () => (
-  <Text fontSize="sm" fontWeight="medium" color={mode("gray.800", "gray.200")}>
+  <Text
+    fontSize="sm"
+    fontWeight="medium"
+    color={useColorModeValue("gray.800", "gray.200")}
+  >
     Workspace Name
   </Text>
 );
@@ -96,22 +103,20 @@ const WorkspaceName = ({ error }: { error: string | undefined }) => {
   );
 };
 
-const CreateButton: FC<{ isDisabled?: boolean }> = ({ isDisabled }) => (
-  <Button
-    width="full"
-    type="submit"
-    isDisabled={isDisabled}
-    colorScheme="brand"
-    aria-label="create workspace button"
-  >
-    Create
-  </Button>
-);
-
-const useCreateWorkspace = (): [() => void, boolean, string | undefined] => {
+export const useCreateWorkspace = (): [
+  () => void,
+  boolean,
+  string | undefined
+] => {
   const { name } = useWorkspaceNameInput();
+  const [planStr] = useQueryParam("plan", StringParam);
+  const plan = toEnumValue(
+    WorkspacePlan,
+    pascalCase(planStr ?? ""),
+    DEFAULT_WORKSPACE_PLAN
+  );
   const [create, { loading, error: createError, called }] =
-    useCreateWorkspaceMutation(name);
+    useCreateWorkspaceMutation(name, plan);
   const error =
     isNil(createError) || !called
       ? undefined
@@ -138,7 +143,7 @@ const FormBody = () => {
   return (
     <form onSubmit={handleSubmit}>
       <WorkspaceName error={createError} />
-      <CreateButton isDisabled={isDisabled} />
+      <CreateWorkspaceButton isDisabled={isDisabled} isLoading={isLoading} />
     </form>
   );
 };

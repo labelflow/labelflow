@@ -5,7 +5,7 @@ import {
   Img,
   Stack,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import * as React from "react";
 import { ImQuotesLeft } from "react-icons/im";
@@ -42,7 +42,7 @@ export const Testimonial = (props: TestimonialProps) => {
         <Box mb="6">
           <Box
             as={ImQuotesLeft}
-            color={mode("brand.500", "brand.400")}
+            color={useColorModeValue("brand.500", "brand.400")}
             fontSize="xl"
           />
           <Text mt="3" fontSize="xl" fontWeight="bold" maxW="38rem">
@@ -65,11 +65,14 @@ export const Testimonial = (props: TestimonialProps) => {
               as="cite"
               fontStyle="normal"
               fontWeight="extrabold"
-              color={mode("brand.500", "brand.400")}
+              color={useColorModeValue("brand.500", "brand.400")}
             >
               {name}
             </Text>
-            <Text fontSize="sm" color={mode("gray.600", "gray.400")}>
+            <Text
+              fontSize="sm"
+              color={useColorModeValue("gray.600", "gray.400")}
+            >
               {job}
             </Text>
           </Box>

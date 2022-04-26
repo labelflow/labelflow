@@ -13,12 +13,15 @@ import {
   Switch,
   Text,
 } from "@chakra-ui/react";
-import { ExportOptions } from "@labelflow/graphql-types";
-import { useCallback, useState } from "react";
+import { ExportFormat } from "@labelflow/graphql-types";
+import { isNil } from "lodash";
+import { omit } from "lodash/fp";
+import { useCallback, useEffect, useState } from "react";
+import { ExportOptions } from "../../../graphql-types/globalTypes";
 import { trackEvent } from "../../../utils/google-analytics";
-import { useExportModal } from "./export-modal.context";
-import { defaultOptions, Format, formatsOptionsInformation } from "./formats";
 import { exportDataset } from "./export-dataset";
+import { useExportModal } from "./export-modal.context";
+import { DEFAULT_EXPORT_OPTIONS, formatsOptionsInformation } from "./formats";
 
 const OptionLine = ({
   header,
@@ -57,48 +60,60 @@ export const ExportOptionsModal = () => {
     setIsOptionsModalOpen,
   } = useExportModal();
   const client = useApolloClient();
-  const [exportOptions, setExportOptions] =
-    useState<ExportOptions>(defaultOptions);
-  const exportFormatLowerCase = exportFormat.toLowerCase() as Format;
+  const [exportOptions, setExportOptions] = useState<ExportOptions>(
+    DEFAULT_EXPORT_OPTIONS
+  );
+  const exportFormatLowerCase =
+    exportFormat.toLowerCase() as Lowercase<ExportFormat>;
   const formatOptionsInformation =
     formatsOptionsInformation[exportFormatLowerCase];
-  const optionsOfFormat = exportOptions[exportFormatLowerCase];
+  const formatOptionsInformationArray = Object.entries(
+    formatOptionsInformation ?? {}
+  );
+  const optionsOfFormat = omit(["name"], exportOptions[exportFormatLowerCase]);
   const exportFunction = useCallback(
-    async (options: ExportOptions) =>
-      await exportDataset({
+    async (options: ExportOptions) => {
+      if (isNil(datasetId)) return await Promise.resolve();
+      return await exportDataset({
         datasetId,
         datasetSlug,
         setIsExportRunning,
         client,
         format: exportFormat,
         options,
-      }),
+      });
+    },
     [client, datasetId, datasetSlug, exportFormat, setIsExportRunning]
   );
 
   const handleChange = useCallback(
     (optionName) => {
-      setExportOptions((previousOptions) => ({
-        ...previousOptions,
-        [exportFormatLowerCase]: {
-          ...previousOptions[exportFormatLowerCase],
-          [optionName]:
-          // @ts-ignore
-            !previousOptions[exportFormatLowerCase][
-              // @ts-ignore
-              optionName as keyof typeof previousOptions[exportFormatLowerCase]
-            ],
-        },
-      }));
+      setExportOptions((previousOptions) => {
+        const prevOpts = previousOptions[exportFormatLowerCase];
+        const optionKey = optionName as keyof typeof prevOpts;
+        return {
+          ...previousOptions,
+          [exportFormatLowerCase]: {
+            ...prevOpts,
+            [optionName]: !prevOpts?.[optionKey],
+          },
+        };
+      });
     },
     [exportFormatLowerCase]
   );
 
-  const handleClick = useCallback(() => {
+  const exportAction = useCallback(() => {
     exportFunction(exportOptions);
     trackEvent(`export_button_click_${exportFormat.toLocaleLowerCase()}`, {});
     setIsOptionsModalOpen(false);
   }, [exportFormat, exportFunction, exportOptions, setIsOptionsModalOpen]);
+
+  useEffect(() => {
+    if (isOptionsModalOpen && formatOptionsInformationArray.length === 0) {
+      exportAction();
+    }
+  });
 
   return (
     <Modal
@@ -121,22 +136,15 @@ export const ExportOptionsModal = () => {
           p={{ base: "2", md: "6" }}
           flexDirection="column"
         >
-          {Object.keys(formatOptionsInformation ?? {}).map((optionName) => {
-            const information = (
-              formatOptionsInformation as Required<
-                typeof formatOptionsInformation
-              >
-            )[optionName as keyof typeof formatOptionsInformation];
+          {formatOptionsInformationArray.map(([optionName, information]) => {
+            const optionKey =
+              optionName as keyof typeof formatOptionsInformation;
             return (
               <OptionLine
                 key={optionName}
                 header={information.title}
                 description={information.description}
-                isChecked={
-                  optionsOfFormat?.[
-                    optionName as keyof typeof optionsOfFormat
-                  ] as boolean
-                }
+                isChecked={optionsOfFormat?.[optionKey]}
                 onChange={() => handleChange(optionName)}
               />
             );
@@ -146,7 +154,7 @@ export const ExportOptionsModal = () => {
             size="md"
             alignSelf="flex-end"
             flexShrink={0}
-            onClick={handleClick}
+            onClick={exportAction}
           >
             Export
           </Button>

@@ -4,7 +4,7 @@ import {
   HStack,
   ListItem,
   UnorderedList,
-  useColorModeValue as color,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { RiErrorWarningFill } from "react-icons/ri";
 import { Card } from "../../card";
@@ -13,22 +13,22 @@ import { useWorkspaceSettings } from "../context";
 const WarningSignIcon = chakra(RiErrorWarningFill);
 
 const WarningSign = () => (
-  <Box color={color("orange.400", "light")}>
+  <Box color={useColorModeValue("orange.400", "light")}>
     <WarningSignIcon size="2em" />
   </Box>
 );
 
 export const DeleteWorkspaceWarning = () => {
-  const workspace = useWorkspaceSettings();
+  const { name } = useWorkspaceSettings();
   return (
-    <Card bgColor={color("orange.100", "orange.600")}>
+    <Card bgColor={useColorModeValue("orange.100", "orange.600")}>
       <HStack spacing="1em">
         <WarningSign />
         <Box w="full">
           <UnorderedList>
             <ListItem>
               {"Deleting the "}
-              <b>{workspace?.name}</b>
+              <b>{name}</b>
               {" workspace will delete all of its images and labels"}
             </ListItem>
             <ListItem>The workspace plan will be canceled</ListItem>

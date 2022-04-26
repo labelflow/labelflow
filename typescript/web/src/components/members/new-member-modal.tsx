@@ -15,14 +15,17 @@ import {
   ModalOverlay,
   Text,
   Textarea,
-  useColorModeValue as mode,
+  useColorModeValue,
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { InvitationResult, MembershipRole } from "@labelflow/graphql-types";
 import { isEmpty } from "lodash/fp";
-import { useRouter } from "next/router";
 import { ChangeEvent, useState } from "react";
+import {
+  InvitationResult,
+  MembershipRole,
+} from "../../graphql-types/globalTypes";
+import { useWorkspace } from "../../hooks";
 import { validateEmail } from "../../utils/validate-email";
 import { RoleSelection } from "./role-selection";
 import { InviteMember } from "./types";
@@ -55,8 +58,8 @@ export const NewMemberModal = ({
   onClose?: () => void;
   inviteMember?: InviteMember;
 }) => {
-  const router = useRouter();
   const toast = useToast();
+  const { slug: workspaceSlug } = useWorkspace();
   const [value, setValue] = useState<string>("");
   const [role, setRole] = useState<MembershipRole>(MembershipRole.Owner);
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -104,7 +107,7 @@ export const NewMemberModal = ({
               </Text>
               <Textarea
                 border="1px"
-                borderColor={mode("gray.200", "gray.400")}
+                borderColor={useColorModeValue("gray.200", "gray.400")}
                 borderRadius="md"
                 bg="transparent"
                 value={value}
@@ -184,7 +187,7 @@ user2@example.com
                   const status = await inviteMember({
                     email,
                     role,
-                    workspaceSlug: router?.query?.workspaceSlug as string,
+                    workspaceSlug,
                   });
                   statusesCurrent[status].push(email);
                   return statusesCurrent;

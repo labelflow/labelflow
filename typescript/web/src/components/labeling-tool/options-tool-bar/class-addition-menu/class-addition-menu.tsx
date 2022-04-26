@@ -7,15 +7,14 @@ import {
   IconButton,
   chakra,
   useBreakpointValue,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { HiSelector } from "react-icons/hi";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import { LabelClass } from "@labelflow/graphql-types";
 import { ClassSelectionPopover } from "../../../class-selection-popover";
+import { GetLabelClassesOfDatasetQuery_dataset_labelClasses } from "../../../../graphql-types/GetLabelClassesOfDatasetQuery";
 
-// The class addition menu doesn't need all the attributes of the label class
-export type LabelClassItem = Omit<LabelClass, "dataset" | "labelsAggregates">;
+export type LabelClassItem = GetLabelClassesOfDatasetQuery_dataset_labelClasses;
 
 const AddIcon = chakra(IoMdAddCircleOutline);
 const SelectorIcon = chakra(HiSelector);
@@ -27,6 +26,7 @@ const ClassAdditionButton = React.forwardRef<
     toggle: () => void;
   }
 >(({ toggle }, ref) => {
+  const buttonBg = useColorModeValue("white", "gray.800");
   const largeButton = (
     <Button
       rightIcon={<SelectorIcon fontSize="md" />}
@@ -34,7 +34,7 @@ const ClassAdditionButton = React.forwardRef<
       justifyContent="space-between"
       ref={ref}
       onClick={toggle}
-      bg={mode("white", "gray.800")}
+      bg={buttonBg}
       pointerEvents="initial"
       aria-label="Add a label"
     >
@@ -52,7 +52,7 @@ const ClassAdditionButton = React.forwardRef<
       icon={<AddIcon fontSize="2xl" />}
       ref={ref}
       onClick={toggle}
-      bg={mode("white", "gray.800")}
+      bg={buttonBg}
       pointerEvents="initial"
       aria-label="Add a label"
     />

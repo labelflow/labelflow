@@ -1,4 +1,7 @@
-import { MembershipRole, InvitationResult } from "@labelflow/graphql-types";
+import {
+  InvitationResult,
+  MembershipRole,
+} from "../../graphql-types/globalTypes";
 
 export type ChangeMembershipRole = ({
   id,

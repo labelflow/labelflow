@@ -1,78 +1,101 @@
-import { gql, useQuery } from "@apollo/client";
+import { ApolloError, useQuery } from "@apollo/client";
 import { BreadcrumbLink, Skeleton, Text } from "@chakra-ui/react";
+import { isEmpty, isNil } from "lodash/fp";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import { useCallback } from "react";
 import { useErrorHandler } from "react-error-boundary";
-import { AuthManager } from "../../../../components/auth-manager";
+import { Authenticated } from "../../../../components/auth";
 import { CookieBanner } from "../../../../components/cookie-banner";
+import { GET_DATASET_BY_SLUG_QUERY } from "../../../../components/datasets/datasets.query";
 import { ExportButton } from "../../../../components/export-button";
 import { ImportButton } from "../../../../components/import-button";
 import { Layout } from "../../../../components/layout";
 import { KeymapButton } from "../../../../components/layout/top-bar/keymap-button";
 import { NavLogo } from "../../../../components/logo/nav-logo";
 import { Meta } from "../../../../components/meta";
-import { ServiceWorkerManagerModal } from "../../../../components/service-worker-manager";
-import { LayoutSpinner } from "../../../../components/spinner";
-import { WelcomeManager } from "../../../../components/welcome-manager";
+import { LayoutSpinner } from "../../../../components";
 import { WorkspaceSwitcher } from "../../../../components/workspace-switcher";
-import { Error404Content } from "../../../404";
+import {
+  GetDatasetBySlugQuery,
+  GetDatasetBySlugQueryVariables,
+} from "../../../../graphql-types";
+import { useRouterQueryString } from "../../../../hooks";
+import { getApolloErrorMessage } from "../../../../utils";
 
-const getDataset = gql`
-  query getDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-      name
+const useApolloErrorHandler = () => {
+  const router = useRouter();
+  const handleError = useErrorHandler();
+  return useCallback(
+    (error: ApolloError) => {
+      if (!router.isReady) return;
+      const errorMsg = getApolloErrorMessage(error);
+      if (errorMsg === "User not authorized to access dataset") {
+        router.push("/404");
+      } else {
+        handleError(error);
+      }
+    },
+    [handleError, router]
+  );
+};
+
+const useRedirectToDefaultTab = () => {
+  const router = useRouter();
+  return useCallback(() => {
+    if (!router.isReady) return;
+    const { datasetSlug, workspaceSlug, ...queryRest } = router.query;
+    router.replace({
+      pathname: `/${workspaceSlug}/datasets/${datasetSlug}/images`,
+      query: queryRest,
+    });
+  }, [router]);
+};
+
+const useRedirect = (
+  loading: boolean,
+  error: ApolloError | undefined
+): void => {
+  const handleError = useApolloErrorHandler();
+  const redirectToDefaultTab = useRedirectToDefaultTab();
+  const router = useRouter();
+  if (!loading && router.isReady) {
+    if (isNil(error)) {
+      redirectToDefaultTab();
+    } else {
+      handleError(error);
     }
   }
-`;
+};
 
-const DatasetIndexPage = () => {
-  const router = useRouter();
-  const { datasetSlug, workspaceSlug, ...queryRest } = router.query;
+const Body = () => {
+  const datasetSlug = useRouterQueryString("datasetSlug");
+  const workspaceSlug = useRouterQueryString("workspaceSlug");
 
   const {
     data: datasetResult,
     error,
     loading,
-  } = useQuery(getDataset, {
-    variables: { slug: datasetSlug, workspaceSlug },
-    skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
-  });
+  } = useQuery<GetDatasetBySlugQuery, GetDatasetBySlugQueryVariables>(
+    GET_DATASET_BY_SLUG_QUERY,
+    {
+      variables: { slug: datasetSlug, workspaceSlug },
+      skip: isEmpty(workspaceSlug) || isEmpty(datasetSlug),
+    }
+  );
 
   const datasetName = datasetResult?.dataset.name;
 
-  useEffect(() => {
-    if (router.isReady && !error && !loading) {
-      router.replace({
-        pathname: `/${workspaceSlug}/datasets/${datasetSlug}/images`,
-        query: queryRest,
-      });
-    }
-  }, [error, loading, router.isReady]);
+  useRedirect(loading, error);
 
   const handleError = useErrorHandler();
   if (error && !loading) {
-    if (!error.message.match(/Couldn't find dataset corresponding to/)) {
-      handleError(error);
-    }
-    return (
-      <>
-        <ServiceWorkerManagerModal />
-        <WelcomeManager />
-        <AuthManager />
-        <Meta title="LabelFlow | Dataset not found" />
-        <CookieBanner />
-        <Error404Content />
-      </>
-    );
+    handleError(getApolloErrorMessage(error));
+    return <></>;
   }
 
   return (
     <>
-      <ServiceWorkerManagerModal />
-      <WelcomeManager />
-      <AuthManager />
       <Meta title={`LabelFlow | ${datasetName ?? "Dataset"}`} />
       <CookieBanner />
       <Layout
@@ -89,7 +112,7 @@ const DatasetIndexPage = () => {
         topBarRightContent={
           <>
             <KeymapButton />
-            <ImportButton />
+            <ImportButton datasetId={datasetResult?.dataset?.id} />
             <ExportButton />
           </>
         }
@@ -99,5 +122,11 @@ const DatasetIndexPage = () => {
     </>
   );
 };
+
+const DatasetIndexPage = () => (
+  <Authenticated withWorkspaces>
+    <Body />
+  </Authenticated>
+);
 
 export default DatasetIndexPage;

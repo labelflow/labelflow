@@ -1,36 +1,24 @@
-import { useState, useEffect, useCallback } from "react";
-import { isEmpty } from "lodash/fp";
+import { useApolloClient, useQuery } from "@apollo/client";
 import {
-  Heading,
-  ModalHeader,
-  ModalBody,
   Button,
+  Heading,
+  ModalBody,
+  ModalHeader,
   Text,
 } from "@chakra-ui/react";
-import { useApolloClient, useQuery, gql } from "@apollo/client";
-import { useRouter } from "next/router";
+import { isEmpty, isNil } from "lodash/fp";
+import { useCallback, useEffect, useState } from "react";
+import {
+  GetDatasetBySlugQuery,
+  GetDatasetBySlugQueryVariables,
+} from "../../../../graphql-types/GetDatasetBySlugQuery";
+import { useDataset, useWorkspace } from "../../../../hooks";
+import { flushPaginatedImagesCache } from "../../../dataset-images-list";
+import { GET_DATASET_BY_SLUG_QUERY } from "../../../datasets/datasets.query";
+import { DroppedFile, UploadInfoRecord } from "../types";
 import { Dropzone } from "./dropzone";
 import { FilesStatuses } from "./file-statuses";
-import { DroppedFile, UploadStatuses } from "../types";
-
 import { importDroppedFiles } from "./import-dropped-files";
-import { flushPaginatedImagesCache } from "../../../dataset-images-list";
-
-const getDataset = gql`
-  query getDataset($slug: String!, $workspaceSlug: String!) {
-    dataset(where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }) {
-      id
-    }
-  }
-`;
-
-const getWorkspaceIdQuery = gql`
-  query getWorkspaceId($workspaceSlug: String) {
-    workspace(where: { slug: $workspaceSlug }) {
-      id
-    }
-  }
-`;
 
 export const ImportImagesModalDropzone = ({
   setMode,
@@ -42,41 +30,39 @@ export const ImportImagesModalDropzone = ({
   onUploadEnd?: () => void;
 }) => {
   const apolloClient = useApolloClient();
-
-  const router = useRouter();
-  const { datasetSlug, workspaceSlug } = router?.query;
-
+  const { id: workspaceId, slug: workspaceSlug } = useWorkspace();
+  const { slug: datasetSlug } = useDataset();
   /*
    * We need a state with the accepted and reject files to be able to reset the list
    * when we close the modal because react-dropzone doesn't provide a way to reset its
    * internal state
    */
   const [files, setFiles] = useState<Array<DroppedFile>>([]);
-  const [fileUploadStatuses, setFileUploadStatuses] = useState<UploadStatuses>(
-    {}
-  );
+  const [uploadInfo, setUploadInfo] = useState<UploadInfoRecord>({});
 
-  const { data: datasetResult } = useQuery(getDataset, {
-    variables: { slug: datasetSlug, workspaceSlug },
-    skip: typeof datasetSlug !== "string" || typeof workspaceSlug !== "string",
-  });
-  const { data: getWorkspaceIdData } = useQuery(getWorkspaceIdQuery, {
-    variables: { workspaceSlug },
-    skip: workspaceSlug == null,
+  const { data: datasetResult } = useQuery<
+    GetDatasetBySlugQuery,
+    GetDatasetBySlugQueryVariables
+  >(GET_DATASET_BY_SLUG_QUERY, {
+    variables: {
+      slug: datasetSlug,
+      workspaceSlug,
+    },
+    skip: isEmpty(workspaceSlug) || isEmpty(datasetSlug),
   });
 
   const datasetId = datasetResult?.dataset.id;
-  const workspaceId = getWorkspaceIdData?.workspace.id;
 
   const handleImport = useCallback(
     async (filesToImport: DroppedFile[]) => {
+      if (isNil(datasetId)) return;
       onUploadStart();
       await flushPaginatedImagesCache(apolloClient, datasetId);
       await importDroppedFiles({
         files: filesToImport,
         workspaceId,
         datasetId,
-        setFileUploadStatuses,
+        setUploadInfo,
         apolloClient,
       });
       onUploadEnd();
@@ -84,7 +70,7 @@ export const ImportImagesModalDropzone = ({
     [
       workspaceId,
       datasetId,
-      setFileUploadStatuses,
+      setUploadInfo,
       apolloClient,
       onUploadStart,
       onUploadEnd,
@@ -93,9 +79,8 @@ export const ImportImagesModalDropzone = ({
 
   useEffect(() => {
     if (isEmpty(files) || !datasetId) return;
-
     handleImport(files);
-  }, [files, datasetId]);
+  }, [files, datasetId, handleImport]);
 
   return (
     <>
@@ -104,7 +89,7 @@ export const ImportImagesModalDropzone = ({
           Import
         </Heading>
         <Text fontSize="lg" fontWeight="medium">
-          Start working with your images. Stay in control of your data.{" "}
+          Start working with your images and annotation files.
           <Button
             colorScheme="brand"
             variant="link"
@@ -128,10 +113,7 @@ export const ImportImagesModalDropzone = ({
         {isEmpty(files) ? (
           <Dropzone onDropEnd={setFiles} />
         ) : (
-          <FilesStatuses
-            files={files}
-            fileUploadStatuses={fileUploadStatuses}
-          />
+          <FilesStatuses files={files} uploadInfo={uploadInfo} />
         )}
       </ModalBody>
     </>

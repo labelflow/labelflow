@@ -5,6 +5,6 @@
   "repository": "git@github.com:labelflow/labelflow.git",
   "scripts": {},
   "dependencies": {
-    "mockdate": "^3.0.5"
+    "mockdate": "3.0.5"
   }
 }

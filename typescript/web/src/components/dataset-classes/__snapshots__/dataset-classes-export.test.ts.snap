@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LabelClasses CSV export Generates proper CSV 1`] = `
+"Test Class With Labels 1
+\\"Test Class With Labels, 2\\"
+"
+`;

@@ -6,7 +6,7 @@ const getApolloNetworkErrorMessage = (
 ): string | undefined => {
   if (isNil(error)) return undefined;
   if ("result" in error) {
-    // ServerError.result type is is Record<string, any>
+    // ServerError.result type is Record<string, any>
     const result = error.result as
       | { errors?: { message?: string }[] }
       | undefined;

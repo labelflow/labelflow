@@ -4,7 +4,7 @@ import { useWorkspaceSettings } from "../context";
 import { useDeleteWorkspace } from "./delete-workspace.state";
 
 const NameInput = () => {
-  const workspace = useWorkspaceSettings();
+  const { name: workspaceName } = useWorkspaceSettings();
   const { name, setName } = useDeleteWorkspace();
   const handleChangeName = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => setName(event.target.value),
@@ -13,7 +13,7 @@ const NameInput = () => {
   return (
     <Input
       aria-label="workspace name input"
-      placeholder={workspace?.name}
+      placeholder={workspaceName}
       value={name}
       onChange={handleChangeName}
     />

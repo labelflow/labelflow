@@ -1,17 +1,17 @@
-/* eslint-disable no-underscore-dangle */
 import { ApolloClient, gql } from "@apollo/client";
-import { v4 as uuidv4 } from "uuid";
 import Bluebird from "bluebird";
-import mime from "mime-types";
 import chunk from "lodash/fp/chunk";
-
+import mime from "mime-types";
+import { v4 as uuidv4 } from "uuid";
 import { uploadFile } from "../../../../../utils/upload-file";
-import { DroppedFile, SetUploadStatuses } from "../../types";
-
 import { BATCH_SIZE, CONCURRENCY } from "../../constants";
+import { DroppedFile, SetUploadInfo } from "../../types";
 
-const createManyImagesMutation = gql`
-  mutation ($images: [ImageCreateManySingleInput!]!, $datasetId: ID!) {
+export const CREATE_MANY_IMAGES_MUTATION = gql`
+  mutation CreateManyImagesInModalMutation(
+    $images: [ImageCreateManySingleInput!]!
+    $datasetId: ID!
+  ) {
     createManyImages(data: { images: $images, datasetId: $datasetId }) {
       id
     }
@@ -55,19 +55,21 @@ const uploadBatchOfImages = async ({
   );
 };
 
+export type ImportImagesOptions = {
+  images: DroppedFile[];
+  workspaceId: string;
+  datasetId: string;
+  apolloClient: ApolloClient<object>;
+  setUploadInfo: SetUploadInfo;
+};
+
 export const importImages = async ({
   images,
   workspaceId,
   datasetId,
   apolloClient,
-  setFileUploadStatuses,
-}: {
-  images: DroppedFile[];
-  workspaceId: string;
-  datasetId: string;
-  apolloClient: ApolloClient<object>;
-  setFileUploadStatuses: SetUploadStatuses;
-}) => {
+  setUploadInfo,
+}: ImportImagesOptions) => {
   const firstUploadDate = new Date();
   const batches = chunk(BATCH_SIZE, images);
 
@@ -85,21 +87,24 @@ export const importImages = async ({
         });
 
         await apolloClient.mutate({
-          mutation: createManyImagesMutation,
+          mutation: CREATE_MANY_IMAGES_MUTATION,
           variables: { images: imagesToCreate, datasetId },
         });
 
-        setFileUploadStatuses((oldStatuses) => ({
-          ...oldStatuses,
+        setUploadInfo((oldInfo) => ({
+          ...oldInfo,
           ...Object.fromEntries(
-            imagesToCreate.map((image) => [image.name, true])
+            imagesToCreate.map((image) => [image.name, { status: "uploaded" }])
           ),
         }));
       } catch (error) {
-        setFileUploadStatuses((oldStatuses) => ({
-          ...oldStatuses,
+        setUploadInfo((oldInfo) => ({
+          ...oldInfo,
           ...Object.fromEntries(
-            batch.map(({ file }) => [file.name, error?.message])
+            batch.map(({ file }) => [
+              file.name,
+              { status: "error", error: error?.message },
+            ])
           ),
         }));
       }

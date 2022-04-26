@@ -1,11 +1,5 @@
 import { useEffect, useRef } from "react";
-import {
-  Box,
-  HStack,
-  VStack,
-  useColorModeValue as mode,
-} from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { HStack, VStack, useColorModeValue, Flex } from "@chakra-ui/react";
 import { useQueryParam } from "use-query-params";
 import { OpenlayersMap } from "./openlayers-map";
 import { DrawingToolbar } from "./drawing-tool-bar";
@@ -16,16 +10,16 @@ import { ImageNavigationTool } from "./image-navigation";
 import { useUndoStore } from "../../connectors/undo-store";
 import { useLabelingStore } from "../../connectors/labeling-state";
 import { BoolParam } from "../../utils/query-param-bool";
+import { useDatasetImage } from "../../hooks";
 
 export const LabelingTool = () => {
   const { clear } = useUndoStore();
 
-  const router = useRouter();
-  const { imageId } = router?.query;
+  const { id: imageId } = useDatasetImage();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const containerSx = {
-    backgroundColor: mode("gray.100", "gray.900"),
+    backgroundColor: useColorModeValue("gray.100", "gray.900"),
   };
 
   useEffect(() => {
@@ -39,8 +33,9 @@ export const LabelingTool = () => {
   const [imageLoadError] = useQueryParam("image-load-error", BoolParam);
 
   return (
-    <Box
-      height="100%"
+    <Flex
+      grow={1}
+      direction="column"
       position="relative"
       overflow="hidden"
       ref={containerRef}
@@ -82,6 +77,6 @@ export const LabelingTool = () => {
       >
         <ImageNavigationTool />
       </HStack>
-    </Box>
+    </Flex>
   );
 };

@@ -7,7 +7,10 @@ import { Effect } from "..";
 
 import { createLabelClassMutationUpdate } from "./cache-updates/create-label-class-mutation-update";
 import { deleteLabelClassMutationUpdate } from "./cache-updates/delete-label-class-mutation-update";
-import { createLabelClassQuery, deleteLabelClassQuery } from "./shared-queries";
+import {
+  CREATE_LABEL_CLASS_QUERY,
+  DELETE_LABEL_CLASS_MUTATION,
+} from "./shared-queries";
 
 export const createCreateLabelClassEffect = (
   {
@@ -29,7 +32,7 @@ export const createCreateLabelClassEffect = (
 ): Effect => ({
   do: async (labelClassId: string = uuid()) => {
     await client.mutate({
-      mutation: createLabelClassQuery,
+      mutation: CREATE_LABEL_CLASS_QUERY,
       variables: { data: { name, color, datasetId, id: labelClassId } },
       update: createLabelClassMutationUpdate(datasetId),
       optimisticResponse: {
@@ -47,7 +50,7 @@ export const createCreateLabelClassEffect = (
   },
   undo: async (labelClassId: string) => {
     await client.mutate({
-      mutation: deleteLabelClassQuery,
+      mutation: DELETE_LABEL_CLASS_MUTATION,
       variables: {
         where: { id: labelClassId },
       },

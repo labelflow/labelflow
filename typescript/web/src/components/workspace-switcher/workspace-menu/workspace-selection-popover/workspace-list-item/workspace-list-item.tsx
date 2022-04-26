@@ -1,17 +1,48 @@
 import {
-  Box,
-  Text,
-  Flex,
   Avatar,
+  Box,
   chakra,
+  Flex,
+  Text,
   Tooltip,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import { RiGroupFill, RiAddFill } from "react-icons/ri";
+import { isEmpty, isNil } from "lodash/fp";
+import { RiAddFill, RiGroupFill } from "react-icons/ri";
+import { UserWithWorkspacesQuery_user_memberships_workspace } from "../../../../../graphql-types/UserWithWorkspacesQuery";
+import { useOptionalWorkspace } from "../../../../../hooks";
 import { randomBackgroundGradient } from "../../../../../utils/random-background-gradient";
 
 const TeamIcon = chakra(RiGroupFill);
 const AddIcon = chakra(RiAddFill);
+
+export type WorkspaceListItemProps = {
+  item:
+    | UserWithWorkspacesQuery_user_memberships_workspace
+    | { type: "CreateWorkspaceItem"; name?: string; id?: string };
+  itemId?: string;
+  highlight?: boolean;
+  index: number;
+  itemProps: any;
+  isCreateWorkspaceItem?: boolean;
+};
+
+type UseBgColorOptions = Pick<
+  WorkspaceListItemProps,
+  "isCreateWorkspaceItem" | "highlight"
+> & { selected: boolean };
+
+const useBgColors = ({
+  selected,
+  isCreateWorkspaceItem,
+  highlight,
+}: UseBgColorOptions): [string, string] => {
+  if (selected && !isCreateWorkspaceItem) return ["gray.300", "gray.500"];
+  return highlight ? ["gray.100", "gray.600"] : ["transparent", "transparent"];
+};
+
+const useBgColor = (options: UseBgColorOptions) =>
+  useColorModeValue(...useBgColors(options));
 
 /**
  * Represent a LabelClass item with its color as
@@ -21,39 +52,28 @@ const AddIcon = chakra(RiAddFill);
  * @param props
  * @returns
  */
-export const WorkspaceListItem = (props: {
-  item:
-    | { name: string; src?: string }
-    | { type: "CreateWorkspaceItem"; name?: string };
-  highlight?: boolean;
-  selected?: boolean;
-  index: number;
-  itemProps: any;
-  isCreateWorkspaceItem?: boolean;
-}) => {
-  const { item, highlight, selected, index, itemProps, isCreateWorkspaceItem } =
-    props;
+export const WorkspaceListItem = ({
+  item,
+  itemId,
+  highlight,
+  index,
+  itemProps,
+  isCreateWorkspaceItem,
+}: WorkspaceListItemProps) => {
+  const workspace = useOptionalWorkspace();
+  const selected = !isNil(workspace) && itemId === workspace.id;
+
   const { name } = item;
+  const image = "image" in item ? item.image ?? undefined : undefined;
 
-  // eslint-disable-next-line no-prototype-builtins
-  const src = item.hasOwnProperty("src")
-    ? (item as { name: string; src?: string }).src
-    : undefined;
+  const bgColor = useBgColor({ highlight, isCreateWorkspaceItem, selected });
 
-  // arrow function instead of nested ternaries to avoid eslint error
-  const bgColor = (() => {
-    if (selected && !isCreateWorkspaceItem) {
-      return mode("gray.300", "gray.500");
-    }
-    if (highlight) {
-      return mode("gray.100", "gray.600");
-    }
-    return mode("transparent", "transparent");
-  })();
-
-  const avaterBorderColor = mode("gray.200", "gray.700");
-  const avatarBackground = mode("white", "gray.600");
-  const addButtonColor = mode("gray.600", "gray.400");
+  const avatarBorderColor = useColorModeValue("gray.200", "gray.700");
+  const avatarBackgroundColor = useColorModeValue("white", "gray.600");
+  const avatarBackground = isEmpty(image)
+    ? randomBackgroundGradient(name)
+    : avatarBackgroundColor;
+  const addButtonColor = useColorModeValue("gray.600", "gray.400");
 
   return (
     <Box
@@ -76,21 +96,17 @@ export const WorkspaceListItem = (props: {
           <Flex justifyContent="space-between" alignItems="center">
             <Avatar
               borderWidth="1px"
-              borderColor={avaterBorderColor}
+              borderColor={avatarBorderColor}
               size="sm"
               rounded="md"
               flexShrink={0}
               flexGrow={0}
               name={name}
-              src={src}
+              src={image}
               ml="2"
               mr="2"
               color="white"
-              bg={
-                src != null && src.length > 0
-                  ? avatarBackground
-                  : randomBackgroundGradient(name)
-              }
+              bg={avatarBackground}
               icon={<AddIcon color={addButtonColor} fontSize="1.5rem" />}
             />
             <Text
@@ -137,21 +153,17 @@ export const WorkspaceListItem = (props: {
           <Flex justifyContent="space-between" alignItems="center">
             <Avatar
               borderWidth="1px"
-              borderColor={avaterBorderColor}
+              borderColor={avatarBorderColor}
               size="sm"
               borderRadius="md"
               flexShrink={0}
               flexGrow={0}
               name={name}
-              src={src}
+              src={image}
               ml="2"
               mr="2"
               color="white"
-              bg={
-                src != null && src.length > 0
-                  ? avatarBackground
-                  : randomBackgroundGradient(name)
-              }
+              bg={avatarBackground}
               icon={<TeamIcon color="white" fontSize="1rem" />}
             />
             <Text

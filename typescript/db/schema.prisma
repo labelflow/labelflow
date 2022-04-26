@@ -53,8 +53,9 @@ model Label {
   labelClassId   String?     @db.Uuid
   type           LabelType
   image          Image       @relation(fields: [imageId], references: [id], onDelete: Cascade)
-  labelClass     LabelClass? @relation(fields: [labelClassId], references: [id])
+  labelClass     LabelClass? @relation(fields: [labelClassId], references: [id], onDelete: Cascade)
   smartToolInput Json?
+  aiAssistantId  String?     @db.Uuid
 
   @@index([labelClassId])
   @@index([imageId, createdAt])
@@ -95,15 +96,16 @@ model Dataset {
 model Workspace {
   // Id exists for regularity reasons.
   // It's more appropriate to query Workspaces using the slug
-  id               String        @id @default(uuid()) @db.Uuid
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  id               String          @id @default(uuid()) @db.Uuid
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
   deletedAt        DateTime?
-  name             String        @unique
-  slug             String        @unique
+  name             String          @unique
+  slug             String          @unique
   image            String?
   plan             WorkspacePlan
   stripeCustomerId String?
+  status           WorkspaceStatus @default(Active)
   datasets         Dataset[]
   memberships      Membership[]
 
@@ -213,5 +215,14 @@ enum WorkspacePlan {
   Community
   Starter
   Pro
-  Enterprise
+}
+
+enum WorkspaceStatus {
+  Active
+  Trialing
+  Incomplete
+  PastDue
+  Unpaid
+  Canceled
+  IncompleteExpired
 }

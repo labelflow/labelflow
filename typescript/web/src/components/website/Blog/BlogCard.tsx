@@ -7,10 +7,11 @@ import {
   LinkBox,
   LinkOverlay,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import * as React from "react";
 import { BsClockFill } from "react-icons/bs";
+import { getImageUrl } from "../get-image-url";
 
 interface BlogProps {
   category: string;
@@ -28,7 +29,7 @@ export const BlogCard = (props: BlogProps) => {
   return (
     <LinkBox
       as="article"
-      bg={{ sm: mode("white", "gray.700") }}
+      bg={{ sm: useColorModeValue("white", "gray.700") }}
       shadow={{ sm: "base" }}
       rounded={{ sm: "md" }}
       overflow="hidden"
@@ -40,7 +41,8 @@ export const BlogCard = (props: BlogProps) => {
           height="60"
           objectFit="cover"
           alt={title}
-          src={image ?? "/static/img/home-screenshot2.jpg"}
+          // FIXME The fallback image (initially home-screenshot2.jpg) does not exists
+          src={image ?? getImageUrl("home-screenshot-2.jpg")}
         />
         <Flex direction="column" px={{ sm: "6" }} py="5">
           <Text
@@ -56,18 +58,22 @@ export const BlogCard = (props: BlogProps) => {
           <Heading as="h3" size="sm" mb="2" lineHeight="base">
             <LinkOverlay href={href}>{title}</LinkOverlay>
           </Heading>
-          <Text noOfLines={2} mb="8" color={mode("gray.600", "gray.400")}>
+          <Text
+            noOfLines={2}
+            mb="8"
+            color={useColorModeValue("gray.600", "gray.400")}
+          >
             {description}
           </Text>
           <Flex
             align="baseline"
             justify="space-between"
             fontSize="sm"
-            color={mode("gray.600", "gray.400")}
+            color={useColorModeValue("gray.600", "gray.400")}
           >
-            <Text>
+            <Box>
               By <Box textDecor="underline">{author?.name}</Box>
-            </Text>
+            </Box>
             <Link href={href}>
               <Box
                 as={BsClockFill}

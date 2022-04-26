@@ -4,8 +4,8 @@ import { Coordinate } from "ol/coordinate";
 import { Label } from "@labelflow/graphql-types";
 import { Effect } from "..";
 
-const updateLabelMutation = gql`
-  mutation updateLabel(
+const UPDATE_LABEL_MUTATION = gql`
+  mutation UndoUpdateIogLabelMutation(
     $id: ID!
     $geometry: GeometryInput
     $smartToolInput: JSON
@@ -28,8 +28,8 @@ const updateLabelMutation = gql`
   }
 `;
 
-const getLabelQuery = gql`
-  query getLabel($id: ID!) {
+const GET_LABEL_QUERY = gql`
+  query GetLabelGeometryAndSmartToolQuery($id: ID!) {
     label(where: { id: $id }) {
       id
       x
@@ -46,7 +46,7 @@ const getLabelQuery = gql`
 `;
 
 const updateIogLabelMutation = gql`
-  mutation updateIogLabel(
+  mutation UpdateIogLabelMutation(
     $id: ID!
     $x: Float
     $y: Float
@@ -122,7 +122,7 @@ export const createUpdateIogLabelEffect = (
     const labelResponse = cache.readQuery<{
       label: PartialLabel;
     }>({
-      query: getLabelQuery,
+      query: GET_LABEL_QUERY,
       variables: { id: labelId },
     });
     if (labelResponse == null) {
@@ -175,7 +175,7 @@ export const createUpdateIogLabelEffect = (
     originalLabel: PartialLabel;
   }): Promise<string> => {
     await client.mutate({
-      mutation: updateLabelMutation,
+      mutation: UPDATE_LABEL_MUTATION,
       optimisticResponse: {
         updateLabel: {
           ...originalLabel,

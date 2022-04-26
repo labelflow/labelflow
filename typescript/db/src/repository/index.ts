@@ -1,6 +1,6 @@
 import { DbLabel, getSlug, Repository } from "@labelflow/common-resolvers";
-import { Image } from "@labelflow/graphql-types";
 import { Prisma } from "@prisma/client";
+import { uniq } from "lodash/fp";
 import { getPrismaClient } from "../prisma-client";
 import {
   checkUserAccessToDataset,
@@ -9,113 +9,28 @@ import {
   checkUserAccessToLabelClass,
   checkUserAccessToWorkspace,
 } from "./access-control";
+import { imageRepository } from "./image";
 import { processImage } from "./image-processing";
-import { countLabels, listLabels } from "./label";
+import { countLabels, deleteManyLabels, listLabels } from "./label";
 import {
   deleteFromStorage,
   getFromStorage,
+  getSignedDownloadUrl,
   getUploadTargetHttp,
   putInStorage,
 } from "./upload-s3";
-import { castObjectNullsToUndefined } from "./utils";
+import { castObjectNullsToUndefined, getWorkspaceFilter } from "./utils";
 import {
   addWorkspace,
   deleteWorkspace,
   getWorkspace,
   listWorkspace,
   updateWorkspace,
+  countImages as countWorkspaceImages,
 } from "./workspace";
 
-const getWorkspaceFilter = (
-  userId: string | undefined,
-  extraFilter?: Prisma.WorkspaceWhereInput
-): { workspace: Prisma.WorkspaceWhereInput } => ({
-  workspace: {
-    memberships: { some: { userId } },
-    deletedAt: { equals: null },
-    ...extraFilter,
-  },
-});
-
 export const repository: Repository = {
-  image: {
-    add: async (image, user) => {
-      await checkUserAccessToDataset({ where: { id: image.datasetId }, user });
-      const createdImage = await (
-        await getPrismaClient()
-      ).image.create({
-        data: castObjectNullsToUndefined(image),
-      });
-      return createdImage.id;
-    },
-    addMany: async ({ images, datasetId }, user) => {
-      await checkUserAccessToDataset({ where: { id: datasetId }, user });
-      const prisma = await getPrismaClient();
-      await prisma.image.createMany({ data: images });
-      return images.map((image) => image.id);
-    },
-    count: async (whereWithUser) => {
-      const { user, ...where } = whereWithUser ?? { user: undefined };
-      if (user?.id == null) {
-        return 0;
-      }
-      return await (
-        await getPrismaClient()
-      ).image.count({
-        where: castObjectNullsToUndefined({
-          ...where,
-          dataset: getWorkspaceFilter(user?.id),
-        }),
-      });
-    },
-    get: async (where, user) => {
-      await checkUserAccessToImage({ where, user });
-      return (await (
-        await getPrismaClient()
-      ).image.findUnique({
-        where,
-      })) as unknown as Image;
-    },
-    update: async (where, image, user) => {
-      await checkUserAccessToImage({ where, user });
-      try {
-        if (image) {
-          await (
-            await getPrismaClient()
-          ).image.update({
-            where,
-            data: castObjectNullsToUndefined(image),
-          });
-        }
-        return true;
-      } catch (e) {
-        return false;
-      }
-    },
-    list: async (whereWithUser, skip = undefined, first = undefined) => {
-      const { user, ...where } = whereWithUser ?? { user: undefined };
-      if (user?.id == null) {
-        return [];
-      }
-      return await (
-        await getPrismaClient()
-      ).image.findMany(
-        castObjectNullsToUndefined({
-          where: castObjectNullsToUndefined({
-            ...where,
-            dataset: getWorkspaceFilter(user?.id),
-          }),
-          orderBy: { createdAt: Prisma.SortOrder.asc },
-          skip,
-          take: first,
-        })
-      );
-    },
-    delete: async (where, user) => {
-      await checkUserAccessToImage({ where, user });
-      await (await getPrismaClient()).image.delete({ where });
-    },
-  },
+  image: imageRepository,
   label: {
     add: async (label, user) => {
       await checkUserAccessToImage({ where: { id: label.imageId }, user });
@@ -124,11 +39,22 @@ export const repository: Repository = {
       ).label.create({ data: label });
       return createdLabel.id;
     },
+    addMany: async ({ labels, imageId }, user) => {
+      await checkUserAccessToImage({ where: { id: imageId }, user });
+      const labelsToCreate = labels.map((label) => ({
+        ...label,
+        imageId,
+      }));
+      const prisma = await getPrismaClient();
+      await prisma.label.createMany({ data: labelsToCreate });
+      return labels.map((label) => label.id);
+    },
     count: countLabels,
     delete: async ({ id }, user) => {
       await checkUserAccessToLabel({ where: { id }, user });
       await (await getPrismaClient()).label.delete({ where: { id } });
     },
+    deleteMany: deleteManyLabels,
     /* Needs to be casted as Prisma doesn't let us specify
      * the type for geometry */
     get: async (where, user) => {
@@ -166,12 +92,24 @@ export const repository: Repository = {
         where: { id: labelClass.datasetId },
         user,
       });
-      const createdLabelClass = await (
-        await getPrismaClient()
-      ).labelClass.create({
+      const db = await getPrismaClient();
+      const createdLabelClass = await db.labelClass.create({
         data: castObjectNullsToUndefined(labelClass),
       });
       return createdLabelClass.id;
+    },
+    addMany: async ({ labelClasses }, user) => {
+      const datasetIds = uniq(
+        labelClasses.map((labelClass) => labelClass.datasetId)
+      );
+      await Promise.all(
+        datasetIds.map((datasetId) =>
+          checkUserAccessToDataset({ where: { id: datasetId }, user })
+        )
+      );
+      const db = await getPrismaClient();
+      await db.labelClass.createMany({ data: labelClasses });
+      return labelClasses.map((labelClass) => labelClass.id);
     },
     count: async (whereWithUser) => {
       const { user, ...where } = whereWithUser ?? { user: undefined };
@@ -318,7 +256,7 @@ export const repository: Repository = {
           skip,
           take: first,
           where: getWorkspaceFilter(where?.user?.id, {
-            slug: where?.workspaceSlug,
+            extraWorkspaceFilter: { slug: where?.workspaceSlug ?? undefined },
           }),
         })
       );
@@ -330,10 +268,12 @@ export const repository: Repository = {
     list: listWorkspace,
     update: updateWorkspace,
     delete: deleteWorkspace,
+    countImages: countWorkspaceImages,
   },
   upload: {
     delete: deleteFromStorage,
     get: getFromStorage,
+    getSignedDownloadUrl,
     getUploadTarget: getUploadTargetHttp,
     getUploadTargetHttp,
     put: putInStorage,

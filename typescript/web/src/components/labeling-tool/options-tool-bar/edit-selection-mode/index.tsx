@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { BiShapePolygon } from "react-icons/bi";
 import { IoColorWandOutline } from "react-icons/io5";
 import { chakra, useColorModeValue } from "@chakra-ui/react";
@@ -11,26 +11,16 @@ import {
   Tools,
 } from "../../../../connectors/labeling-state";
 import { keymap } from "../../../../keymap";
-import {
-  ToggleButtonGroup,
-  ToggleIconButton,
-} from "../../../toggle-button-group";
+import { ToggleButtonGroup, ToggleIconButton } from "../../../core";
+
+import { LABEL_QUERY } from "../../openlayers-map/iog/queries";
 
 const ChakraBiShapePolygon = chakra(BiShapePolygon);
 const ChakraIoColorWandOutline = chakra(IoColorWandOutline);
 
-export const labelQuery = gql`
-  query getLabel($id: ID!) {
-    label(where: { id: $id }) {
-      id
-      smartToolInput
-    }
-  }
-`;
-
 export const EditSelectionMode = () => {
   const selectedLabelId = useLabelingStore((state) => state.selectedLabelId);
-  const { data: dataLabelQuery } = useQuery(labelQuery, {
+  const { data: dataLabelQuery } = useQuery(LABEL_QUERY, {
     variables: { id: selectedLabelId },
     skip: selectedLabelId == null,
   });
@@ -64,7 +54,7 @@ export const EditSelectionMode = () => {
 
   if (
     !selectedLabelId ||
-    selectedTool !== Tools.SELECTION ||
+    (selectedTool !== Tools.SELECTION && selectedTool !== Tools.AI_ASSISTANT) ||
     !isIogModeAvailable
   ) {
     return null;

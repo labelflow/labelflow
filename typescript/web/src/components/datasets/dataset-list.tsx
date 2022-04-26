@@ -1,9 +1,7 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { Flex } from "@chakra-ui/react";
 import type { Dataset as DatasetType } from "@labelflow/graphql-types";
-import { PaginationProvider } from "../pagination";
-import { PaginationFooter } from "../pagination/pagination-footer";
-import { Spinner } from "../spinner";
+import { PaginationProvider, PaginationFooter, Spinner } from "../core";
 import { DatasetCard } from "./dataset-card";
 import { DatasetCardBox } from "./dataset-card-box";
 import {
@@ -11,14 +9,7 @@ import {
   DatasetListProvider,
   useDatasetList,
 } from "./dataset-list.context";
-
-export const getDatasetsQuery = gql`
-  query getDatasets($where: DatasetWhereInput) {
-    datasets(where: $where) {
-      id
-    }
-  }
-`;
+import { GET_DATASETS_IDS_QUERY } from "./get-datasets-ids.query";
 
 const LoadingCard = () => (
   <DatasetCardBox>
@@ -86,7 +77,7 @@ export const DatasetList = (props: DatasetListProps) => {
       | "labelClassesAggregates"
       | "labelsAggregates"
     >[];
-  }>(getDatasetsQuery, {
+  }>(GET_DATASETS_IDS_QUERY, {
     variables: { where: { workspaceSlug } },
     skip: workspaceSlug == null,
   });

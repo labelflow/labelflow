@@ -5,7 +5,7 @@ import {
   Input,
   Stack,
   Text,
-  useColorModeValue as mode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -16,13 +16,13 @@ export const RequestAccess = () => {
   return (
     <Box
       as="section"
-      bg={mode("gray.100", "gray.700")}
+      bg={useColorModeValue("gray.100", "gray.700")}
       py="48"
       minH="calc( 100vh - 430px)"
     >
       <Box
         textAlign="center"
-        bg={mode("white", "gray.800")}
+        bg={useColorModeValue("white", "gray.800")}
         shadow="lg"
         maxW={{ base: "xl", md: "3xl" }}
         mx="auto"
@@ -31,15 +31,6 @@ export const RequestAccess = () => {
         rounded="lg"
       >
         <Box maxW="md" mx="auto">
-          <Text
-            color={mode("brand.600", "brand.400")}
-            fontWeight="bold"
-            fontSize="sm"
-            letterSpacing="wide"
-          >
-            LABELFLOW EARLY ACCESS SHIPS IN Q3 2021
-            {/* 6,000+ PEOPLE ALREADY JOINED ❤️️ */}
-          </Text>
           <Heading mt="4" fontWeight="extrabold">
             Get early access and up to 50% off on LabelFlow by joining now
           </Heading>
@@ -73,15 +64,15 @@ export const RequestAccess = () => {
                   aria-label="Enter your email"
                   placeholder="Enter your email"
                   rounded="base"
-                  bg={mode("white", "inherit")}
+                  bg={useColorModeValue("white", "inherit")}
                   type="email"
                   name="email"
                   id="requestAccessEmail"
                   required
-                  focusBorderColor={mode("brand.500", "brand.300")}
+                  focusBorderColor={useColorModeValue("brand.500", "brand.300")}
                   _placeholder={{
                     opacity: 1,
-                    color: mode("gray.500", "whiteAlpha.700"),
+                    color: useColorModeValue("gray.500", "whiteAlpha.700"),
                   }}
                 />
                 <Button
@@ -95,14 +86,18 @@ export const RequestAccess = () => {
                 </Button>
               </Stack>
             </form>
-            <Text color={mode("gray.600", "gray.400")} fontSize="sm" mt="5">
+            <Text
+              color={useColorModeValue("gray.600", "gray.400")}
+              fontSize="sm"
+              mt="5"
+            >
               <Box
                 aria-hidden
                 as={HiShieldCheck}
                 display="inline-block"
                 marginEnd="2"
                 fontSize="lg"
-                color={mode("brand.600", "brand.400")}
+                color={useColorModeValue("brand.600", "brand.400")}
               />
               No spams. Your email is only used to register you in the queue
             </Text>

@@ -24,7 +24,7 @@ import type {
   WorkspaceWhereUniqueInput,
   WorkspaceType,
 } from "@labelflow/graphql-types";
-import { WorkspacePlan } from "@prisma/client";
+import { WorkspacePlan, WorkspaceStatus } from "@prisma/client";
 
 type NoUndefinedField<T> = { [P in keyof T]: NonNullable<T[P]> };
 
@@ -98,7 +98,13 @@ export type DbWorkspace = Omit<
   | "memberships"
   | "plan"
   | "stripeCustomerPortalUrl"
-> & { plan: WorkspacePlan; stripeCustomerId?: string | undefined | null };
+  | "status"
+  | "imagesAggregates"
+> & {
+  plan: WorkspacePlan;
+  stripeCustomerId?: string | undefined | null;
+  status: WorkspaceStatus;
+};
 
 export type DbWorkspaceWithType = DbWorkspace & { type: WorkspaceType };
 
@@ -127,6 +133,11 @@ type Delete<EntityWhereUniqueInput> = (
   user?: { id: string }
 ) => Promise<void>;
 
+type DeleteMany<EntityWhereInput> = (
+  input: EntityWhereInput,
+  user?: { id: string }
+) => Promise<number>;
+
 type Get<EntityType, EntityWhereUniqueInput> = (
   input: EntityWhereUniqueInput,
   user?: { id: string }
@@ -153,27 +164,42 @@ export type Repository = {
     ) => Promise<ID[]>;
     count: Count<ImageWhereInput & { user?: { id: string } }>;
     get: Get<DbImage, ImageWhereUniqueInput>;
-    list: List<
-      DbImage,
-      ImageWhereInput & { user?: { id: string } } & { id?: { in: string[] } }
-    >;
+    list: List<DbImage, ImageWhereInput & { user?: { id: string } }>;
     delete: Delete<ImageWhereUniqueInput>;
+    deleteMany: DeleteMany<ImageWhereInput>;
     update: Update<DbImage, ImageWhereUniqueInput>;
   };
   label: {
     add: Add<DbLabelCreateInput>;
+    addMany: (
+      args: {
+        labels: Omit<DbLabelCreateInput, "imageId" | "labelClassId">[];
+        imageId: string;
+      },
+      user?: { id: string }
+    ) => Promise<ID[]>;
     count: Count<LabelWhereInput & { user?: { id: string } }>;
     delete: Delete<LabelWhereUniqueInput>;
+    deleteMany: DeleteMany<LabelWhereInput>;
     get: Get<DbLabel, LabelWhereUniqueInput>;
     list: List<DbLabel, LabelWhereInput & { user?: { id: string } }>;
     update: Update<DbLabel, LabelWhereUniqueInput>;
   };
   labelClass: {
     add: Add<DbLabelClassCreateInput>;
+    addMany: (
+      args: { labelClasses: DbLabelClassCreateInput[] },
+      user?: { id: string }
+    ) => Promise<ID[]>;
     count: Count<LabelClassWhereInput & { user?: { id: string } }>;
     delete: Delete<LabelClassWhereUniqueInput>;
     get: Get<DbLabelClass, LabelClassWhereUniqueInput>;
-    list: List<DbLabelClass, LabelClassWhereInput & { user?: { id: string } }>;
+    list: List<
+      DbLabelClass,
+      LabelClassWhereInput & { user?: { id: string } } & {
+        id?: string | { in: string[] };
+      }
+    >;
     update: Update<DbLabelClass, LabelClassWhereUniqueInput>;
   };
   dataset: {
@@ -192,6 +218,7 @@ export type Repository = {
     >;
     update: Update<DbWorkspaceWithType, WorkspaceWhereUniqueInput>;
     delete: Delete<WorkspaceWhereUniqueInput>;
+    countImages: Get<number, WorkspaceWhereUniqueInput>;
   };
   upload: {
     getUploadTargetHttp: (
@@ -204,6 +231,7 @@ export type Repository = {
     ) => Promise<UploadTarget> | UploadTarget;
     put: (url: string, file: Blob, req?: Request) => Promise<void>;
     get: (url: string, req?: Request) => Promise<ArrayBuffer>;
+    getSignedDownloadUrl: (key: string, expiresIn: number) => Promise<string>;
     delete: (url: string) => Promise<void>;
   };
   imageProcessing: {

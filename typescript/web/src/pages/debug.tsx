@@ -1,46 +1,39 @@
-import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import NextLink from "next/link";
 import {
+  Box,
+  Center,
+  Code,
   Heading,
   Link,
-  VStack,
-  UnorderedList,
   ListItem,
-  Code,
-  Center,
-  Box,
   Text,
+  UnorderedList,
+  VStack,
 } from "@chakra-ui/react";
 import { detect } from "detect-browser";
-
+import NextLink from "next/link";
+import React from "react";
+import { Authenticated } from "../components/auth";
+import { CookieBanner } from "../components/cookie-banner";
+import { Layout } from "../components/layout";
+import { NavLogo } from "../components/logo/nav-logo";
 import { Meta } from "../components/meta";
-
 import {
-  isInWindowScope,
-  isInServiceWorkerScope,
   isDevelopmentEnvironment,
+  isInWindowScope,
 } from "../utils/detect-scope";
 
-import { Layout } from "../components/layout";
-import { ServiceWorkerManagerBackground } from "../components/service-worker-manager";
-import { AuthManager } from "../components/auth-manager";
-import { CookieBanner } from "../components/cookie-banner";
-import { NavLogo } from "../components/logo/nav-logo";
-
-export const debugQuery = gql`
-  query getDebug {
+export const DEBUG_QUERY = gql`
+  query GetDebugQuery {
     debug
   }
 `;
 
 const DebugPage = () => {
-  const { data: debugResult } = useQuery<{ debug: any }>(debugQuery);
+  const { data: debugResult } = useQuery<{ debug: any }>(DEBUG_QUERY);
 
   return (
-    <>
-      <ServiceWorkerManagerBackground />
-      <AuthManager />
+    <Authenticated>
       <Meta title="LabelFlow | Debug" />
       <CookieBanner />
       <Layout breadcrumbs={[<NavLogo key={0} />, <Text key={1}>Debug</Text>]}>
@@ -198,7 +191,6 @@ const DebugPage = () => {
                   {
                     clientType: "Standard LabelFlow Client App",
                     isInWindowScope,
-                    isInServiceWorkerScope,
                     isDevelopmentEnvironment,
                     browser: { ...detect() },
                     env: {
@@ -248,7 +240,7 @@ const DebugPage = () => {
           </Box>
         </Center>
       </Layout>
-    </>
+    </Authenticated>
   );
 };
 

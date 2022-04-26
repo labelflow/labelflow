@@ -1,0 +1,34 @@
+{
+  "title": "HuggingFaceResult",
+  "type": "array",
+  "items": { "$ref": "#/$defs/HuggingFaceLabel" },
+  "$defs": {
+    "HuggingFaceLabel": {
+      "type": "object",
+      "required": ["label", "score"],
+      "properties": {
+        "label": { "$ref": "#/$defs/HuggingFaceLabelClass" },
+        "score": { "$ref": "#/$defs/HuggingFaceScore" },
+        "box": { "$ref": "#/$defs/HuggingFaceBox" }
+      }
+    },
+    "HuggingFaceLabelClass": {
+      "type": "string",
+      "minLength": 1
+    },
+    "HuggingFaceBox": {
+      "type": "object",
+      "properties": {
+        "xmin": { "type": "number" },
+        "ymin": { "type": "number" },
+        "xmax": { "type": "number" },
+        "ymax": { "type": "number" }
+      }
+    },
+    "HuggingFaceScore": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  }
+}

@@ -7,13 +7,8 @@ import {
   ReactNativeInfo,
 } from "detect-browser";
 
-declare let self: ServiceWorkerGlobalScope;
-
 // eslint-disable-next-line import/no-mutable-exports
 export let isInWindowScope: boolean | null = null;
-
-// eslint-disable-next-line import/no-mutable-exports
-export let isInServiceWorkerScope: boolean | null = null;
 
 export const isDevelopmentEnvironment = process.env.NODE_ENV === "development";
 
@@ -39,19 +34,6 @@ const detectScope = () => {
       }
     } catch (e) {
       isInWindowScope = false;
-    }
-  }
-
-  if (isInServiceWorkerScope === null) {
-    try {
-      // @ts-ignore
-      if (self && self instanceof ServiceWorkerGlobalScope) {
-        isInServiceWorkerScope = true;
-      } else {
-        isInServiceWorkerScope = false;
-      }
-    } catch (e) {
-      isInServiceWorkerScope = false;
     }
   }
 };

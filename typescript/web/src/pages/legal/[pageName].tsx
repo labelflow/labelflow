@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { NavBar } from "../../components/website/Navbar/NavBar";
 import { Footer } from "../../components/website/Footer/Footer";
 import { Meta } from "../../components/meta";
-import { ServiceWorkerManagerBackground } from "../../components/service-worker-manager";
 import { CookieBanner } from "../../components/cookie-banner";
 
 const Iubenda = ({
@@ -67,7 +66,6 @@ export default function LegalPage() {
   })();
   return (
     <>
-      <ServiceWorkerManagerBackground />
       <Meta title={`LabelFlow | ${title}`} />
       <CookieBanner />
       <Box minH="640px">

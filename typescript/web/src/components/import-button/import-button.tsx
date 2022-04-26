@@ -61,11 +61,13 @@ const ResponsiveOpenModalButton = (props: ButtonProps) => {
 
 export type ImportButtonProps = ButtonProps & {
   showModal?: boolean;
+  datasetId?: string;
 };
 
 export const ImportButton = ({
   showModal = true,
   disabled,
+  datasetId,
   ...props
 }: ImportButtonProps) => {
   const { isReady } = useRouter();
@@ -80,6 +82,7 @@ export const ImportButton = ({
         <ImportImagesModal
           isOpen={isOpen ?? false}
           onClose={() => setIsOpen(false, "replaceIn")}
+          datasetId={datasetId}
         />
       )}
       <ResponsiveOpenModalButton

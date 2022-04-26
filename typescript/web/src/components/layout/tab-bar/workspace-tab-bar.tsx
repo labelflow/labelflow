@@ -1,30 +1,31 @@
+import { useWorkspace } from "../../../hooks";
 import { TabBar } from "./tab-bar";
 
 export type Props = {
   currentTab: "datasets" | "members" | "settings" | "graphiql";
-  workspaceSlug: string;
 };
 
-export const WorkspaceTabBar = ({ currentTab, workspaceSlug }: Props) => {
+export const WorkspaceTabBar = ({ currentTab }: Props) => {
+  const { slug } = useWorkspace();
   const tabs = [
     {
       name: "datasets",
-      url: `/${workspaceSlug}/datasets`,
+      url: `/${slug}/datasets`,
       isActive: currentTab === "datasets",
     },
     {
       name: "members",
-      url: `/${workspaceSlug}/members`,
+      url: `/${slug}/members`,
       isActive: currentTab === "members",
     },
     {
       name: "settings",
-      url: `/${workspaceSlug}/settings`,
+      url: `/${slug}/settings`,
       isActive: currentTab === "settings",
     },
     {
       name: "GraphiQL",
-      url: `/${workspaceSlug}/graphiql`,
+      url: `/${slug}/graphiql`,
       isActive: currentTab === "graphiql",
     },
   ];

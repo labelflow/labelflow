@@ -1,4 +1,4 @@
-import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   Button,
   FormControl,
@@ -15,63 +15,24 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import { getSlug } from "@labelflow/common-resolvers";
+import { isEmpty } from "lodash/fp";
 import debounce from "lodash/fp/debounce";
-import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  GetDatasetByIdQuery,
+  GetDatasetByIdQueryVariables,
+} from "../../graphql-types/GetDatasetByIdQuery";
+import { useWorkspace } from "../../hooks";
+import { WORKSPACE_DATASETS_PAGE_DATASETS_QUERY } from "../../shared-queries/workspace-datasets-page.query";
+import { CREATE_DATASET_MUTATION } from "./create-dataset.mutation";
+import {
+  GET_DATASET_BY_ID_QUERY,
+  SEARCH_DATASET_BY_SLUG_QUERY,
+} from "./datasets.query";
+import { GET_DATASETS_IDS_QUERY } from "./get-datasets-ids.query";
+import { UPDATE_DATASET_MUTATION } from "./update-dataset.mutation";
 
 const debounceTime = 200;
-
-const createDatasetMutation = gql`
-  mutation createDataset($name: String!, $workspaceSlug: String!) {
-    createDataset(data: { name: $name, workspaceSlug: $workspaceSlug }) {
-      id
-      name
-      slug
-      images(first: 1) {
-        id
-        url
-        thumbnail500Url
-      }
-      imagesAggregates {
-        totalCount
-      }
-      labelsAggregates {
-        totalCount
-      }
-      labelClassesAggregates {
-        totalCount
-      }
-    }
-  }
-`;
-
-const updateDatasetMutation = gql`
-  mutation updateDataset($id: ID!, $name: String!) {
-    updateDataset(where: { id: $id }, data: { name: $name }) {
-      id
-    }
-  }
-`;
-
-const getDatasetBySlugQuery = gql`
-  query getDatasetBySlug($slug: String!, $workspaceSlug: String!) {
-    searchDataset(
-      where: { slugs: { slug: $slug, workspaceSlug: $workspaceSlug } }
-    ) {
-      id
-      slug
-    }
-  }
-`;
-
-const getDatasetByIdQuery = gql`
-  query getDatasetById($id: ID) {
-    dataset(where: { id: $id }) {
-      id
-      name
-    }
-  }
-`;
 
 export const UpsertDatasetModal = ({
   isOpen = false,
@@ -82,7 +43,7 @@ export const UpsertDatasetModal = ({
   onClose?: () => void;
   datasetId?: string;
 }) => {
-  const workspaceSlug = useRouter()?.query?.workspaceSlug as string | undefined;
+  const { slug: workspaceSlug } = useWorkspace();
 
   const [datasetNameInputValue, setDatasetNameInputValue] =
     useState<string>("");
@@ -90,17 +51,20 @@ export const UpsertDatasetModal = ({
 
   const datasetName = datasetNameInputValue.trim();
 
-  useQuery(getDatasetByIdQuery, {
-    skip: typeof datasetId !== "string",
-    variables: { id: datasetId },
-    fetchPolicy: "cache-and-network",
-    onError: (e) => {
-      setErrorMessage(e.message);
-    },
-    onCompleted: ({ dataset }) => {
-      setDatasetNameInputValue(dataset.name);
-    },
-  });
+  useQuery<GetDatasetByIdQuery, GetDatasetByIdQueryVariables>(
+    GET_DATASET_BY_ID_QUERY,
+    {
+      skip: typeof datasetId !== "string" || isEmpty(datasetId),
+      variables: { id: datasetId ?? "" },
+      fetchPolicy: "cache-and-network",
+      onError: (e) => {
+        setErrorMessage(e.message);
+      },
+      onCompleted: ({ dataset }) => {
+        setDatasetNameInputValue(dataset.name);
+      },
+    }
+  );
 
   const [
     queryExistingDatasets,
@@ -109,27 +73,36 @@ export const UpsertDatasetModal = ({
       loading: loadingExistingDatasets,
       variables: variablesExistingDatasets,
     },
-  ] = useLazyQuery(getDatasetBySlugQuery, { fetchPolicy: "network-only" });
+  ] = useLazyQuery(SEARCH_DATASET_BY_SLUG_QUERY, {
+    fetchPolicy: "network-only",
+  });
 
   const [createDatasetMutate, { loading: createMutationLoading }] = useMutation(
-    createDatasetMutation,
+    CREATE_DATASET_MUTATION,
     {
       variables: {
         name: datasetName,
         workspaceSlug,
       },
-      refetchQueries: ["getDatasets"],
+      refetchQueries: [
+        GET_DATASETS_IDS_QUERY,
+        WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
+      ],
+      awaitRefetchQueries: true,
     }
   );
 
   const [updateDatasetMutate, { loading: updateMutationLoading }] = useMutation(
-    updateDatasetMutation,
+    UPDATE_DATASET_MUTATION,
     {
       variables: {
         id: datasetId,
         name: datasetName,
       },
-      refetchQueries: ["getPaginatedDatasets"],
+      refetchQueries: [
+        GET_DATASETS_IDS_QUERY,
+        WORKSPACE_DATASETS_PAGE_DATASETS_QUERY,
+      ],
       awaitRefetchQueries: true,
     }
   );

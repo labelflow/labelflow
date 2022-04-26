@@ -1,35 +1,31 @@
 import { ExportOptionsCoco } from "@labelflow/graphql-types";
 import JSZip from "jszip";
 import mime from "mime-types";
-
+import { getImageName } from "../common";
+import { ExportFunction } from "../types";
+import { addImageDimensionsToLabels } from "./add-image-dimensions-to-labels";
 import { convertLabelflowDatasetToCocoDataset } from "./coco-core/converters";
 import { jsonToDataUri } from "./json-to-data-uri";
-import { ExportFunction } from "../types";
-import { getImageName } from "../common";
 
-import { addImageDimensionsToLabels } from "./add-image-dimensions-to-labels";
-
-export const exportToCoco: ExportFunction = async (
+export const exportToCoco: ExportFunction<ExportOptionsCoco> = async (
   datasetId,
-  options: ExportOptionsCoco = {},
-  { repository, req },
-  user
+  options = {},
+  { repository, req, user }
 ) => {
-  const images = await repository.image.list({ datasetId, user });
-  const labelClasses = await repository.labelClass.list({ datasetId, user });
-  const labels = await repository.label.list({ datasetId, user });
+  const [images, labelClasses, labels] = await Promise.all([
+    repository.image.list({ datasetId, user }),
+    repository.labelClass.list({ datasetId, user }),
+    repository.label.list({ datasetId, user }),
+  ]);
 
-  const labelsWithImageDimensions = await addImageDimensionsToLabels(
-    labels,
-    repository,
-    user
-  );
+  const labelsWithImageDimensions = addImageDimensionsToLabels(labels, images);
   const annotationsFileJson = JSON.stringify(
-    convertLabelflowDatasetToCocoDataset(
+    await convertLabelflowDatasetToCocoDataset(
       images,
       labelsWithImageDimensions,
       labelClasses,
-      options
+      options,
+      { repository, req, user }
     )
   );
   const annotationsFileDataUri = jsonToDataUri(annotationsFileJson);

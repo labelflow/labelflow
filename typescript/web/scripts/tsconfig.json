@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS"
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.fixtures.ts",
+    "**/*.fixtures.tsx",
+    "**/src/utils/fixtures",
+    "**/src/utils/tests",
+    "**/src/utils/stories",
+  ]
+}

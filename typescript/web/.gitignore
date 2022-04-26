@@ -4,3 +4,5 @@
 
 next-env.d.ts
 public/sitemap.xml
+
+src/graphql-types
