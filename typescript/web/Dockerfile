@@ -57,6 +57,7 @@ RUN adduser --system labelflow --uid 1001
 COPY --from=web-builder /app/typescript/web/public ./public
 COPY --from=web-builder --chown=labelflow:nodejs /app/typescript/web/.next ./.next
 COPY --from=web-builder /app/node_modules ./node_modules
+COPY --from=web-builder /app/typescript/web/node_modules/@next-auth ./node_modules/@next-auth
 COPY --from=web-builder /app/package.json ./package.json
 
 USER labelflow

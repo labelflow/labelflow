@@ -8241,7 +8241,7 @@ __metadata:
     "@labelflow/graphql-types": "workspace:typescript/graphql-types"
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber"
     "@labelflow/utils": "workspace:typescript/utils"
-    "@next-auth/prisma-adapter": next
+    "@next-auth/prisma-adapter": 1.0.3
     "@prisma/client": 2.30.3
     "@sentry/browser": 6.18.0
     "@sentry/nextjs": 6.18.0
@@ -8505,13 +8505,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next-auth/prisma-adapter@npm:next":
-  version: 0.5.2-next.5
-  resolution: "@next-auth/prisma-adapter@npm:0.5.2-next.5"
+"@next-auth/prisma-adapter@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@next-auth/prisma-adapter@npm:1.0.3"
   peerDependencies:
-    "@prisma/client": ">=2.26.0"
-    next-auth: ">=4"
-  checksum: d48b132fe698060bb8a995e85c28c39baf6265ee24276a2e802cf38a4e7c90477f68d50cf7f3d4a4704f0c10f79e93984a34b5d6f9bd5c0b44c0464ef9febc09
+    "@prisma/client": ">=2.26.0 || >=3"
+    next-auth: ^4.0.1
+  checksum: 41b27c559144928a7056f15120e20a549943d97469f31871f040b9255521df1c3b0dd8eb2615217d5d164039dc7db0b862bbfbf83bec809ff76d6efcdcf2c528
   languageName: node
   linkType: hard
 

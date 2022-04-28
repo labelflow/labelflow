@@ -32,7 +32,7 @@ services:
     volumes:
       - "minio:/data"
     entrypoint: sh
-    # create a labelflow folder in the minio to create a bucket named labelflow
+    # create a labelflow folder in minio to create a bucket named accordingly
     command: -c 'mkdir -p /data/labelflow && /usr/bin/docker-entrypoint.sh server /data --console-address ":9001"'
 
   iog:
@@ -66,6 +66,12 @@ services:
       LABELFLOW_AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
       LABELFLOW_AWS_REGION: eu-west-1
       LABELFLOW_AWS_ENDPOINT: http://localhost:9000
+      JWT_SECRET: ${JWT_SECRET:-9W3LaNVnxT9UOaPWZHIyrAVu3ndIbBsLme3Ttq+WNoQ=}
+      EMAIL_SERVER: ${EMAIL_SERVER:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
     depends_on:
       - db
       - db_migrate
