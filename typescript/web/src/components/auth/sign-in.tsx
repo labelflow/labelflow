@@ -1,9 +1,9 @@
 import { Box, Heading, Text, useColorModeValue } from "@chakra-ui/react";
+import { OAuthProviderType } from "next-auth/providers/oauth-types";
 import NextLink from "next/link";
 import React from "react";
-import { OAuthProviderType } from "next-auth/providers/oauth-types";
-import { Logo } from "../logo";
 import { TextLink } from "../core";
+import { Logo } from "../logo";
 import { DividerWithText } from "./divider-with-text";
 import { EmailSignIn } from "./email-sign-in";
 import { OAuthSignIn } from "./oauth-sign-in";
@@ -12,7 +12,7 @@ import { useSignIn } from "./sign-in.context";
 
 const BigLogo = () => (
   <NextLink href="/">
-    <Logo h="9" mb="10" mx="auto" cursor="pointer" />
+    <Logo h="9" mb="10" iconColor="brand.600" mx="auto" cursor="pointer" />
   </NextLink>
 );
 
