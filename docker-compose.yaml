@@ -41,7 +41,10 @@ services:
     build:
       context: ./python/iog
       dockerfile: Dockerfile
+      target: local-dev
     # runtime: nvidia
+    volumes:
+      - "./python/iog/data/IOG_PASCAL_SBD_REFINEMENT.pth:/app/data/IOG_PASCAL_SBD_REFINEMENT.pth:ro"
     command: python server.py
     ports:
       - "5001:5000"
@@ -59,26 +62,54 @@ services:
     ports:
       - "3000:3000"
     environment:
-      POSTGRES_EXTERNAL_URL: "postgresql://${POSTGRES_ADMIN_USER:-admin}:${POSTGRES_ADMIN_PASSWORD:-admin}@db:5432/${POSTGRES_DB:-labelflow}?schema=public"
       VERCEL_URL: http://localhost:3000
-      EMAIL_FROM: "LabelFlow <contact@labelflow.ai>"
+      POSTGRES_EXTERNAL_URL: "postgresql://${POSTGRES_ADMIN_USER:-admin}:${POSTGRES_ADMIN_PASSWORD:-admin}@db:5432/${POSTGRES_DB:-labelflow}?schema=public"
       LABELFLOW_AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minioadmin}
       LABELFLOW_AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
-      LABELFLOW_AWS_REGION: eu-west-1
-      LABELFLOW_AWS_ENDPOINT: http://localhost:9000
+      LABELFLOW_AWS_REGION: ${LABELFLOW_AWS_REGION:-eu-west-1}
+      LABELFLOW_AWS_ENDPOINT: ${LABELFLOW_AWS_ENDPOINT:-http://localhost:9000}
       JWT_SECRET: ${JWT_SECRET:-9W3LaNVnxT9UOaPWZHIyrAVu3ndIbBsLme3Ttq+WNoQ=}
       EMAIL_SERVER: ${EMAIL_SERVER:-}
+      EMAIL_FROM: "LabelFlow <contact@labelflow.ai>"
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      KEYCLOAK_ID: ${KEYCLOAK_ID:-labelflow}
+      KEYCLOAK_SECRET: ${KEYCLOAK_SECRET:-3jKWDZxOoFa5bVNQJZXyEDGmC6NhoLFc}
+      KEYCLOAK_ISSUER: ${KEYCLOAK_ISSUER:-http://localhost:8080/auth/realms/LabelFlow}
+    volumes:
+      - "./docker-compose.dev.nginx:/etc/nginx/sites-enabled/localhost-proxy.nginx:ro"
     depends_on:
       - db
       - db_migrate
       - minio
+      - iog
+      - keycloak
+
+  keycloak:
+    image: jboss/keycloak:16.1.1
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_USER: ${KEYCLOAK_USER:-admin}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD:-admin}
+      KEYCLOAK_IMPORT: /opt/labelflow-realm.json
+    volumes:
+      - "./docker-compose.dev.realm.json:/opt/labelflow-realm.json:ro"
+
+  keycloak_init:
+    image: jboss/keycloak:16.1.1
+    restart: on-failure
+    environment:
+      KEYCLOAK_USER: ${KEYCLOAK_USER:-admin}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD:-admin}
+    volumes:
+      - "./docker-compose.kcadm.sh:/tmp/create-labelflow-user.sh:ro"
+    entrypoint: "/bin/bash"
+    command: /tmp/create-labelflow-user.sh
+    depends_on: [keycloak]
 
 volumes:
-  db:
-    external: false
-  minio:
-    external: false
+  db: {external: false}
+  minio: {external: false}

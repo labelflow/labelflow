@@ -92,7 +92,6 @@ USER root
 RUN apt-get update && \
     apt-get install nginx -y && \
     apt-get clean
-COPY ./docker-compose.dev.nginx /etc/nginx/sites-enabled/
 
 CMD ["bash", "-c", "service nginx start && node_modules/.bin/next start"]
 

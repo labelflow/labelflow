@@ -1,6 +1,7 @@
 import { Box, Heading, Text, useColorModeValue } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
+import { OAuthProviderType } from "next-auth/providers/oauth-types";
 import { Logo } from "../logo";
 import { TextLink } from "../core";
 import { DividerWithText } from "./divider-with-text";
@@ -49,13 +50,32 @@ const Status = () => {
   return error ? <SignInError /> : <Disclaimer />;
 };
 
-export const SignIn = () => (
+const SignInWithEmail = () => (
+  <>
+    <DividerWithText>or sign in with email</DividerWithText>
+    <EmailSignIn />
+  </>
+);
+
+export type SignInProps = { methods: OAuthProviderType[] };
+
+export const Form = ({ methods }: SignInProps) => {
+  const hasEmail = methods.includes("email");
+  const hasOAuth =
+    (!hasEmail && methods.length > 0) || (hasEmail && methods.length > 1);
+  return (
+    <>
+      {hasOAuth && <OAuthSignIn methods={methods} />}
+      {hasEmail && <SignInWithEmail />}
+    </>
+  );
+};
+
+export const SignIn = (props: SignInProps) => (
   <Box w="full">
     <BigLogo />
     <Header />
-    <OAuthSignIn />
-    <DividerWithText>or sign in with email</DividerWithText>
-    <EmailSignIn />
+    <Form {...props} />
     <Status />
   </Box>
 );

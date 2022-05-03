@@ -1,4 +1,2 @@
-# Leave data alone
-
-data/VOCdevkit
+data
 __pycache__
