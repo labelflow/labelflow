@@ -3,14 +3,14 @@
 # Inspired from: https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 
 ################################################################################
-# Common layer between the web-builder and the db-migrate images
+# Common layer between the web-builder, runner and the db-migrate images
 FROM node:14 AS common
 
 WORKDIR /app
 
 COPY . .
 
-RUN yarn install --immutable
+RUN yarn workspaces focus --all --production
 
 ################################################################################
 # Build the whole web application and its dependencies
@@ -30,6 +30,7 @@ EOF
 # Don't forget to increase your Docker host memory to a greater value!
 ENV NODE_OPTIONS --max-old-space-size=4096
 
+RUN yarn install --immutable
 RUN yarn build:web
 
 ################################################################################
@@ -53,12 +54,11 @@ ENV NEXTAUTH_URL "http://localhost:${PORT}"
 RUN addgroup --gecos 1001 --system nodejs
 RUN adduser --system labelflow --uid 1001
 
-# COPY --from=web-builder /app/typescript/web/next.config.js ./
-COPY --from=web-builder /app/typescript/web/public ./public
+COPY --from=common /app/node_modules ./node_modules
+COPY --from=common /app/package.json ./package.json
+COPY --from=common /app/typescript/web/public ./public
+COPY --from=web-builder /app/node_modules/.prisma/client ./node_modules/.prisma/client
 COPY --from=web-builder --chown=labelflow:nodejs /app/typescript/web/.next ./.next
-COPY --from=web-builder /app/node_modules ./node_modules
-COPY --from=web-builder /app/typescript/web/node_modules/@next-auth ./node_modules/@next-auth
-COPY --from=web-builder /app/package.json ./package.json
 
 USER labelflow
 
@@ -102,10 +102,11 @@ WORKDIR /app
 COPY --from=common /app/typescript/db ./typescript/db
 COPY --from=common /app/node_modules ./node_modules
 COPY --from=common /app/package.json ./package.json
+COPY --from=web-builder /app/node_modules/.prisma/client ./node_modules/.prisma/client
 WORKDIR /app/typescript/db
-RUN yarn prisma generate
+RUN yarn global add prisma@2.30.3
 ENV POSTGRES_EXTERNAL_URL="${POSTGRES_EXTERNAL_URL}"
-CMD ["yarn", "prisma", "migrate", "dev"]
+CMD ["prisma", "migrate", "dev"]
 
 ################################################################################
 # Re-expose the standard version at the end since Docker takes the latest image

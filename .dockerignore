@@ -5,7 +5,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-python/iog/data
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -162,3 +161,16 @@ storybook-static
 **/.next
 
 .git
+
+python/iog/data
+python/iog/ims
+strapi/data
+labelflow.excalidraw
+.github
+.vscode
+docker-compose.*
+.DS_Store
+.env.*
+.github
+node_modules
+typescript/web/src/graphql-types
