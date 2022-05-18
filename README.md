@@ -62,8 +62,9 @@ LabelFlow officially launched as v.0.1 on 7th of September, however a lot of new
 
 ## Getting Started
 
-### LabelFlow.ai hosted version
+### LabelFlow.ai hosted version (Deprecated)
 
+Edit: The hosted version is discontinued, please use the on-premise version (to be released end of May 2022)
 You can use our hosted version now for free, at [labeflow.ai](https://labelflow.ai).
 
 ### Serving your own LabelFlow
