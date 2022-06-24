@@ -8,6 +8,7 @@ import { OAuthConfig } from "next-auth/providers";
 import EmailProvider from "next-auth/providers/email";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import KeycloakProvider from "next-auth/providers/keycloak";
 import { sendVerificationRequestFromPrisma } from "../../../utils/email/send-verification-request";
 
 // https://next-auth.js.org/configuration/options#secret
@@ -30,6 +31,27 @@ if (!globalThis.prismaInstance) {
 }
 globalThis.prismaInstanceIsConnected = true;
 
+globalThis.prismaInstance.$use(
+  async (params: any, next: (params: any) => Promise<unknown>) => {
+    if (params.action === "create" && params.model === "Account") {
+      // eslint-disable-next-line no-param-reassign
+      delete params.args.data["not-before-policy"];
+    }
+    const result = await next(params);
+    return result;
+  }
+);
+
+const KEYCLOAK_PROVIDER = isEmpty(process.env.KEYCLOAK_ID)
+  ? []
+  : [
+      KeycloakProvider({
+        clientId: process.env.KEYCLOAK_ID as string,
+        clientSecret: process.env.KEYCLOAK_SECRET as string,
+        issuer: process.env.KEYCLOAK_ISSUER,
+      }),
+    ];
+
 export default NextAuth({
   providers: [
     EmailProvider({
@@ -47,6 +69,7 @@ export default NextAuth({
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
     }),
+    ...KEYCLOAK_PROVIDER,
   ],
   adapter: PrismaAdapter(globalThis.prismaInstance),
   secret: process.env.JWT_SECRET,

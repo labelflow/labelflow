@@ -1,7 +1,7 @@
 import { Box, Button, ButtonProps, Stack } from "@chakra-ui/react";
 import { OAuthProviderType } from "next-auth/providers";
 import React, { useCallback } from "react";
-import { FaGithub } from "react-icons/fa";
+import { FaGithub, FaUserLock } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useSignIn } from "./sign-in.context";
 
@@ -24,6 +24,10 @@ const OAuthButton = ({ provider, label, icon }: OAuthButtonProps) => {
 const useOAuthSignIn = (): Partial<
   Record<OAuthProviderType, Omit<OAuthButtonProps, "provider">>
 > => ({
+  keycloak: {
+    icon: <Box as={FaUserLock} />,
+    label: "Sign in with Keycloak",
+  },
   google: {
     icon: <Box as={FcGoogle} />,
     label: "Sign in with Google",
@@ -34,17 +38,23 @@ const useOAuthSignIn = (): Partial<
   },
 });
 
-export const OAuthSignIn = () => {
+export type OAuthSignInProps = { methods: OAuthProviderType[] };
+
+export const OAuthSignIn = ({ methods: enabledMethods }: OAuthSignInProps) => {
   const methods = useOAuthSignIn();
   return (
     <Stack spacing="4">
-      {Object.entries(methods).map(([provider, props]) => (
-        <OAuthButton
-          key={provider}
-          provider={provider as OAuthProviderType}
-          {...props}
-        />
-      ))}
+      {Object.entries(methods)
+        .filter(([method]) =>
+          enabledMethods.includes(method as OAuthProviderType)
+        )
+        .map(([provider, props]) => (
+          <OAuthButton
+            key={provider}
+            provider={provider as OAuthProviderType}
+            {...props}
+          />
+        ))}
     </Stack>
   );
 };

@@ -105,15 +105,19 @@ export default function Posts({
 }
 
 export async function getStaticPaths() {
-  // Call an external API endpoint to get posts
-  const articles = (await getAllArticlesWithSlug()) || [];
-  // Get the paths we want to pre-render based on posts
-  const paths = articles.map((article) => ({
-    params: { slug: article?.slug },
-  }));
-  // We'll pre-render only these paths at build time.
-  // { fallback: false } means other routes should 404.
-  return { paths, fallback: false };
+  try {
+    // Call an external API endpoint to get posts
+    const articles = (await getAllArticlesWithSlug()) || [];
+    // Get the paths we want to pre-render based on posts
+    const paths = articles.map((article) => ({
+      params: { slug: article?.slug },
+    }));
+    // We'll pre-render only these paths at build time.
+    // { fallback: false } means other routes should 404.
+    return { paths, fallback: false };
+  } catch {
+    return { paths: [], fallback: false };
+  }
 }
 
 export async function getStaticProps({

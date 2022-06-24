@@ -1,36 +1,22 @@
-import { useSession } from "next-auth/react";
 import React from "react";
 import { Authenticated } from "../components/auth";
 import { CookieBanner } from "../components/cookie-banner";
-import { Home } from "../components/home";
 import { Layout } from "../components/layout";
 import { NavLogo } from "../components/logo/nav-logo";
 import { Meta } from "../components/meta";
-import { APP_TITLE } from "../constants";
-import { getHomeStaticProps, HomeProps } from "../utils/get-home-static-props";
-import Website from "./website";
+import { Workspaces } from "../components/workspaces";
+import { APP_NAME } from "../constants";
+import { getHomeStaticProps } from "../utils/get-home-static-props";
 
-const App = () => (
+const IndexPage = () => (
   <Authenticated withWorkspaces>
-    <Meta title={APP_TITLE} />
+    <Meta title={`${APP_NAME} | Workspaces`} />
     <CookieBanner />
     <Layout breadcrumbs={[<NavLogo key={0} />]}>
-      <Home />
+      <Workspaces />
     </Layout>
   </Authenticated>
 );
-
-const IndexPage = ({ previewArticles }: HomeProps) => {
-  const { status } = useSession();
-  return (
-    <>
-      {status === "authenticated" && <App />}
-      {status === "unauthenticated" && (
-        <Website previewArticles={previewArticles} />
-      )}
-    </>
-  );
-};
 
 export const getStaticProps = getHomeStaticProps;
 

@@ -34,7 +34,7 @@
     "@labelflow/graphql-types": "workspace:typescript/graphql-types",
     "@labelflow/react-openlayers-fiber": "workspace:typescript/react-openlayers-fiber",
     "@labelflow/utils": "workspace:typescript/utils",
-    "@next-auth/prisma-adapter": "next",
+    "@next-auth/prisma-adapter": "1.0.3",
     "@prisma/client": "2.30.3",
     "@sentry/browser": "6.18.0",
     "@sentry/nextjs": "6.18.0",
