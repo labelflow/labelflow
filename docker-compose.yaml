@@ -17,7 +17,7 @@ services:
       dockerfile: ./typescript/web/Dockerfile
       target: db-migrate
     environment:
-      - POSTGRES_EXTERNAL_URL=postgresql://${POSTGRES_ADMIN_USER:-admin}:${POSTGRES_ADMIN_PASSWORD:-admin}@db:5432/${POSTGRES_DB:-labelflow}?schema=public
+      POSTGRES_EXTERNAL_URL: "postgresql://${POSTGRES_ADMIN_USER:-admin}:${POSTGRES_ADMIN_PASSWORD:-admin}@db:5432/${POSTGRES_DB:-labelflow}?schema=public&connect_timeout=300"
     depends_on:
       - db
 
@@ -63,7 +63,7 @@ services:
       - "3000:3000"
     environment:
       VERCEL_URL: http://localhost:3000
-      POSTGRES_EXTERNAL_URL: "postgresql://${POSTGRES_ADMIN_USER:-admin}:${POSTGRES_ADMIN_PASSWORD:-admin}@db:5432/${POSTGRES_DB:-labelflow}?schema=public"
+      POSTGRES_EXTERNAL_URL: "postgresql://${POSTGRES_ADMIN_USER:-admin}:${POSTGRES_ADMIN_PASSWORD:-admin}@db:5432/${POSTGRES_DB:-labelflow}?schema=public&connect_timeout=300"
       LABELFLOW_AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minioadmin}
       LABELFLOW_AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
       LABELFLOW_AWS_REGION: ${LABELFLOW_AWS_REGION:-eu-west-1}
@@ -89,6 +89,11 @@ services:
 
   keycloak:
     image: jboss/keycloak:16.1.1
+    # Keycloak images are not compatible with Apple M1 chips yet
+    build: docker/keycloak-containers/server
+    # Subdirectries of git repositories are not supported by docker-compose yet
+    # build: https://github.com/keycloak/keycloak-containers.git#16.1.1#:server
+    # https://github.com/docker/build-push-action/issues/676
     ports:
       - "8080:8080"
     environment:

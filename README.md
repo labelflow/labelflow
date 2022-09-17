@@ -11,16 +11,9 @@
   <p align="center">
     The open platform for image labeling
     <br />
-    <a href="https://labelflow.ai/"><strong>Try it now »</strong></a>
-    <br />
-    <br />
     <a href="https://docs.labelflow.ai/">Explore docs</a>
     ·
     <a href="https://github.com/labelflow/labelflow/issues/new?assignees=&labels=bug&template=bug_report.md&title=">Report Bug</a>
-    ·
-    <a href="https://labelflow.canny.io/">Request Feature</a>
-    ·
-    <a href="https://discord.gg/sHtanUQA2V">Join the Community</a>
   </p>
 </div>
 <br />
@@ -29,6 +22,12 @@
 ## About
 
 <img width="100%" alt="LabelFlow Screenshot" src="https://czeqiukmkichqmwlshce.supabase.in/storage/v1/object/public/labelflow-images/hero-image.jpg">
+
+# ⚠️ This product is discontinued ⚠️
+
+Unfortunately, we had to stop working on the project 😿
+
+But it's open source! Feel free to reuse the code as you want as-long as it complies with the [license](LICENCE) 🚀
 
 # Visual Data for absolutely everyone
 
@@ -62,57 +61,34 @@ LabelFlow officially launched as v.0.1 on 7th of September, however a lot of new
 
 ## Getting Started
 
-### LabelFlow.ai hosted version
+### ~~LabelFlow.ai hosted version~~
 
-You can use our hosted version now for free, at [labeflow.ai](https://labelflow.ai).
+~~You can use our hosted version now for free, at [labeflow.ai](https://labelflow.ai).~~
+
+**LabelFlow is now discontinued**, you must build it by yourself by following the steps described in the next section.
 
 ### Serving your own LabelFlow
 
-This guide walks you through the steps needed to run a production-ready version of LabelFlow locally.
+You can serve you own LabelFlow server with onr of the solutions below.
 
-Before continuing, please have a look at our <a href="./LICENSE">License</a> ⬅️.
+#### With Docker Compose
 
-#### Prerequisites
+This is the simplest solution as it also starts all the required services.
 
-You need to have below listed softwares installed on your machine to run labelflow.
+```text
+git submodule update --init
+docker compose up -d --build
+```
 
-- ✔️ Git 📦
-- ✔️ Node (v15.5.0 or above) 📦
-- ✔️ Yarn (v1.22.4 or above) 📦
+> _Depending on your configuration, some services might take some time to start._
 
-#### Running LabelFlow on your machine
+#### With Nods 16 and Yarn
 
-1. Clone the repository on your machine using
-
-   ```shell
-   git clone https://github.com/labelflow/labelflow.git
-   ```
-
-2. Go into the labelflow folder
-
-   ```shell
-   cd labelflow
-   ```
-
-3. Install dependencies using yarn
-
-   ```shell
-   yarn install
-   ```
-
-4. Build the web app
-
-   ```shell
-   yarn build:web
-   ```
-
-5. Start the web server
-
-   ```shell
-   yarn start:web
-   ```
-
-6. Open your browser and visit [http://localhost:3000](http://localhost:3000).
+```text
+yarn
+yarn codegen:all
+yarn start:web
+```
 
 #### A note on environment variables
 
@@ -124,13 +100,6 @@ You can find the full list of environment variables needed for a fully featured 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-## Roadmap
-
-- The short term roadmap is on Github https://github.com/orgs/labelflow/projects/5
-- The longer term feature roadmap is on Canny https://labelflow.canny.io/
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 ## License
 
 LabelFlow sources are entirely available on Github, and LabelFlow is primarily distributed under the terms of the Business Source License (BSL), like our friends at [MariaDB](https://mariadb.com/bsl11/), [Sentry](https://blog.sentry.io/2019/11/06/relicensing-sentry) and [CockroachDB](https://www.cockroachlabs.com/blog/oss-relicensing-cockroachdb/).
@@ -138,15 +107,5 @@ LabelFlow sources are entirely available on Github, and LabelFlow is primarily d
 As they explain very well, the BSL is the closest thing to open source that we can do without being threatened by external companies. LabelFlow source is available on this repository, you can deploy LabelFlow entirely on premises, and you can contribute to LabelFlow here!
 
 See [LICENSE](https://github.com/labelflow/labelflow/blob/main/LICENSE) for details.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-## Contact
-
-- Discord Community https://discord.gg/sHtanUQA2V
-- Website https://labelflow.ai/website
-- Twitter https://twitter.com/labelflowai
-- LinkedIn https://www.linkedin.com/company/labelflow/
-- Facebook https://facebook.com/labelflow-102033695440701
 
 <p align="right">(<a href="#top">back to top</a>)</p>

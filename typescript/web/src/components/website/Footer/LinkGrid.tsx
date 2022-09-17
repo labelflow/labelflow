@@ -18,7 +18,6 @@ const productLinks: FooterLink[] = [
 
 const learnLinks: FooterLink[] = [
   { href: "/about", label: "About" },
-  { href: "/posts", label: "Blog" },
   { href: DOCUMENTATION_URL, label: "Documentation" },
   { href: "https://labelflow.recruitee.com/", label: "Jobs" },
 ];
