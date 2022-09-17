@@ -69,11 +69,11 @@ LabelFlow officially launched as v.0.1 on 7th of September, however a lot of new
 
 ### Serving your own LabelFlow
 
-You can serve you own LabelFlow server with onr of the solutions below.
+You can serve you own LabelFlow server with one of the solutions below.
 
 #### With Docker Compose
 
-This is the simplest solution as it also starts all the required services.
+This is the simplest way to get everything up and running as it also starts all the required services.
 
 ```text
 git submodule update --init
@@ -83,6 +83,8 @@ docker compose up -d --build
 > _Depending on your configuration, some services might take some time to start._
 
 #### With Nods 16 and Yarn
+
+Make sure that Postgres and MinIO are installed on your machine, edit the `.env.development` file according to your needs, then run:
 
 ```text
 yarn
