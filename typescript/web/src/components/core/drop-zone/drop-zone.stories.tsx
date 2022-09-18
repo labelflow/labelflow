@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { DropZone } from ".";
-import { chakraDecorator, storybookTitle } from "../../utils/stories";
+import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 
 export default {
   title: storybookTitle(DropZone),

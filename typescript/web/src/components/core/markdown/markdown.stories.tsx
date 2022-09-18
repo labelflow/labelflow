@@ -1,7 +1,7 @@
 import { Button, Flex, useColorMode } from "@chakra-ui/react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { PropsWithChildren } from "react";
-import { chakraDecorator, storybookTitle } from "../../utils/stories";
+import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 import { Markdown } from "./markdown";
 import { MARKDOWN_EXAMPLE } from "./markdown.fixtures";
 

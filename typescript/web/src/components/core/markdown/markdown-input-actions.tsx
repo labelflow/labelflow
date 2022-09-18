@@ -15,7 +15,6 @@ import {
   RiListUnordered,
   RiStrikethrough,
 } from "react-icons/ri";
-import { APP_NAME } from "../../constants";
 
 export type MarkdownEditorAction = monaco.editor.IActionDescriptor & {
   icon: IconType;
@@ -54,8 +53,7 @@ export const wrapEditorAction =
     editor.focus();
   };
 
-const getId = (label: string): string =>
-  `${paramCase(APP_NAME)}.markdown.${paramCase(label)}`;
+const getId = (label: string): string => `markdown.${paramCase(label)}`;
 
 const useEditorAction = (
   label: string,

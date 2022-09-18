@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { Button, Flex, useColorMode } from "@chakra-ui/react";
 import { PropsWithChildren, useState } from "react";
 import { MarkdownInput as MarkdownInputComponent } from ".";
-import { chakraDecorator, storybookTitle } from "../../utils/stories";
+import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 
 export default {
   title: storybookTitle(MarkdownInputComponent),

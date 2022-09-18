@@ -2,7 +2,7 @@ import { Box, Button, Flex, useColorMode } from "@chakra-ui/react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { PropsWithChildren } from "react";
 import { CodeEditor, CodeEditorProvider } from ".";
-import { chakraDecorator, storybookTitle } from "../../utils/stories";
+import { chakraDecorator, storybookTitle } from "../../../utils/stories";
 
 export default {
   title: storybookTitle(CodeEditor),
