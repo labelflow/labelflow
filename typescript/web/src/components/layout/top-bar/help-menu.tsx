@@ -12,12 +12,7 @@ import {
   MenuGroup,
 } from "@chakra-ui/react";
 import { useQueryParam } from "use-query-params";
-import {
-  RiQuestionLine,
-  RiGlobalLine,
-  RiGiftLine,
-  RiBookOpenLine,
-} from "react-icons/ri";
+import { RiQuestionLine, RiGlobalLine, RiBookOpenLine } from "react-icons/ri";
 import { VscDebug } from "react-icons/vsc";
 import { FaRegKeyboard, FaDiscord, FaGithub, FaVoteYea } from "react-icons/fa";
 import { GrGraphQl } from "react-icons/gr";
@@ -29,7 +24,6 @@ import { DOCUMENTATION_URL } from "../../../constants";
 const HelpMenuIcon = chakra(RiQuestionLine);
 const WebsiteIcon = chakra(RiGlobalLine);
 const DocumentationIcon = chakra(RiBookOpenLine);
-const WhatsNewIcon = chakra(RiGiftLine);
 const KeymapIcon = chakra(FaRegKeyboard);
 const DiscordIcon = chakra(FaDiscord);
 const VoteIcon = chakra(FaVoteYea);
@@ -91,11 +85,6 @@ export const HelpMenu = () => {
             >
               Keyboard shortcuts
             </MenuItem>
-            <NextLink href="/posts">
-              <MenuItem icon={<WhatsNewIcon fontSize="lg" />}>
-                What&apos;s new
-              </MenuItem>
-            </NextLink>
 
             <NextLink href="/website">
               <MenuItem icon={<WebsiteIcon fontSize="lg" />}>

@@ -1,0 +1,3 @@
+[submodule "docker/keycloak-containers"]
+	path = docker/keycloak-containers
+	url = https://github.com/keycloak/keycloak-containers.git

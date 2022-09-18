@@ -23,7 +23,6 @@ export const links: Link[] = [
   {
     label: "Resources",
     children: [
-      { label: "Blog", href: "/posts" },
       {
         label: "Documentation",
         href: DOCUMENTATION_URL,

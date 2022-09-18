@@ -1,9 +1,11 @@
 import { Flex, Heading, VStack, useColorModeValue } from "@chakra-ui/react";
+import { isEmpty } from "lodash/fp";
+import { OAuthProviderType } from "next-auth/providers/oauth-types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { StringParam, useQueryParam } from "use-query-params";
-import { SignIn, SignInProvider } from "../../components/auth";
+import { SignIn, SignInProps, SignInProvider } from "../../components/auth";
 import { Meta } from "../../components/meta";
 
 const useRedirectIfAuthenticated = (redirectUrl?: string) => {
@@ -22,11 +24,11 @@ const MustLogInMessage = () => (
   </Heading>
 );
 
-type BodyProps = {
+type BodyProps = SignInProps & {
   redirectUrl?: string;
 };
 
-const Body = ({ redirectUrl }: BodyProps) => {
+const Body = ({ redirectUrl, ...props }: BodyProps) => {
   return (
     <SignInProvider>
       <Flex
@@ -45,14 +47,14 @@ const Body = ({ redirectUrl }: BodyProps) => {
           borderRadius="8"
         >
           {redirectUrl && <MustLogInMessage />}
-          <SignIn />
+          <SignIn {...props} />
         </VStack>
       </Flex>
     </SignInProvider>
   );
 };
 
-const SignInPage = () => {
+const SignInPage = (props: SignInProps) => {
   const [redirect] = useQueryParam("redirect", StringParam);
   const redirectUrl = redirect ?? undefined;
   const { status } = useSession();
@@ -60,9 +62,27 @@ const SignInPage = () => {
   return (
     <>
       <Meta title="LabelFlow | Sign in" />
-      {status === "unauthenticated" && <Body redirectUrl={redirectUrl} />}
+      {status === "unauthenticated" && (
+        <Body redirectUrl={redirectUrl} {...props} />
+      )}
     </>
   );
+};
+
+const AUTH_METHODS_ENV_NAMES: Partial<Record<OAuthProviderType, string[]>> = {
+  keycloak: ["KEYCLOAK_ID", "KEYCLOAK_SECRET", "KEYCLOAK_ISSUER"],
+  google: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"],
+  github: ["GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"],
+  email: ["EMAIL_SERVER", "EMAIL_FROM"],
+};
+
+export const getServerSideProps = async (): Promise<{ props: SignInProps }> => {
+  const methods = Object.entries(AUTH_METHODS_ENV_NAMES)
+    .filter(([, envNames]) =>
+      envNames.every((envName) => !isEmpty(process.env[envName]))
+    )
+    .map(([method]) => method as OAuthProviderType);
+  return { props: { methods } };
 };
 
 export default SignInPage;
