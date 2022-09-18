@@ -19,45 +19,42 @@
 <br />
 <br />
 
+---
+
+# ⚠️ This repository is deprecated ⚠️
+
+Unfortunately, we had to stop working on the project 😿
+
+But the project is open source! You're free to reuse the code as you want as-long as it complies with the [license](LICENCE) 🚀
+
+---
+
 ## About
 
 <img width="100%" alt="LabelFlow Screenshot" src="https://czeqiukmkichqmwlshce.supabase.in/storage/v1/object/public/labelflow-images/hero-image.jpg">
 
-# ⚠️ This product is discontinued ⚠️
-
-Unfortunately, we had to stop working on the project 😿
-
-But it's open source! Feel free to reuse the code as you want as-long as it complies with the [license](LICENCE) 🚀
-
 # Visual Data for absolutely everyone
 
-LabelFlow is an open platform for image labeling. Its source is entirely available on this Github repository. You are in charge of your own data and workflows.
+LabelFlow is an open platform for image labeling. Its source code is entirely available on this Github repository. You are in charge of your own data and workflows.
 
 LabelBox, Roboflow, v7labs and other Image labeling tools are are awesome. They made our lives massively easier when we needed to label data. However, most tools are very limited in terms of control and customisations.
 
-That's where LabelFlow.ai comes in. Self-hosted or hosted by us. White-label by design. API-driven and ready to be deployed on your own domain. Full control over your images and labels.
+That's where LabelFlow came in. Self-hosted or hosted by us. White-label by design. API-driven and ready to be deployed on your own domain. Full control over your images and labels.
 
-[Labelflow.ai](https://labelflow.ai) is the parent company developing LabelFlow, and commercializing a Hosted version.
+Sterblue was the parent company developing LabelFlow, and commercializing an hosted version.
 
-You can build LabelFlow from source, and serve it from your machine. Read how to [deploy it yourself](#running-labelflow-on-your-machine).
+You can build LabelFlow from source, and serve it from your machine. Read how to [deploy it yourself](#serving-your-own-labelflow).
 
 ### Built With
 
 - [TypeScript](https://www.typescriptlang.org/): Main programming language of the web app
 - [ReactJS](https://reactjs.org/): View library of the web app
+- [NodeJS](https://nodejs.org/en/): Javascript runtime for development and production on docker
 - [NextJS](https://nextjs.org/): Web framework of the web app
 - [GraphQL](https://graphql.org/): API, communication between client and server
-- [NodeJS](https://nodejs.org/en/): Javascript runtime for development and production on docker
+- [Prisma](https://www.prisma.io/): Next-generation Node.js and TypeScript ORM
 - [Python](https://www.python.org/) for the machine learning server
 - [PyTorch](https://pytorch.org/) for the machine learning server
-
-### Stay Up-to-Date
-
-LabelFlow officially launched as v.0.1 on 7th of September, however a lot of new features are coming. Watch releases of this repository to be notified for future updates:
-
-![Subscribe](https://github.com/labelflow/labelflow/raw/main/typescript/web/public/static/img/subscribe.gif)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Getting Started
 
