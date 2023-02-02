@@ -8080,7 +8080,7 @@ __metadata:
     graphql: 15.5.1
     graphql-type-json: 0.3.2
     isomorphic-fetch: 3.0.0
-    jszip: 3.7.0
+    jszip: 3.8.0
     lodash: 4.17.21
     mime-types: 2.1.32
     slugify: 1.6.0
@@ -8294,7 +8294,7 @@ __metadata:
     http-browserify: 1.7.0
     jest: 27.5.1
     jimp: 0.16.1
-    jszip: 3.7.0
+    jszip: 3.8.0
     lodash: 4.17.21
     mem: 8.1.1
     micro: 9.3.4
@@ -25675,15 +25675,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jszip@npm:3.7.0":
-  version: 3.7.0
-  resolution: "jszip@npm:3.7.0"
+"jszip@npm:3.8.0":
+  version: 3.8.0
+  resolution: "jszip@npm:3.8.0"
   dependencies:
     lie: ~3.3.0
     pako: ~1.0.2
     readable-stream: ~2.3.6
     set-immediate-shim: ~1.0.1
-  checksum: 10b8c6a8406c0ac559353bb8b8946a55432ccfda27bc98e539156301ec78a26cd4e7dc4288e9863796e9f30a6924910cefa7bb12bda1338cf71e522133abb370
+  checksum: 219772f0291345ee91464b688869614c7cb936e450e767270799043d92739230bce3c9f70bd4e2bcdbdbf1a177e8a8cde39d6cc25d9300dd4a2e8956b2f3da95
   languageName: node
   linkType: hard
 
