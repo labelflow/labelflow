@@ -28,7 +28,7 @@
     "graphql": "15.5.1",
     "graphql-type-json": "0.3.2",
     "isomorphic-fetch": "3.0.0",
-    "jszip": "3.7.0",
+    "jszip": "3.8.0",
     "lodash": "4.17.21",
     "mime-types": "2.1.32",
     "slugify": "1.6.0",
